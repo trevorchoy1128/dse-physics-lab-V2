@@ -1,0 +1,460 @@
+<title>DSE Physics Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F7F4; --paper:#FFFFFF; --ink:#1B2530; --ink-2:#4A5563; --ink-3:#7B8591;
+  --line:#D8DDD7; --grid:#E4E9E3; --hover:#EEF3EE;
+  --accent:#0E6F6A; --accent-ink:#FFFFFF; --accent-soft:#DCEEEC;
+  --concept:#4B5CB0; --concept-soft:#E3E6F6;
+  --star:#B7761B; --star-soft:#F6E9D3;
+  --focus:#0E6F6A;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131920; --paper:#1B2229; --ink:#E6EAEE; --ink-2:#B4BCC5; --ink-3:#7F8993;
+    --line:#2C353E; --grid:#1F2830; --hover:#222C35;
+    --accent:#4FB8B1; --accent-ink:#0F1A1A; --accent-soft:#173634;
+    --concept:#95A2E8; --concept-soft:#242B4A;
+    --star:#E0A24C; --star-soft:#3D2E16;
+    --focus:#4FB8B1;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131920; --paper:#1B2229; --ink:#E6EAEE; --ink-2:#B4BCC5; --ink-3:#7F8993;
+  --line:#2C353E; --grid:#1F2830; --hover:#222C35;
+  --accent:#4FB8B1; --accent-ink:#0F1A1A; --accent-soft:#173634;
+  --concept:#95A2E8; --concept-soft:#242B4A;
+  --star:#E0A24C; --star-soft:#3D2E16;
+  --focus:#4FB8B1;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:15px;line-height:1.6;-webkit-text-size-adjust:100%}
+/* 觸控尺寸：iPad 與電腦並用，所有可按元素最少 44px 高 */
+button,.chip,.modes button,.unit,.card,.back{touch-action:manipulation}
+.search{min-height:44px}
+.modes button{min-height:44px;min-width:52px;font-size:14px}
+.chip{min-height:40px;padding:6px 16px;font-size:14px}
+.back{min-height:44px}
+input[type=search]{font-size:16px} /* 防止 iOS 自動放大 */
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.en{color:var(--ink-3)}
+.zh + .en{margin-left:.4em}
+.unit .name .en,.card .title .en,.card .desc .en,h1 .en,.intro p .en{margin-left:0}
+[data-lang="zh"] .en{display:none!important}
+[data-lang="en"] .zh{display:none!important}
+[data-lang="en"] .en{color:inherit}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1800px;margin:0 auto;padding:10px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-family:"Noto Serif TC",serif;font-weight:700;font-size:18px;letter-spacing:.01em;display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;min-height:44px;padding:0 6px;margin-left:-6px;border-radius:4px}
+.brand:hover{background:var(--hover);color:var(--accent)}
+.brand:active{background:var(--accent-soft)}
+.brand svg{width:26px;height:26px}
+.brand .sub{font-family:"Noto Sans TC",sans-serif;font-weight:400;font-size:12px;color:var(--ink-3)}
+.spacer{flex:1}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--bg);padding:6px 10px;min-width:220px;flex:1;max-width:380px}
+.search input{border:0;background:transparent;color:var(--ink);font:inherit;font-size:14px;width:100%;outline:none}
+.search svg{width:16px;height:16px;color:var(--ink-3);flex:none}
+.modes{display:inline-flex;border:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-size:12px}
+.modes button{background:var(--paper);color:var(--ink-2);border:0;border-right:1px solid var(--line);padding:5px 12px;font:inherit;cursor:pointer}
+.modes button:last-child{border-right:0}
+.modes button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+
+.wrap{max-width:1800px;margin:0 auto;padding:28px 28px 80px}
+
+/* intro */
+.intro{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:22px}
+h1{font-family:"Noto Serif TC",serif;font-size:30px;font-weight:700;line-height:1.25;margin:0 0 6px;text-wrap:balance}
+.intro p{margin:0;max-width:60ch;color:var(--ink-2)}
+.stats{display:flex;gap:22px;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-3);padding-bottom:4px}
+.stats b{display:block;font-size:22px;color:var(--ink);font-weight:500;line-height:1.1}
+
+/* course map */
+.map-label{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:22px 0 8px;display:flex;align-items:center;gap:10px}
+.map-label::after{content:"";flex:1;height:1px;background:var(--line)}
+.units{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.units.four{grid-template-columns:repeat(4,1fr)}
+.units.one{grid-template-columns:repeat(4,1fr)}
+@media (min-width:1400px){
+  .unit{min-height:170px;padding:18px 18px 14px}
+  .unit .name{font-size:18px}
+  .intro{margin-bottom:28px}
+}
+.unit{background:var(--paper);border:1px solid var(--line);padding:14px 14px 12px;text-align:left;cursor:pointer;color:var(--ink);font:inherit;display:flex;flex-direction:column;gap:6px;min-height:150px;position:relative;transition:border-color .15s,background .15s}
+.unit:hover{border-color:var(--accent);background:var(--hover)}
+.unit .code{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);letter-spacing:.06em}
+.unit .name{font-weight:700;font-size:16px;line-height:1.3}
+.unit .name .en{display:block;font-weight:400;font-size:12.5px;line-height:1.35;margin-top:2px}
+[data-lang="en"] .unit .name .en{font-size:15px;font-weight:700}
+.unit .icon{position:absolute;right:12px;top:12px;width:34px;height:34px;color:var(--accent);opacity:.9}
+.unit .icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.unit .count{margin-top:auto;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3);display:flex;gap:10px}
+.unit .count i{font-style:normal;display:inline-flex;align-items:center;gap:4px}
+.unit .count i::before{content:"";width:8px;height:8px;display:inline-block}
+.unit .count .e::before{background:var(--accent)}
+.unit .count .c::before{background:var(--concept)}
+
+/* filters */
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:18px}
+.chip{border:1px solid var(--line);background:var(--paper);color:var(--ink-2);padding:4px 12px;font:inherit;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip .dot{display:inline-block;width:8px;height:8px;margin-right:6px;vertical-align:1px}
+.chip .dot.e{background:var(--accent)} .chip .dot.c{background:var(--concept)} .chip .dot.s{background:var(--star)}
+.result{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3);margin-left:auto}
+
+/* views */
+[hidden]{display:none!important}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);background:none;border:0;padding:0;font-family:inherit;cursor:pointer;margin-bottom:16px}
+.back:hover{color:var(--accent)}
+.back svg{width:14px;height:14px}
+.unit-head{display:flex;align-items:flex-start;gap:16px}
+.unit-head .icon{width:44px;height:44px;color:var(--accent);flex:none}
+.unit-head .icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.unit-head .code{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);letter-spacing:.06em}
+.unit-head h2{font-family:"Noto Serif TC",serif;font-size:26px;font-weight:600;margin:0;line-height:1.25}
+.unit-head h2 .en{display:block;font-family:"Noto Sans TC",sans-serif;font-size:14px;font-weight:400;margin-left:0}
+[data-lang="en"] .unit-head h2 .en{font-family:"Noto Serif TC",serif;font-size:26px;font-weight:600}
+/* sections */
+section.topic{margin-top:22px}
+.topic-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.topic-h .code{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);letter-spacing:.06em}
+.topic-h h2{font-family:"Noto Serif TC",serif;font-size:20px;font-weight:600;margin:0}
+.topic-h h2 .en{font-family:"Noto Sans TC",sans-serif;font-size:14px;font-weight:400;margin-left:8px}
+[data-lang="en"] .topic-h h2 .en{font-family:"Noto Serif TC",serif;font-size:20px;font-weight:600;margin:0}
+.topic-h .n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3);margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.card{background:var(--paper);border:1px solid var(--line);padding:12px 14px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink);position:relative;transition:border-color .15s,background .15s}
+.card:hover{border-color:var(--accent);background:var(--hover)}
+.card .top{display:flex;align-items:center;gap:8px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3)}
+.card .top .id{font-variant-numeric:tabular-nums}
+.card .top .ch{color:var(--accent);white-space:nowrap}
+.chs{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin-top:8px;font-size:12px;color:var(--ink-3)}
+.chip-ch{font-size:12px;color:var(--ink-2);border:1px solid var(--line);padding:2px 8px;background:var(--paper)}
+.chip-ch b{font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--accent);margin-right:4px}
+.badge{font-size:11px;font-weight:500;letter-spacing:.04em;padding:1px 7px;border-radius:3px;white-space:nowrap;font-family:"Noto Sans TC",sans-serif}
+.b-e{background:var(--accent-soft);color:var(--accent)}
+.b-c{background:var(--concept-soft);color:var(--concept)}
+.b-s{background:var(--star-soft);color:var(--star)}
+.card .title{font-weight:700;font-size:15px;line-height:1.35}
+.card .title .en{display:block;font-weight:400;font-size:12.5px;line-height:1.35;margin-top:1px}
+[data-lang="en"] .card .title .en{font-size:15px;font-weight:700}
+.card .desc{font-size:13px;color:var(--ink-2);line-height:1.5}
+.card .desc .en{display:block;font-size:12.5px}
+.card .status{margin-top:auto;padding-top:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-3);display:flex;align-items:center;gap:6px}
+.card .status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--line)}
+.card.live .status::before{background:var(--accent)}
+.card.wip .status::before{background:var(--star)}
+.card[hidden]{display:none}
+.empty{color:var(--ink-3);font-size:14px;padding:30px 0;text-align:center;display:none}
+footer{margin-top:50px;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-3);display:flex;gap:18px;flex-wrap:wrap}
+@media (max-width:900px){.units,.units.four,.units.one{grid-template-columns:repeat(3,1fr)}} /* iPad 直向 */
+@media (hover:none){.unit:hover,.card:hover{background:var(--paper);border-color:var(--line)}.unit:active,.card:active{background:var(--hover);border-color:var(--accent)}}
+@media (max-width:600px){
+  .wrap{padding:18px 12px 60px}
+  .units,.units.four,.units.one{grid-template-columns:repeat(2,1fr)}
+  .grid{grid-template-columns:1fr}
+  h1{font-size:24px}
+  .search{min-width:0;order:3;max-width:none;flex-basis:100%}
+  .unit{min-height:130px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="bar"><div class="bar-in">
+  <a class="brand" href="#">
+    <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 3h8M11 3v7L4.5 21a1.5 1.5 0 0 0 1.3 2.2h14.4a1.5 1.5 0 0 0 1.3-2.2L15 10V3"/><path d="M7.5 17h11"/></svg>
+    DSE Physics Lab <span class="sub zh">物理實驗模擬器</span><span class="sub en">Physics Simulations</span>
+  </a>
+  <div class="spacer"></div>
+  <label class="search">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3.5 3.5"/></svg>
+    <input id="q" type="search" placeholder="搜尋模擬…" autocomplete="off" aria-label="搜尋模擬">
+  </label>
+  <div class="modes" role="group" aria-label="語言 Language">
+    <button data-mode="zh" aria-pressed="true">中</button><button data-mode="en" aria-pressed="false">EN</button>
+  </div>
+</div></div>
+
+<main class="wrap">
+  <div id="view-home">
+    <div class="intro">
+      <div>
+        <h1><span class="zh">HKDSE 物理 3D 實驗模擬器</span><span class="en" style="display:block;font-family:'Noto Sans TC',sans-serif;font-size:15px;font-weight:400">Interactive 3D simulations for every HKDSE Physics experiment and concept</span></h1>
+        <p><span class="zh">按課程單元選擇。每個模擬都可以調校參數、記錄讀數、匯出數據，並附實驗步驟、理論及常見混淆。</span><span class="en" style="display:block">Pick a unit below. Every simulation lets you adjust parameters, record readings, export data, and comes with procedure, theory and common misconceptions.</span></p>
+      </div>
+      <div class="stats"><span><b id="n-all">121</b><span class="zh">模擬</span><span class="en">simulations</span></span><span><b id="n-exp">30</b><span class="zh">實驗</span><span class="en">experiments</span></span><span><b id="n-con">91</b><span class="zh">概念</span><span class="en">concepts</span></span></div>
+    </div>
+    <div class="map-label"><span class="zh">必修部分</span><span class="en">Compulsory</span></div>
+    <div class="units" id="map-c"></div>
+    <div class="map-label"><span class="zh">選修部分</span><span class="en">Electives</span></div>
+    <div class="units four" id="map-e"></div>
+    <div class="map-label"><span class="zh">跨單元</span><span class="en">Cross-topic</span></div>
+    <div class="units one" id="map-s"></div>
+  </div>
+
+  <div id="view-unit" hidden>
+    <button class="back" type="button" id="back"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 2 4 7l5 5"/></svg><span class="zh">返回課程地圖</span><span class="en">Back to course map</span></button>
+    <div class="unit-head" id="unit-head"></div>
+    <div class="filters" role="group" aria-label="篩選 Filter">
+      <button class="chip" data-f="all" aria-pressed="true"><span class="zh">全部</span><span class="en">All</span></button>
+      <button class="chip" data-f="exp" aria-pressed="false"><span class="dot e"></span><span class="zh">實驗</span><span class="en">Experiments</span></button>
+      <button class="chip" data-f="con" aria-pressed="false"><span class="dot c"></span><span class="zh">概念</span><span class="en">Concepts</span></button>
+      <button class="chip" data-f="star" aria-pressed="false"><span class="dot s"></span><span class="zh">第一階段</span><span class="en">Phase 1</span></button>
+      <span class="result" id="result"></span>
+    </div>
+    <div id="unit-body"></div>
+    <div class="empty" id="empty"><span class="zh">沒有符合的模擬</span><span class="en">No matching simulations</span></div>
+  </div>
+
+  <footer>
+    <span>DSE Physics Lab · v0.2</span>
+    <span class="zh">術語以考評局《物理課程及評估指引》為準</span><span class="en">Terminology follows the HKEAA Physics Curriculum and Assessment Guide</span>
+    <span>MIT (code) · CC BY-NC (content)</span>
+  </footer>
+</main>
+
+<script>
+const UNITS=[
+ {id:"c1",g:"c",code:"必修 I",codeEn:"Compulsory I",zh:"熱和氣體",en:"Heat and Gases",icon:'<svg viewBox="0 0 34 34"><path d="M10 5v16a4 4 0 1 0 4 0V5a2 2 0 0 0-4 0z"/><path d="M12 12v9"/><circle cx="24" cy="9" r="1.6"/><circle cx="28" cy="16" r="1.6"/><circle cx="23" cy="22" r="1.6"/><circle cx="29" cy="26" r="1.6"/></svg>'},
+ {id:"c2",g:"c",code:"必修 II",codeEn:"Compulsory II",zh:"力和運動",en:"Force and Motion",icon:'<svg viewBox="0 0 34 34"><path d="M4 26h26"/><rect x="7" y="15" width="12" height="8"/><circle cx="10" cy="26" r="2"/><circle cx="16" cy="26" r="2"/><path d="M19 19h9m0 0-3-3m3 3-3 3"/></svg>'},
+ {id:"c3",g:"c",code:"必修 III",codeEn:"Compulsory III",zh:"波動",en:"Wave Motion",icon:'<svg viewBox="0 0 34 34"><path d="M3 17c3-8 6-8 9 0s6 8 9 0 6-8 9 0"/><path d="M3 17h28" stroke-dasharray="1.5 3"/></svg>'},
+ {id:"c4",g:"c",code:"必修 IV",codeEn:"Compulsory IV",zh:"電和磁",en:"Electricity and Magnetism",icon:'<svg viewBox="0 0 34 34"><path d="M9 6v12a8 8 0 0 0 16 0V6"/><path d="M9 6h5v6H9zM20 6h5v6h-5z"/><path d="M17 26v3"/></svg>'},
+ {id:"c5",g:"c",code:"必修 V",codeEn:"Compulsory V",zh:"放射現象和核能",en:"Radioactivity and Nuclear Energy",icon:'<svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="2.2"/><path d="M17 12.5V5a12 12 0 0 1 10.4 6l-6.5 3.7M13.1 14.7 6.6 11A12 12 0 0 1 17 5M13.1 19.3l-6.5 3.7a12 12 0 0 0 20.8 0l-6.5-3.7"/></svg>'},
+ {id:"e1",g:"e",code:"選修 I",codeEn:"Elective I",zh:"天文學和航天科學",en:"Astronomy and Space Science",icon:'<svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="7"/><path d="M5 21c4 4 20 4 24-4M6 13c5-5 18-4 22 3"/></svg>'},
+ {id:"e2",g:"e",code:"選修 II",codeEn:"Elective II",zh:"原子世界",en:"Atomic World",icon:'<svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="2"/><ellipse cx="17" cy="17" rx="13" ry="5"/><ellipse cx="17" cy="17" rx="13" ry="5" transform="rotate(60 17 17)"/><ellipse cx="17" cy="17" rx="13" ry="5" transform="rotate(-60 17 17)"/></svg>'},
+ {id:"e3",g:"e",code:"選修 III",codeEn:"Elective III",zh:"能量和能源的使用",en:"Energy and Use of Energy",icon:'<svg viewBox="0 0 34 34"><circle cx="11" cy="11" r="4"/><path d="M11 3v2M11 17v2M3 11h2M17 11h2M5.3 5.3l1.4 1.4M15.3 15.3l1.4 1.4M16.7 5.3l-1.4 1.4M6.7 15.3l-1.4 1.4"/><path d="M25 30V18M25 18l-5-3M25 18l5-3M25 18v-6"/></svg>'},
+ {id:"e4",g:"e",code:"選修 IV",codeEn:"Elective IV",zh:"醫學物理學",en:"Medical Physics",icon:'<svg viewBox="0 0 34 34"><path d="M3 18h7l3-8 4 16 3-8h11"/></svg>'},
+ {id:"sk",g:"s",code:"跨單元",codeEn:"Cross-topic",zh:"基礎技能",en:"Skills",icon:'<svg viewBox="0 0 34 34"><path d="M5 5v24h24"/><path d="M8 24 27 9"/><circle cx="11" cy="21" r="1.4"/><circle cx="16" cy="18" r="1.4"/><circle cx="21" cy="13" r="1.4"/><circle cx="25" cy="11" r="1.4"/></svg>'}
+];
+// SIMS-START（由 tools/build-catalogue.mjs 生成，請改 content/catalogue.json）
+// [id, unit, type(e/c), star, zh, en, descZh, descEn, chapter]
+const SIMS=[
+[1,"c1","e",1,"比熱容量（電熱法）","Specific heat capacity (electrical method)","金屬塊 / 水，發熱器、温度計、電錶讀數，T-t 圖，熱損失","Metal block or water, heater, thermometer, meter readings, T-t graph, heat loss","Bk1 Ch3"],
+[2,"c1","e",0,"熔化潛熱 / 汽化潛熱","Specific latent heat of fusion / vaporisation","冰塊加熱、沸水，質量-時間圖","Melting ice, boiling water, mass-time graph","Bk1 Ch4?"],
+[3,"c1","e",1,"波義耳定律","Boyle's law","注射器加壓，p-V 及 p-1/V 圖","Syringe under pressure, p-V and p-1/V graphs","Bk1 Ch5?"],
+[4,"c1","e",0,"氣壓定律 / 查理定律","Pressure law / Charles's law","水浴加熱，p-T 圖外推至 −273 °C（絕對零度）","Water bath, p-T graph extrapolated to −273 °C (absolute zero)","Bk1 Ch5?"],
+[5,"c1","e",0,"布朗運動（烟霧盒）","Brownian movement (smoke cell)","顯微鏡視角，烟粒被空氣分子撞擊","Microscope view, smoke particles hit by air molecules","Bk1 Ch5?"],
+[6,"c1","c",0,"熱平衡與溫標","Thermal equilibrium and temperature scales","兩物體接觸至熱平衡；攝氏温標 / 開氏溫標對照","Two bodies reaching thermal equilibrium; Celsius vs Kelvin scales","Bk1 Ch1"],
+[7,"c1","c",1,"温度、熱與內能","Temperature, heat and internal energy","分子視角：温度 = 平均動能，內能 = 動能 + 勢能，熱 = 轉移中的能量","Molecular view: temperature as mean KE, internal energy as KE + PE, heat as energy in transfer","Bk1 Ch2"],
+[8,"c1","c",0,"傳導、對流、輻射","Conduction, convection, radiation","金屬棒温度分佈、對流、紅外輻射","Temperature along a rod, convection currents, infra-red radiation","Bk1 Ch2"],
+[9,"c1","c",0,"物態變化時温度為何不變","Why temperature stays constant during a change of state","能量去了分子勢能而非動能","Energy goes into molecular PE, not KE","Bk1 Ch4?"],
+[10,"c1","c",0,"蒸發與沸騰","Evaporation vs boiling","高速分子逃逸、蒸發致冷；沸騰在整體內發生","Fast molecules escape, cooling by evaporation; boiling throughout","Bk1 Ch4?"],
+[11,"c1","c",1,"氣體分子運動論","Kinetic theory of gases","3D 分子盒，改變 T、V、N，即時顯示壓強及速率分佈","3D molecule box; vary T, V, N; live pressure and speed distribution","Bk1 Ch5?"],
+[12,"c1","c",0,"氣體壓強的分子解釋","Molecular origin of gas pressure","分子撞壁的動量變化 → 壓強，推導 pV = ⅓Nmc²","Momentum change at the wall gives pressure; derive pV = ⅓Nmc²","Bk1 Ch5?"],
+[13,"c1","c",0,"理想氣體方程 pV = nRT","Ideal gas equation","三個氣體定律合一，任意固定一個變量","Three gas laws in one; hold any variable fixed","Bk1 Ch5?"],
+[14,"c1","c",0,"分子速率分佈與温度","Molecular speed distribution and temperature","速率分佈曲線、方均根速率","Speed distribution curve, r.m.s. speed","Bk1 Ch5?"],
+[15,"c2","e",1,"紙帶打點計時器 / 運動感應器","Ticker-tape timer / motion sensor","紙帶生成、剪帶貼圖、求加速度","Generate tape, cut and chart, find acceleration","Bk2 B2"],
+[16,"c2","e",1,"自由下落量 g","Measuring g by free fall","光閘 / 電磁釋放，s-t² 圖","Light gate or electromagnet release, s-t² graph","Bk2 B2"],
+[17,"c2","e",1,"牛頓運動第二定律（小車＋斜面）","Newton's second law (trolley and runway)","補償摩擦作用、砝碼加力，a-F、a-1/m 圖","Friction-compensated runway, a-F and a-1/m graphs","Bk2 B3"],
+[18,"c2","e",0,"力矩與平衡（米尺）","Moments and equilibrium (metre rule)","米尺平衡、重心，加減砝碼；即 S4 的情景 1","Balance a metre rule, centre of gravity, add masses; scene 1 of S4","Bk2 B5"],
+[19,"c2","e",0,"動量守恆（小車 / 氣墊導軌）","Conservation of momentum","彈性、非彈性、爆炸三種，動量及動能表；與 S8 共用碰撞引擎","Elastic, inelastic and explosion; momentum and KE tables; shares the S8 collision engine","Bk2 B7"],
+[20,"c2","e",1,"圓周運動（旋轉膠塞）","Circular motion (whirling bung)","向心力箭嘴、F-ω² 圖，切繩後沿切線飛出；與 S1 共用受力顯示","Centripetal force arrow, F-ω² graph, tangential release; shares the S1 force display","Bk2 B9"],
+[21,"c2","c",0,"位移、速度變化的矢量運算","Vector arithmetic: displacement and change in velocity","S12 · 路徑編輯；距離 vs 位移、平均速率 vs 平均速度；Δv = v − u 三角形法；轉 90° 速率不變時 Δv = √2 v","S12 · Path editor; distance vs displacement; Δv = v − u by triangle; 90° turn gives Δv = √2 v","Bk2 B1"],
+[22,"c2","c",0,"相對速度與參考座標系","Relative velocity and frames of reference","規格以外，待老師定奪；與 S1 的轉盤觀察者視角共用機制","Beyond the spec, pending teacher approval; shares the rotating-observer view of S1","Bk2 B1"],
+[23,"c2","c",0,"運動線圖與真實運動同步","Motion graphs synced with real motion","S7 · 2D 即可。由運動生成圖，或在 v-t 圖上拖畫線段驅動小車；切線斜率、線下面積陰影；位移與距離分開讀數","S7 · Motion draws the graphs, or draw a v-t graph to drive the trolley; slope, area; displacement vs distance","Bk2 B2"],
+[24,"c2","c",0,"慣性與牛頓運動第一定律","Inertia and Newton's first law","規格以外，待老師定奪：無摩擦運動、桌布實驗","Beyond the spec, pending teacher approval: frictionless motion, tablecloth pull","Bk2 B3"],
+[25,"c2","c",0,"摩擦的方向與極限摩擦","Direction of friction and limiting friction","S13 · 驅動輪接觸點摩擦向前；靜摩擦隨外力增至極限後跌至動摩擦","S13 · Friction on a driving wheel points forward; static friction rises to its limit then drops to kinetic","Bk2 B3"],
+[26,"c2","c",0,"流體阻力與終端速度","Fluid resistance and terminal velocity","S11 · 阻力 ∝ v 或 v²；初速可高於終端速度；a 由 g 減至零","S11 · Drag ∝ v or v²; start above terminal velocity; a falls from g to zero","Bk2 B3"],
+[27,"c2","c",1,"作用與反作用力對的辨識","Identifying action–reaction pairs","S5 · 每支力標「施力物 → 受力物」；點選高亮其反作用力；只看某物體受的力（孤立物體圖）；桌加速下降時重量與法向反作用力不再相等","S5 · Every force labelled agent → receiver; click to highlight its partner; filter forces on one body (free-body diagram)","Bk2 B3"],
+[28,"c2","c",0,"連接體系統","Connected bodies","S10 · 滑輪連掛重、兩接觸方塊、升降機內磅秤；張力 vs mg；整體法與隔離法並列","S10 · Pulley and hanging mass, blocks in contact, scale in a lift; tension vs mg; whole-system vs isolated","Bk2 B4"],
+[29,"c2","c",1,"斜面受力與力的分解","Forces on an inclined plane and resolution","S6 · R = mg cos θ 與 mg 比較條；實際摩擦 vs 極限摩擦；tan θ = μ 剛好滑動；加水平外力時 R 改變；接觸力合成","S6 · R = mg cos θ vs mg; actual vs limiting friction; R changes with an applied horizontal force","Bk2 B4"],
+[30,"c2","c",1,"剛體平衡、重心與傾倒","Rigid-body equilibrium, centre of gravity and toppling","S4 · 米尺與支點、鉸接橫桿與牆、可傾斜的箱；作用線與垂直距離；力偶；重心在物體外；支撐面與重心投影，tan θ = b / 2h","S4 · Metre rule, hinged beam, tilting box; line of action and perpendicular distance; couple; base area and CG projection","Bk2 B5"],
+[31,"c2","c",0,"能量轉換與機械能守恆","Energy conversion and conservation of mechanical energy","S9 · 軌道編輯器；能量堆疊條（動能、重力勢能、內能）；不同斜度同高度落底速率相同；參考水平面可拖動；W = Fs cos θ","S9 · Track editor; stacked energy bars; same speed at the bottom for any slope; movable reference level","Bk2 B6"],
+[32,"c2","c",0,"碰撞與動量守恆（含二維與衝擊力）","Collisions and momentum (1D, 2D, impact force)","S8 · 總動量與總動能分開顯示；完全彈性至完全非彈性連續調節；二維碰撞矢量圖；硬地板 vs 軟墊 F-t 圖面積相同","S8 · Total momentum and KE shown separately; elastic to inelastic; 2D vector diagram; equal F-t areas","Bk2 B7"],
+[33,"c2","c",1,"拋體運動：水平與垂直的獨立性","Projectile motion: independence of components","S2 · 3D + 側視 + 俯視三窗同步；兩球同時落地；頻閃模式；最高點 vy = 0 但 vx 不變；g 可選 1.6 / 3.7 / 9.81","S2 · 3D, side and top views in sync; two balls land together; strobe mode; at the top vy = 0 but vx unchanged","Bk2 B8"],
+[34,"c2","c",1,"圓周運動：向心力的來源","Circular motion: source of the centripetal force","S1 · 水平轉盤、錐擺、傾斜彎道（μ 可調至零）；受力圖只畫真實的力，合力另一層顯示；轉盤觀察者視角標明非慣性座標系；剪斷繩沿切線離開。另加豎直圓周情景（規格以外）","S1 · Turntable, conical pendulum, banked track; only real forces drawn, resultant on its own layer; cut the string","Bk2 B9"],
+[35,"c2","c",0,"引力場強度與平方反比定律","Gravitational field strength and the inverse square law","S14 · 距離由地心量起；r = 2R 時 g/4；月球、火星比較","S14 · Distance from Earth's centre; g/4 at r = 2R; compare Moon and Mars","Bk2 B10"],
+[36,"c2","c",1,"衞星軌道與表觀失重","Satellite orbits and apparent weightlessness","S3 · 常設引力箭嘴與場強讀數；艙內磅秤讀數為零而引力仍在；軌道面傾角非零時星下點成 8 字；T = 24 h 反推 r ≈ 4.2 × 10⁷ m","S3 · Gravity arrow always shown; cabin scale reads zero while gravity remains; tilted orbit traces a figure of 8","Bk2 B10"],
+[37,"c3","e",1,"折射與全內反射（玻璃磚）","Refraction and total internal reflection (glass block)","光線追蹤、斯涅耳定律、臨界角","Ray tracing, Snell's law, critical angle","Bk3A Ch2"],
+[38,"c3","e",1,"透鏡成像與焦距","Lens image formation and focal length","凸透鏡 / 凹透鏡、物距像距、光線圖、主焦點","Convex and concave lenses, u and v, ray diagrams, principal focus","Bk3A Ch3?"],
+[39,"c3","e",1,"水波槽","Ripple tank","反射、折射、衍射、雙源干涉，頻閃觀測器定格","Reflection, refraction, diffraction, two-source interference, stroboscope","Bk3B Ch5"],
+[40,"c3","e",0,"駐波（弦線 / 共鳴管）","Stationary waves (Melde's experiment, resonance tube)","邁爾德實驗、共鳴管量聲速","Melde's experiment, speed of sound by resonance tube","Bk3B Ch5"],
+[41,"c3","e",0,"楊氏雙縫實驗與衍射光柵","Young's double slit experiment and diffraction grating","程差、條紋間距 y = λD/a、狹縫間距","Path difference, fringe separation y = λD/a, slit separation","Bk3B Ch6"],
+[42,"c3","e",0,"聲波干涉（兩個揚聲器）","Sound interference (two loudspeakers)","走動聽強弱（腹線、節線），頻率與距離關係","Walk across antinodal and nodal lines; frequency and spacing","Bk3B Ch7"],
+[43,"c3","c",0,"平面鏡成像","Plane mirror images","虛像、橫向倒置、最小鏡長","Virtual image, lateral inversion, minimum mirror length","Bk3A Ch1"],
+[44,"c3","c",0,"折射率與視深","Refractive index and apparent depth","池底看似較淺、筷子折斷","Pool looks shallower, bent chopstick","Bk3A Ch2"],
+[45,"c3","c",0,"全內反射的應用","Applications of total internal reflection","光纖、稜鏡潛望鏡、海市蜃樓","Optical fibre, prismatic periscope, mirage","Bk3A Ch2"],
+[46,"c3","c",0,"色散與電磁波譜","Dispersion and the electromagnetic spectrum","稜鏡色散；波長、頻率、能量對照","Prism dispersion; wavelength, frequency and energy across the spectrum","Bk3A Ch2"],
+[47,"c3","c",0,"實像與虛像、放大","Real and virtual images, magnification","光線可否在屏上會聚、放大鏡","Can rays meet on a screen? Magnifying glass","Bk3A Ch3?"],
+[48,"c3","c",0,"眼睛與照相機","Eye and camera as lens systems","視覺調節、近視遠視矯正（連結選修 E4）","Accommodation, correcting short and long sight (links to E4)","Bk3A Ch3?"],
+[49,"c3","c",1,"橫波與縱波","Transverse and longitudinal waves","粒子振動與波傳播分開顯示；波長、振幅、密部疏部、v = fλ","Particle motion vs wave travel; λ, amplitude, compressions and rarefactions, v = fλ","Bk3B Ch4"],
+[50,"c3","c",1,"位移-距離圖 vs 位移-時間圖","Displacement–distance vs displacement–time graphs","同一列波兩張圖並排，讀波長 vs 讀週期","Both graphs of one wave side by side; read λ vs T","Bk3B Ch4"],
+[51,"c3","c",0,"粒子運動方向","Direction of particle motion","給波形與傳播方向，判斷某點粒子此刻向上或向下","Given waveform and direction, which way is a particle moving?","Bk3B Ch4"],
+[52,"c3","c",0,"相位與相位差","Phase and phase difference","同相、反相、相位差與程差","In phase, antiphase, phase vs path difference","Bk3B Ch4"],
+[53,"c3","c",0,"波的折射","Refraction of waves","波速與波長改變、頻率不變","Speed and wavelength change, frequency stays","Bk3B Ch5"],
+[54,"c3","c",0,"衍射與狹縫闊度","Diffraction and slit width","狹縫闊度 vs 波長比例","Slit width relative to wavelength","Bk3B Ch5"],
+[55,"c3","c",1,"疊加與干涉","Superposition and interference","兩波逐點相加、相長相消、程差 = nλ 或 (n+½)λ","Add two waves point by point; constructive and destructive; path difference","Bk3B Ch5"],
+[56,"c3","c",0,"駐波 vs 行波","Stationary vs travelling waves","波節、波腹、能量不傳播、相鄰波節間同相","Nodes and antinodes, no energy transfer, phase between nodes","Bk3B Ch5"],
+[57,"c3","c",0,"聲音：音調、響度、音品","Sound: pitch, loudness, timbre","波形與頻譜、超聲波、聽頻範圍、陰極射線示波器顯示","Waveforms and spectra, ultrasound, audible range, CRO display","Bk3B Ch7"],
+[58,"c3","c",0,"共振","Resonance","驅動頻率掃描，振幅-頻率圖，固有頻率","Sweep the driving frequency; amplitude-frequency graph; natural frequency","Bk3B Ch7"],
+[59,"c3","c",0,"多普勒效應","Doppler effect","波源移動，波陣面壓縮（連結選修 E1）","Moving source, compressed wavefronts (links to E1)","E1 Ch3"],
+[60,"c4","e",1,"歐姆定律與 I-V 特性","Ohm's law and I-V characteristics","電阻器、燈泡、二極管，接駁安培計與伏特計","Resistor, bulb, diode with ammeter and voltmeter","Bk4 Ch2"],
+[61,"c4","e",0,"電阻率","Resistivity","改變導線長度、截面積，R-L 圖","Vary length and area, R-L graph","Bk4 Ch2"],
+[62,"c4","e",0,"串聯、並聯與分壓器","Series, parallel circuits and potential divider","拖放式接線板，電流「粒子」流動","Drag-and-drop circuit board, flowing charge carriers","Bk4 Ch2"],
+[63,"c4","e",0,"電動勢與內電阻","EMF and internal resistance","V-I 圖求 ε 與 r","V-I graph to find ε and r","Bk4 Ch2"],
+[64,"c4","e",1,"電流的磁場","Magnetic field of currents","直導線 / 線圈 / 螺綫管，3D 場力線、指南針陣列、右手握拳定則","Wire, coil, solenoid; 3D field lines, compass array, right-hand grip rule","Bk4 Ch4?"],
+[65,"c4","e",0,"載流導體受力與直流電動機","Force on a current-carrying conductor, d.c. motor","F = BIL，力箭嘴，轉子逐步旋轉","F = BIL, force arrows, step the rotor","Bk4 Ch5?"],
+[66,"c4","e",1,"電磁感應","Electromagnetic induction","磁鐵進出線圈，磁通量-時間、感應電動勢-時間圖","Magnet in and out of a coil; flux-time and EMF-time graphs","Bk4 Ch6?"],
+[67,"c4","c",0,"電荷與感應起電","Charge and charging by induction","摩擦起電、感應起電、接地、范德格拉夫起電機","Charging by friction and induction, earthing, Van de Graaff generator","Bk4 Ch1"],
+[68,"c4","c",0,"庫倫定律","Coulomb's law","力與距離平方反比","Inverse-square force","Bk4 Ch1"],
+[69,"c4","c",1,"電場力線與電場強度","Electric field lines and field strength","拖放點電荷，3D 場力線、平行板均勻場","Drag point charges; 3D field lines, uniform field between plates","Bk4 Ch1"],
+[70,"c4","c",1,"電勢、電勢差與電勢能","Potential, p.d. and potential energy","等勢面、「高度」地形圖比喻、電荷沿場移動的能量變化","Equipotentials, the height-map analogy, energy of a moving charge","Bk4 Ch1"],
+[71,"c4","c",1,"帶電粒子在電場中","Charged particle in an electric field","陰極射綫偏轉管、陰極射線示波器","Cathode ray deflection tube, the CRO","Bk4 Ch1"],
+[72,"c4","c",0,"電流的微觀圖像：漂移速度","Drift velocity, I = nAvq","導線內電子隨機運動加緩慢漂移","Random electron motion plus slow drift in a wire","Bk4 Ch2"],
+[73,"c4","c",0,"歐姆導體與非歐姆導體","Ohmic and non-ohmic conductors","燈泡温度升電阻升、二極管單向導電","Bulb resistance rises with temperature; diode conducts one way","Bk4 Ch2"],
+[74,"c4","c",0,"電動勢 vs 端電壓","EMF vs terminal voltage","內電阻分壓，負載變化","Internal resistance drops volts as the load changes","Bk4 Ch2"],
+[75,"c4","c",0,"電功率與電能","Electrical power and energy","P = IV = I²R = V²/R 在同一電路中如何用","Using P = IV = I²R = V²/R correctly in one circuit","Bk4 Ch2"],
+[76,"c4","c",0,"感應器電路（光敏電阻、熱敏電阻器）","Sensor circuits (LDR, thermistor)","分壓器輸出隨光 / 温度變化","Divider output vs light and temperature","Bk4 Ch2"],
+[77,"c4","c",0,"家居用電","Domestic electricity","活線 / 中線 / 地線、保險絲、斷路器、千瓦小時","Live, neutral, earth; fuse, circuit breaker, kilowatt-hour","Bk4 Ch3?"],
+[78,"c4","c",0,"磁場圖案","Magnetic field patterns","條形磁鐵、U 形磁鐵、地磁場","Bar magnet, U-magnet, Earth's field","Bk4 Ch4?"],
+[79,"c4","c",1,"弗林明左手定則","Fleming's left-hand rule","3D 手勢，任意旋轉磁場與電流方向","3D hand; rotate field and current freely","Bk4 Ch5?"],
+[80,"c4","c",0,"平行導線間的力","Force between parallel wires","同向相吸、反向相斥","Like currents attract, unlike repel","Bk4 Ch5?"],
+[81,"c4","c",0,"線圈所受的轉矩","Torque on a coil","力偶、轉動角度與轉矩變化","Couple; torque vs angle","Bk4 Ch5?"],
+[82,"c4","c",1,"帶電粒子在磁場中","Charged particle in a magnetic field","圓周運動 r = mv/qB、速度選擇器","Circular path r = mv/qB, velocity selector","Bk4 Ch5?"],
+[83,"c4","c",0,"霍耳效應","Hall effect","載流子偏向、霍耳電壓","Carrier deflection, Hall voltage","Bk4 Ch5?"],
+[84,"c4","c",1,"磁通量與楞次定律","Magnetic flux and Lenz's law","磁通量變化率、感應電流方向、能量守恆","Rate of change of flux, induced current direction, energy conservation","Bk4 Ch6?"],
+[85,"c4","c",0,"交流發電機","a.c. generator","線圈轉角與電動勢波形同步","Coil angle synced with the EMF waveform","Bk4 Ch7?"],
+[86,"c4","c",0,"交流與方均根值","a.c. and r.m.s. values","峰值 vs 方均根值、與直流等效發熱","Peak vs r.m.s.; heating equivalent to d.c.","Bk4 Ch7?"],
+[87,"c4","c",0,"變壓器與渦電流","Transformer and eddy currents","匝數比、疊片鐵芯、渦流損耗","Turns ratio, laminated core, eddy current loss","Bk4 Ch8"],
+[88,"c4","c",0,"高壓輸電","High-voltage power transmission","同功率下提高電壓減 I²R 功率損失","Same power, higher voltage, lower I²R power loss","Bk4 Ch8"],
+[89,"c5","e",1,"蓋革計數器與本底輻射","Geiger counter and background radiation","隨機計數、計數率、扣除本底","Random counts, count rate, subtracting background","Bk5 Ch1"],
+[90,"c5","e",0,"吸收與平方反比定律","Absorption and the inverse square law","紙 / 鋁 / 鉛吸收，距離變化","Paper, aluminium, lead; vary distance","Bk5 Ch1"],
+[91,"c5","e",1,"半衰期","Half-life","3D 原子核陣列隨機衰變，衰變曲線，取對數","Random decay of a 3D nucleus array, decay curve, log plot","Bk5 Ch2"],
+[92,"c5","c",1,"α、β、γ 性質比較","Properties of α, β, γ","致電離能力、穿透能力、在電場 / 磁場中的偏轉","Ionising power, penetrating power, deflection in fields","Bk5 Ch1"],
+[93,"c5","c",0,"雲室徑跡","Cloud chamber tracks","三種射線的徑跡","Tracks of the three radiations","Bk5 Ch1"],
+[94,"c5","c",0,"輻射劑量","Radiation dose","吸收劑量、當量劑量（希沃特）、本底輻射來源","Absorbed dose, equivalent dose (sievert), background sources","Bk5 Ch1"],
+[95,"c5","c",0,"原子結構與同位素","Atomic structure and isotopes","原子序數、核子數、同位素記法","Atomic number, nucleon number, notation","Bk5 Ch2"],
+[96,"c5","c",0,"衰變的隨機性","Randomness of decay","放射強度、衰變常數、單個原子核何時衰變不可預測","Activity, decay constant, one nucleus is unpredictable","Bk5 Ch2"],
+[97,"c5","c",0,"衰變方程與衰變系","Decay equations and decay series","核子數與電荷守恆，N-Z 圖","Conserve nucleon number and charge, N-Z chart","Bk5 Ch2"],
+[98,"c5","c",0,"碳 14 年代測定法","Carbon-14 dating","半衰期的應用","A half-life application","Bk5 Ch2"],
+[99,"c5","c",1,"質能等價與結合能","Mass–energy equivalence and binding energy","質量虧損、每核子結合能曲線","Mass defect, binding energy per nucleon curve","Bk5 Ch3"],
+[100,"c5","c",0,"核裂變、連鎖反應與反應堆","Nuclear fission, chain reaction and reactor","中子、鈾核、減速劑、控制棒、臨界質量","Neutrons, uranium, moderator, control rods, critical mass","Bk5 Ch3"],
+[101,"c5","c",0,"核聚變","Nuclear fusion","太陽內的核聚變及其條件","Fusion in the Sun and its conditions","Bk5 Ch3"],
+[102,"e1","c",0,"天球與星空","Celestial sphere and the night sky","赤經赤緯、星空隨時間變化","RA and Dec, the sky through the night and year","E1 Ch1"],
+[103,"e1","c",0,"開普勒行星運動定律與太陽系","Kepler's laws of planetary motion and the Solar System","橢圓軌道、近日點遠日點、等面積、T² ∝ a³","Ellipses, perihelion and aphelion, equal areas, T² ∝ a³","E1 Ch2"],
+[104,"e1","c",0,"視差、赫羅圖與恆星演化","Parallax, H-R diagram and stellar evolution","視差量距離、光度與温度、演化路徑","Distance by parallax, luminosity vs temperature, evolution tracks","E1 Ch3"],
+[105,"e1","c",0,"紅移與哈勃定律","Red shift and Hubble's law","譜線移動（多普勒頻移）、退行速度與距離","Shifted spectral lines (Doppler shift), recession speed vs distance","E1 Ch3"],
+[106,"e2","e",1,"光電效應","Photoelectric effect","臨閾頻率、遏止電勢、光子模型、功函數","Threshold frequency, stopping potential, photon model, work function","E2 Ch1"],
+[107,"e2","e",0,"盧瑟福散射","Rutherford scattering","α 粒子射向金箔，散射角分佈","Alpha particles at gold foil, scattering angles","E2 Ch2"],
+[108,"e2","c",0,"玻爾模型、能級與光譜","Bohr's model, energy levels and spectra","能級躍遷、發射光譜與吸收光譜","Transitions, emission and absorption spectra","E2 Ch2"],
+[109,"e2","c",0,"電子衍射與物質波","Electron diffraction and matter waves","德布羅意波長、衍射環","de Broglie wavelength, diffraction rings","E2 Ch2"],
+[110,"e2","c",0,"掃描隧穿顯微鏡與納米尺度","Scanning tunnelling microscope and the nanoscale","隧穿電流、原子表面成像","Tunnelling current, imaging an atomic surface","E2 Ch3"],
+[111,"e3","e",0,"太陽能電池與風力渦輪機","Solar cells and wind turbines","光強與輸出、風速與功率","Output vs light intensity, power vs wind speed","E3 Ch4"],
+[112,"e3","c",0,"抽熱機與性能係數","Heat pumps and coefficient of performance","壓縮機、冷凝管道、COP 隨温差變化","Compressor, condensing coil, COP vs temperature difference","E3 Ch1"],
+[113,"e3","c",0,"照明：光視效能與照明度","Lighting: luminous efficacy and illuminance","白熾燈 / 熒光燈 / LED 比較、平方反比定律、朗伯餘弦定律","Incandescent vs fluorescent vs LED, inverse-square law, Lambert's cosine law","E3 Ch2"],
+[114,"e3","c",0,"建築物傳熱與總熱傳送值","Building heat transfer and OTTV","導熱率、窗與牆的熱流、OTTV","Thermal conductivity, heat flow through windows and walls, OTTV","E3 Ch3"],
+[115,"e4","c",0,"眼睛與視力矯正","The eye and vision correction","近視、遠視、散光、屈光度","Short sight, long sight, astigmatism, dioptre","E4 Ch1"],
+[116,"e4","c",0,"超聲波 A-掃描 / B-掃描","Ultrasound A-scan / B-scan","脈衝回聲、聲阻抗、衰減、成像","Pulse-echo, acoustic impedance, attenuation, imaging","E4 Ch2"],
+[117,"e4","c",0,"X 射線衰減與電腦斷層造影","X-ray attenuation and computed tomography","半值厚度、多角度投影、反投影算法","Half-value thickness, projections, back projection algorithm","E4 Ch3"],
+[118,"e4","c",0,"放射療法與劑量","Radiotherapy and dose","多方向照射、劑量分佈","Multi-beam treatment, dose distribution","E4 Ch3"],
+[119,"sk","c",0,"線性化與求斜率","Linearising graphs and finding gradients","把 y = kx² 變直線、取最佳線、讀斜率截距","Turn y = kx² into a line, best fit, gradient and intercept","—"],
+[120,"sk","c",0,"誤差、不確定度與有效數字","Errors, uncertainty and significant figures","隨機誤差 vs 規律性誤差、百分誤差、有效數字規則","Random vs systematic, percentage error, sig. fig. rules","—"],
+[121,"sk","c",0,"國際單位制單位與量綱","SI units and dimensions","基本單位、導出單位、量綱分析檢查公式","Base and derived units, dimensional analysis","—"],
+[122,"sk","c",0,"數量級估算","Order-of-magnitude estimation","費米估算練習","Fermi estimation practice","—"]
+];
+const CHAPTERS={"c1":[["Bk1 Ch1","溫度和溫度計"],["Bk1 Ch2","熱和內能"],["Bk1 Ch3","熱容量和比熱容量"],["Bk1 Ch4?","物態變化"],["Bk1 Ch5?","氣體"]],"c2":[["Bk2 B1","位置和移動"],["Bk2 B2","直線運動"],["Bk2 B3","力和運動"],["Bk2 B4","力的合成和分解"],["Bk2 B5","力矩"],["Bk2 B6","功、能量和功率"],["Bk2 B7","動量"],["Bk2 B8","拋體運動"],["Bk2 B9","圓周運動"],["Bk2 B10","引力"]],"c3":[["Bk3A Ch1","光的反射"],["Bk3A Ch2","光的折射"],["Bk3A Ch3?","透鏡"],["Bk3B Ch4","波的性質"],["Bk3B Ch5","波的現象"],["Bk3B Ch6","光的波動性"],["Bk3B Ch7","聲音"]],"c4":[["Bk4 Ch1","靜電學"],["Bk4 Ch2","電路"],["Bk4 Ch3?","家居用電"],["Bk4 Ch4?","磁場"],["Bk4 Ch5?","電磁力"],["Bk4 Ch6?","電磁感應"],["Bk4 Ch7?","交流電"],["Bk4 Ch8","變壓器與輸電"]],"c5":[["Bk5 Ch1","放射現象"],["Bk5 Ch2","原子核與衰變"],["Bk5 Ch3","核能"]],"e1":[["E1 Ch1","宇宙"],["E1 Ch2","天體力學"],["E1 Ch3","恆星與宇宙"]],"e2":[["E2 Ch1","光電效應"],["E2 Ch2","原子結構"],["E2 Ch3","納米科技"]],"e3":[["E3 Ch1","能源效益"],["E3 Ch2","照明"],["E3 Ch3","建築與交通"],["E3 Ch4","可再生能源與核能"]],"e4":[["E4 Ch1","眼睛"],["E4 Ch2","耳與超聲波"],["E4 Ch3","X 射線與放射醫學"]],"sk":[["—","跨單元"]]};
+// SIMS-END
+SIMS.forEach((s,i)=>s[0]=i+1);            // 編號按次序自動生成
+const STATUS={};                            // 開發中的模擬
+STATUS[SIMS.find(s=>s[4].startsWith("拋體運動"))[0]]="wip";
+
+const $=s=>document.querySelector(s);
+{ const e=SIMS.filter(s=>s[2]==="e").length; $("#n-all").textContent=SIMS.length; $("#n-exp").textContent=e; $("#n-con").textContent=SIMS.length-e; }
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const byId=Object.fromEntries(UNITS.map(u=>[u.id,u]));
+function unitCounts(u){const l=SIMS.filter(s=>s[1]===u);return{e:l.filter(s=>s[2]==="e").length,c:l.filter(s=>s[2]==="c").length}}
+
+// course map (home)
+for(const u of UNITS){
+  const n=unitCounts(u.id);
+  const b=document.createElement("a");b.className="unit";b.href="#/unit/"+u.id;
+  b.innerHTML=`<span class="icon">${u.icon}</span><span class="code"><span class="zh">${u.code}</span><span class="en">${u.codeEn}</span></span><span class="name"><span class="zh">${u.zh}</span><span class="en">${u.en}</span></span><span class="count">${n.e?`<i class="e">${n.e} <span class="zh">實驗</span><span class="en">exp</span></i>`:""}<i class="c">${n.c} <span class="zh">概念</span><span class="en">con</span></i></span>`;
+  b.addEventListener("click",e=>{e.preventDefault();go("#/unit/"+u.id);showUnit(u.id);});
+  $("#map-"+u.g).appendChild(b);
+}
+// 更新網址但不依賴 hashchange（data: / file: 環境下亦可運作）
+function go(hash){try{history.pushState(null,"",hash||location.pathname+location.search);}catch(e){}}
+
+function card(s){
+  const [id,,type,star,zh,en,dzh,den,ch]=s;
+  const st=STATUS[id]||"soon";
+  const a=document.createElement("a");a.className="card "+st;a.href="#/sim/"+id;a.dataset.type=type;a.dataset.star=star;a.dataset.text=(zh+" "+en+" "+dzh+" "+den+" "+ch).toLowerCase();
+  a.innerHTML=`<div class="top"><span class="id">#${String(id).padStart(3,"0")}</span><span class="ch">${esc(ch)}</span>${type==="e"?'<span class="badge b-e"><span class="zh">實驗</span><span class="en">Experiment</span></span>':'<span class="badge b-c"><span class="zh">概念</span><span class="en">Concept</span></span>'}${star?'<span class="badge b-s"><span class="zh">第一階段</span><span class="en">Phase 1</span></span>':""}</div><div class="title"><span class="zh">${esc(zh)}</span><span class="en">${esc(en)}</span></div><div class="desc"><span class="zh">${esc(dzh)}</span><span class="en">${esc(den)}</span></div><div class="status">${st==="wip"?'<span class="zh">開發中</span><span class="en">In development</span>':'<span class="zh">即將推出</span><span class="en">Coming soon</span>'}</div>`;
+  return a;
+}
+function group(list,titleZh,titleEn){
+  const sec=document.createElement("section");sec.className="topic";
+  sec.innerHTML=`<div class="topic-h"><h2><span class="zh">${titleZh}</span><span class="en">${titleEn}</span></h2><span class="n">${list.length}</span></div><div class="grid"></div>`;
+  const g=sec.querySelector(".grid");list.forEach(s=>g.appendChild(card(s)));return sec;
+}
+
+// views
+let current=null;
+function showUnit(uid){
+  const u=byId[uid];if(!u)return showHome();
+  current=uid;
+  const chs=(CHAPTERS[uid]||[]).filter(c=>c[0]!=="—").map(c=>`<span class="chip-ch"><b>${esc(c[0])}</b> ${esc(c[1])}</span>`).join("");
+  $("#unit-head").innerHTML=`<span class="icon">${u.icon}</span><div><div class="code"><span class="zh">${u.code}</span><span class="en">${u.codeEn}</span></div><h2><span class="zh">${u.zh}</span><span class="en">${u.en}</span></h2>${chs?`<div class="chs"><span class="zh">課本章節</span><span class="en">Textbook chapters</span>${chs}</div>`:""}</div>`;
+  const body=$("#unit-body");body.innerHTML="";
+  const list=SIMS.filter(s=>s[1]===uid);
+  const exp=list.filter(s=>s[2]==="e"),con=list.filter(s=>s[2]==="c");
+  if(exp.length)body.appendChild(group(exp,"實驗","Experiments"));
+  if(con.length)body.appendChild(group(con,"概念","Concepts"));
+  filter="all";document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.f==="all")));
+  $("#view-home").hidden=true;$("#view-unit").hidden=false;
+  apply();window.scrollTo({top:0});
+}
+function showSearch(q){
+  current="search";
+  $("#unit-head").innerHTML=`<div><div class="code"><span class="zh">搜尋結果</span><span class="en">Search results</span></div><h2 id="qh"></h2></div>`;
+  $("#qh").textContent="“"+q+"”";
+  const body=$("#unit-body");body.innerHTML="";
+  for(const u of UNITS){body.appendChild(group(SIMS.filter(s=>s[1]===u.id),u.code+" "+u.zh,u.codeEn+" "+u.en));}
+  $("#view-home").hidden=true;$("#view-unit").hidden=false;
+  apply();
+}
+function showHome(){current=null;$("#view-unit").hidden=true;$("#view-home").hidden=false;window.scrollTo({top:0});}
+
+function route(){
+  const h=location.hash;
+  const m=h.match(/^#\/unit\/(\w+)/);
+  if(m)showUnit(m[1]);
+  else if(h.startsWith("#/sim/")){ if(!current)showHome(); }   // 模擬頁未建，暫時停留在清單
+  else showHome();
+}
+window.addEventListener("hashchange",route);
+window.addEventListener("popstate",route);
+const goHome=e=>{ if(e)e.preventDefault(); $("#q").value=""; go(""); showHome(); };
+$("#back").addEventListener("click",goHome);
+$(".brand").addEventListener("click",goHome);   // 按 logo 一律返回首頁
+
+// language mode
+function setLang(m){document.documentElement.dataset.lang=m;document.documentElement.lang=m==="en"?"en":"zh-Hant";$("#q").placeholder=m==="en"?"Search simulations…":"搜尋模擬…";document.querySelectorAll(".modes button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===m)));try{localStorage.setItem("dsepl-lang",m)}catch(e){}}
+document.querySelectorAll(".modes button").forEach(b=>b.addEventListener("click",()=>setLang(b.dataset.mode)));
+let saved="zh";try{saved=localStorage.getItem("dsepl-lang")||"zh"}catch(e){}
+setLang(saved==="en"?"en":"zh");
+
+// filter + search
+let filter="all";
+function apply(){
+  const q=$("#q").value.trim().toLowerCase();let shown=0,total=0;
+  document.querySelectorAll("#unit-body .card").forEach(c=>{
+    total++;let ok=true;
+    if(filter==="exp")ok=c.dataset.type==="e";else if(filter==="con")ok=c.dataset.type==="c";else if(filter==="star")ok=c.dataset.star==="1";
+    if(ok&&q)ok=c.dataset.text.includes(q);
+    c.hidden=!ok;if(ok)shown++;
+  });
+  document.querySelectorAll("#unit-body section.topic").forEach(s=>{s.hidden=!s.querySelector(".card:not([hidden])")});
+  $("#empty").style.display=shown?"none":"block";
+  $("#result").textContent=shown+" / "+total;
+}
+document.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.f;document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));apply()}));
+$("#q").addEventListener("input",()=>{
+  const q=$("#q").value.trim();
+  if(q){ if(current!=="search")showSearch(q); else { $("#qh").textContent="“"+q+"”"; apply(); } }
+  else if(current==="search"){ showHome(); }
+});
+route();
+</script>

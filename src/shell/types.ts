@@ -1,0 +1,106 @@
+// 模擬模組契約。詳見 .claude/skills/new-sim/references/module-contract.md
+import type { ComponentType } from "react";
+
+export type Lang = "zh" | "en";
+export interface Text { zh: string; en: string }
+
+export type UnitId = "c1" | "c2" | "c3" | "c4" | "c5" | "e1" | "e2" | "e3" | "e4" | "sk";
+export type SimStatus = "draft" | "verified" | "preview" | "approved" | "blocked";
+
+export interface SimManifest {
+  id: string;
+  unit: UnitId;
+  chapter: string;
+  type: "e" | "c";
+  phase: 1 | 2 | 3;
+  needs3D: "must" | "high" | "medium" | "low";
+  spec?: { doc: string; section: string; code?: string };
+  title: Text;
+  summary: Text;
+  dsePapers: string[];
+  pendingPapers: string[];
+  assumptions: Text[];
+  pendingTerms: string[];
+  beyondSpec: string[];
+  version: string;
+}
+
+export interface SimEvent { key: string; t: number; label: Text }
+
+export interface SimModel<S, P> {
+  init(params: P): S;
+  step(state: S, params: P, dt: number): S;
+  observe(state: S, params: P): Record<string, number>;
+  events?(prev: S, next: S, params: P): SimEvent[];
+}
+
+export type ControlKind = "slider" | "select" | "toggle";
+export interface ControlOption { value: number | string; label: Text }
+export interface ControlDef {
+  key: string;
+  symbol?: string;
+  label: Text;
+  unit?: string;
+  kind?: ControlKind;
+  min?: number;
+  max?: number;
+  step?: number;
+  default: number | string | boolean;
+  options?: ControlOption[];
+}
+
+export interface ChartDef {
+  key: string;
+  label: Text;
+  x: string;
+  y: string[];
+  unitX: string;
+  unitY: string;
+  fit?: "linear";
+}
+
+export interface LayerDef { key: string; label: Text; default: boolean }
+export type Layers = Record<string, boolean>;
+
+export interface Scenario<P> {
+  key: string;
+  misconception: Text;
+  params: Partial<P>;
+  watch: Text;
+  expect: Text;
+  layers?: string[];
+}
+
+// 畫面計劃
+export type Vec3 = [number, number, number];
+export type ArrowKind = "weight" | "normal" | "friction" | "tension" | "net" | "velocity" | "acceleration" | "field";
+export interface ArrowPlan { kind: ArrowKind; origin: Vec3; vector: Vec3; label?: string; layer: string }
+export interface LabelPlan { position: Vec3; symbol: string; value: number; unit: string }
+export interface BodyPlan { key: string; shape: "sphere" | "box" | "cylinder"; position: Vec3; size: Vec3; color?: string; rotation?: Vec3 }
+export interface RenderPlan {
+  bodies?: BodyPlan[];
+  arrows: ArrowPlan[];
+  labels: LabelPlan[];
+  trails?: { key: string; points: Vec3[] }[];
+  scales: Partial<Record<ArrowKind, number>>;
+}
+export type PlanFn<S, P> = (state: S, params: P, obs: Record<string, number>, layers: Layers) => RenderPlan;
+
+export interface SceneProps { plan: RenderPlan }
+
+// 一個模擬模組的完整匯出（每個 src/sims/<id>/index.ts）
+export interface SimModule<S = unknown, P = Record<string, unknown>> {
+  manifest: SimManifest;
+  model: SimModel<S, P>;
+  controls: ControlDef[];
+  defaults: P;
+  scenarios: Scenario<P>[];
+  charts: ChartDef[];
+  layers: LayerDef[];
+  plan: PlanFn<S, P>;
+  Scene: ComponentType<SceneProps>;
+  guideZh: string;
+  mode: "3d" | "2d";
+  /** 3D 相機預設：打開時一眼看到規格「學生應該看見的現象」第 1 項 */
+  camera?: { position: Vec3; target: Vec3; fov?: number };
+}

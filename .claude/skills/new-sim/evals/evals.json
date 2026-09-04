@@ -1,0 +1,24 @@
+{
+  "skill_name": "new-sim",
+  "note": "待正式項目骨架建立後執行。",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "幫我做 Book 2 規格入面嘅模擬器 2（拋體運動），要有三個同步視窗同頻閃模式",
+      "expected_output": "src/sims/projectile-independence/ 七個檔案齊全；model.test.ts 含規格三條驗證條件（對稱、45° 射程最大、v_x 不變）並通過；scenarios 對應規格五條迷思；controls 範圍與規格一致（u 1–50、θ −30°–90°、h 0–50、g 1.6/3.7/9.81、空氣阻力預設關）；guide 五節；termlint 零錯誤；有桌面與 iPad 截圖",
+      "files": ["reference/11_Book2_難點與3D模擬器規格.md", "content/catalogue.json"]
+    },
+    {
+      "id": 2,
+      "prompt": "做一個 S5 作用與反作用力對嘅模擬，每支力要標明施力物同受力物",
+      "expected_output": "五個情景可切換；每支力有「施力物 → 受力物」標籤；點選一支力高亮其反作用力；篩選「只看某物體受的力」；桌加速下降情景中重量與法向反作用力不再相等而各自的反作用力仍相等；測試「配對兩力數值差為零」通過；術語用法向反作用力、孤立物體圖",
+      "files": ["reference/11_Book2_難點與3D模擬器規格.md", "content/catalogue.json"]
+    },
+    {
+      "id": 3,
+      "prompt": "整個比熱容量實驗模擬器（必修 I）",
+      "expected_output": "因為 Book 1 未有規格文件，skill 應停下說明：可先建骨架與測試框架，但參數範圍、迷思清單、驗證條件要等規格，不自行編造",
+      "files": ["content/catalogue.json"]
+    }
+  ]
+}
