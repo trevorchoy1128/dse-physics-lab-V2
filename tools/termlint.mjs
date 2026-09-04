@@ -6,11 +6,12 @@ import { lint, lineOf, ROOT } from "./glossary.mjs";
 
 export const CONTENT_GLOBS = [
   "content/**/*.md", "content/**/*.json", "BLUEPRINT.md", "site/index.html",
-  "src/sims/**/*.md", "src/sims/**/*.json", "src/**/glossary*.ts", "src/**/ui*.ts",
+  "src/sims/**/*.md", "src/sims/**/*.json", "src/sims/**/manifest.ts", "src/sims/**/controls.ts", "src/sims/**/scenarios.ts", "src/sims/**/charts.ts", "src/i18n/ui.ts",
 ];
+// glossary.gen.ts 是術語表本身（含別稱），不掃描
 export const isContentFile = f => {
   const r = relative(ROOT, f).replace(/\\/g, "/");
-  return /^(content\/.*\.(md|json)|BLUEPRINT\.md|site\/index\.html|src\/sims\/.*\.(md|json)|src\/.*\/(glossary|ui)[^/]*\.ts)$/.test(r);
+  return /^(content\/.*\.(md|json)|BLUEPRINT\.md|site\/index\.html|src\/sims\/.*\.(md|json)|src\/sims\/.*\/(manifest|controls|scenarios|charts)\.ts|src\/i18n\/ui\.ts)$/.test(r);
 };
 
 export function lintFiles(files, { strict = false } = {}) {

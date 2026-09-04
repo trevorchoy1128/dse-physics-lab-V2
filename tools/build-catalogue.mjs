@@ -31,7 +31,26 @@ const sims = [];
 for (const [uid] of UNITS) {
   for (const t of ["e", "c"]) for (const s of CAT.sims.filter(x => x.unit === uid && x.type === t)) sims.push(s);
 }
-sims.forEach((s, i) => (s.id = i + 1));
+sims.forEach((s, i) => (s.n = i + 1));
+
+// 補上缺少的 id（英文 kebab-case，由 en 生成，去重）與 status，並寫回 catalogue.json
+const slug = s => s.toLowerCase().replace(/[’'"()]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+{
+  const used = new Set(sims.filter(s => s.id).map(s => s.id));
+  let changed = false;
+  for (const s of sims) {
+    if (!s.id) { let base = slug(s.en), id = base, k = 2; while (used.has(id)) id = `${base}-${k++}`; s.id = id; used.add(id); changed = true; }
+    if (!s.status) { s.status = "draft"; changed = true; }
+  }
+  if (changed) {
+    // 保持原次序：按 CAT.sims 原陣列寫回（sims 內的物件與 CAT.sims 是同一批引用）
+    for (const s of sims) delete s.n;
+    const fmt = `{\n  "_readme": ${JSON.stringify(CAT._readme)},\n  "chapters": {\n${Object.entries(CAT.chapters).map(([k, v]) => `    ${JSON.stringify(k)}: ${JSON.stringify(v)}`).join(",\n")}\n  },\n  "sims": [\n${CAT.sims.map(s => "    " + JSON.stringify(s)).join(",\n")}\n  ]\n}\n`;
+    writeFileSync(join(ROOT, "content/catalogue.json"), fmt, "utf8");
+    sims.forEach((s, i) => (s.n = i + 1));
+    console.log("catalogue.json：已補上 id / status");
+  }
+}
 const nE = sims.filter(s => s.type === "e").length, nC = sims.length - nE, nStar = sims.filter(s => s.star).length;
 const isQ = ch => ch.endsWith("?");
 const chLine = uid => CAT.chapters[uid].map(([c, t]) => `${c} ${t}`).join(" · ");
@@ -40,7 +59,7 @@ const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&
 // ---------- site ----------
 {
   let html = readFileSync(SITE, "utf8");
-  const rows = sims.map(s => JSON.stringify([s.id, s.unit, s.type, s.star, s.zh, s.en, s.dzh, s.den, s.ch])).join(",\n");
+  const rows = sims.map(s => JSON.stringify([s.n, s.unit, s.type, s.star, s.zh, s.en, s.dzh, s.den, s.ch])).join(",\n");
   const block = `// SIMS-START（由 tools/build-catalogue.mjs 生成，請改 content/catalogue.json）\n// [id, unit, type(e/c), star, zh, en, descZh, descEn, chapter]\nconst SIMS=[\n${rows}\n];\nconst CHAPTERS=${JSON.stringify(CAT.chapters)};\n// SIMS-END`;
   if (html.includes("// SIMS-START")) html = html.replace(/\/\/ SIMS-START[\s\S]*?\/\/ SIMS-END/, block);
   else html = html.replace(/\/\/ \[id, unit, type\(e\/c\)[^\n]*\nconst SIMS=\[[\s\S]*?\n\];/, block);
@@ -60,7 +79,7 @@ const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&
       const l = list.filter(s => s.type === t);
       if (!l.length) continue;
       out.push(`**${title}**`, "", "| # | 章節 | 模擬 Simulation | | 內容 |", "|---|---|---|---|---|");
-      for (const s of l) out.push(`| ${s.id} | ${s.ch} | ${s.zh} ${s.en} | ${t === "e" ? "🧪" : "💡"}${s.star ? "⭐" : ""} | ${s.dzh} |`);
+      for (const s of l) out.push(`| ${s.n} | ${s.ch} | ${s.zh} ${s.en} | ${t === "e" ? "🧪" : "💡"}${s.star ? "⭐" : ""} | ${s.dzh} |`);
       out.push("");
     }
   }
@@ -85,7 +104,7 @@ if (existsSync(HTML)) {
       const l = list.filter(s => s.type === t);
       if (!l.length) continue;
       out.push(`  <h4>${title}</h4>`, `  <div class="tablewrap"><table><tbody>`);
-      for (const s of l) out.push(`  <tr><td class="num">${s.id}</td><td class="ch">${esc(s.ch)}</td><td class="k">${esc(s.zh)}<span class="en">${esc(s.en)}</span></td><td class="t">${t === "e" ? '<span class="badge b-exp">實驗</span>' : '<span class="badge b-con">概念</span>'}${s.star ? '<span class="badge b-star">優先</span>' : ""}</td><td class="d">${esc(s.dzh)}</td></tr>`);
+      for (const s of l) out.push(`  <tr><td class="num">${s.n}</td><td class="ch">${esc(s.ch)}</td><td class="k">${esc(s.zh)}<span class="en">${esc(s.en)}</span></td><td class="t">${t === "e" ? '<span class="badge b-exp">實驗</span>' : '<span class="badge b-con">概念</span>'}${s.star ? '<span class="badge b-star">優先</span>' : ""}</td><td class="d">${esc(s.dzh)}</td></tr>`);
       out.push(`  </tbody></table></div>`, "");
     }
   }

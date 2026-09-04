@@ -176,18 +176,18 @@ src/
 | 15 | Bk2 B2 | 紙帶打點計時器 / 運動感應器 Ticker-tape timer / motion sensor | 🧪⭐ | 紙帶生成、剪帶貼圖、求加速度 |
 | 16 | Bk2 B2 | 自由下落量 g Measuring g by free fall | 🧪⭐ | 光閘 / 電磁釋放，s-t² 圖 |
 | 17 | Bk2 B3 | 牛頓運動第二定律（小車＋斜面） Newton's second law (trolley and runway) | 🧪⭐ | 補償摩擦作用、砝碼加力，a-F、a-1/m 圖 |
-| 18 | Bk2 B5 | 力矩與平衡（米尺） Moments and equilibrium (metre rule) | 🧪 | 米尺平衡、重心，加減砝碼；即 S4 的情景 1 |
-| 19 | Bk2 B7 | 動量守恆（小車 / 氣墊導軌） Conservation of momentum | 🧪 | 彈性、非彈性、爆炸三種，動量及動能表；與 S8 共用碰撞引擎 |
-| 20 | Bk2 B9 | 圓周運動（旋轉膠塞） Circular motion (whirling bung) | 🧪⭐ | 向心力箭嘴、F-ω² 圖，切繩後沿切線飛出；與 S1 共用受力顯示 |
+| 18 | Bk2 B5 | 力矩與平衡（米尺） Moments and equilibrium (metre rule) | 🧪 | 米尺平衡、重心，加減砝碼 |
+| 19 | Bk2 B7 | 動量守恆（小車 / 氣墊導軌） Conservation of momentum | 🧪 | 彈性、非彈性、爆炸三種，動量及動能表 |
+| 20 | Bk2 B9 | 圓周運動（旋轉膠塞） Circular motion (whirling bung) | 🧪⭐ | 向心力箭嘴、F-ω² 圖，切繩後沿切線飛出 |
 
 **概念 Concepts**
 
 | # | 章節 | 模擬 Simulation | | 內容 |
 |---|---|---|---|---|
 | 21 | Bk2 B1 | 位移、速度變化的矢量運算 Vector arithmetic: displacement and change in velocity | 💡 | S12 · 路徑編輯；距離 vs 位移、平均速率 vs 平均速度；Δv = v − u 三角形法；轉 90° 速率不變時 Δv = √2 v |
-| 22 | Bk2 B1 | 相對速度與參考座標系 Relative velocity and frames of reference | 💡 | 規格以外，待老師定奪；與 S1 的轉盤觀察者視角共用機制 |
+| 22 | Bk2 B1 | 相對速度與參考座標系 Relative velocity and frames of reference | 💡 | 火車上拋球，切換地面與車廂兩個觀察者的視角 |
 | 23 | Bk2 B2 | 運動線圖與真實運動同步 Motion graphs synced with real motion | 💡 | S7 · 2D 即可。由運動生成圖，或在 v-t 圖上拖畫線段驅動小車；切線斜率、線下面積陰影；位移與距離分開讀數 |
-| 24 | Bk2 B3 | 慣性與牛頓運動第一定律 Inertia and Newton's first law | 💡 | 規格以外，待老師定奪：無摩擦運動、桌布實驗 |
+| 24 | Bk2 B3 | 慣性與牛頓運動第一定律 Inertia and Newton's first law | 💡 | 無摩擦運動、桌布實驗 |
 | 25 | Bk2 B3 | 摩擦的方向與極限摩擦 Direction of friction and limiting friction | 💡 | S13 · 驅動輪接觸點摩擦向前；靜摩擦隨外力增至極限後跌至動摩擦 |
 | 26 | Bk2 B3 | 流體阻力與終端速度 Fluid resistance and terminal velocity | 💡 | S11 · 阻力 ∝ v 或 v²；初速可高於終端速度；a 由 g 減至零 |
 | 27 | Bk2 B3 | 作用與反作用力對的辨識 Identifying action–reaction pairs | 💡⭐ | S5 · 每支力標「施力物 → 受力物」；點選高亮其反作用力；只看某物體受的力（孤立物體圖）；桌加速下降時重量與法向反作用力不再相等 |
@@ -197,7 +197,7 @@ src/
 | 31 | Bk2 B6 | 能量轉換與機械能守恆 Energy conversion and conservation of mechanical energy | 💡 | S9 · 軌道編輯器；能量堆疊條（動能、重力勢能、內能）；不同斜度同高度落底速率相同；參考水平面可拖動；W = Fs cos θ |
 | 32 | Bk2 B7 | 碰撞與動量守恆（含二維與衝擊力） Collisions and momentum (1D, 2D, impact force) | 💡 | S8 · 總動量與總動能分開顯示；完全彈性至完全非彈性連續調節；二維碰撞矢量圖；硬地板 vs 軟墊 F-t 圖面積相同 |
 | 33 | Bk2 B8 | 拋體運動：水平與垂直的獨立性 Projectile motion: independence of components | 💡⭐ | S2 · 3D + 側視 + 俯視三窗同步；兩球同時落地；頻閃模式；最高點 vy = 0 但 vx 不變；g 可選 1.6 / 3.7 / 9.81 |
-| 34 | Bk2 B9 | 圓周運動：向心力的來源 Circular motion: source of the centripetal force | 💡⭐ | S1 · 水平轉盤、錐擺、傾斜彎道（μ 可調至零）；受力圖只畫真實的力，合力另一層顯示；轉盤觀察者視角標明非慣性座標系；剪斷繩沿切線離開。另加豎直圓周情景（規格以外） |
+| 34 | Bk2 B9 | 圓周運動：向心力的來源 Circular motion: source of the centripetal force | 💡⭐ | S1 · 水平轉盤、錐擺、傾斜彎道（μ 可調至零）；受力圖只畫真實的力，合力另一層顯示；轉盤觀察者視角標明非慣性座標系；剪斷繩沿切線離開 |
 | 35 | Bk2 B10 | 引力場強度與平方反比定律 Gravitational field strength and the inverse square law | 💡 | S14 · 距離由地心量起；r = 2R 時 g/4；月球、火星比較 |
 | 36 | Bk2 B10 | 衞星軌道與表觀失重 Satellite orbits and apparent weightlessness | 💡⭐ | S3 · 常設引力箭嘴與場強讀數；艙內磅秤讀數為零而引力仍在；軌道面傾角非零時星下點成 8 字；T = 24 h 反推 r ≈ 4.2 × 10⁷ m |
 
