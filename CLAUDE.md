@@ -68,3 +68,6 @@ HKDSE 物理 3D 實驗模擬器網站。中文為主（繁體、香港用語）�
 - 新模擬一律用 `/new-sim`。
 - 改動 `content/catalogue.json` 後必跑 `node tools/build-catalogue.mjs`。
 - 完成一個模擬前必在瀏覽器面板實機看過桌面與 iPad 兩種尺寸，並讀 console 有無錯誤。
+
+## 學生會唔明嘅畫面行為（老師反饋，通用）
+軸或比例不隨時間改變；物體離開畫面用鏡頭跟隨＋世界座標背景，不縮比例；t 軸放在 y = 0。完整清單在 .claude/skills/new-sim/references/checklist.md 第 F 節，每個 Scene 都要對照。

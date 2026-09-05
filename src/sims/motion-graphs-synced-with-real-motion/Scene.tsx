@@ -10,25 +10,27 @@ import type { RenderPlan, SceneProps } from "@/shell/types";
 interface Pane { x: number; y: number; w: number; h: number; yMin: number; yMax: number; tMax: number }
 interface Layout { track: { x: number; y: number; w: number; h: number; smax: number }; panes: Record<"s" | "v" | "a", Pane> }
 
+const tick = (v: number) => String(Number(v.toPrecision(6)) + 0);   // 刻度數字：10 而非 10.0，-0 → 0
 const nice = (m: number) => { const e = 10 ** Math.floor(Math.log10(m)); const f = m / e; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * e; };
 
-// 軸範圍「只放大、不縮小、不因滑桿跳動」：按至今出現過的最大值取好看刻度，重置（t 回到 0）時歸零重算。
-// 畫圖模式的 v、a 軸固定為拖動範圍 ±5、±10。（學生試用者第 2、3 輪）
+// 軸範圍在重置（t 回到 0）時由參數預測的最大值一次定好，播放期間不隨時間改變（老師 2026-09-06：軸隨時間變，學生會不明白為何條線突然跳）。
+// 只有學生自己改參數（即時加速度滑桿）才可能令預測值變大而放大軸；同一次運行內只放大、不縮小。
+// 預測值（|u|、|u + aT|、½|a|T² 等）是上界，「至今出現過的值」只作保險。畫圖模式的 v、a 軸固定為拖動範圍 ±5、±10。
 interface Axes { s: number; v: number; a: number; t: number }
 function growAxes(prev: Axes, meta: Record<string, number>): Axes {
   const fresh = meta.t < prev.t - 1e-9;   // 重置
   const base = fresh ? { s: 0, v: 0, a: 0 } : prev;
   const grow = (cur: number, need: number, min: number) => Math.max(cur, nice(Math.max(min, need)));
   return {
-    s: grow(base.s, meta.sGraph * 1.15, 5),
-    v: meta.draw ? 5 : grow(base.v, meta.vSeen * 1.2, 1),
-    a: meta.draw ? 10 : grow(base.a, meta.aSeen * 1.2, 1),
+    s: grow(base.s, Math.max(meta.smax, meta.sGraph * 1.02), 5),
+    v: meta.draw ? 5 : grow(base.v, Math.max(meta.vmax, meta.vSeen * 1.02), 1),
+    a: meta.draw ? 10 : grow(base.a, Math.max(meta.amax, meta.aSeen * 1.02), 1),
     t: meta.t,
   };
 }
 
 function layoutOf(w: number, h: number, meta: Record<string, number>, axes: Axes): Layout {
-  const trackH = Math.max(120, Math.round(h * 0.34));
+  const trackH = Math.max(170, Math.round(h * 0.34));   // 最少 170 px：天空要放得下 s 標籤、a 箭嘴、v 箭嘴三行（iPad 直向）
   const gap = 12, top = trackH + 8, gh = h - top - 8;
   const gw = (w - gap * 4) / 3;
   const T = meta.T;
@@ -46,6 +48,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
   const lang = useLang(s => s.lang);
   const lay = useRef<Layout | null>(null);
   const axes = useRef<Axes>({ s: 0, v: 0, a: 0, t: 0 });
+  const cam = useRef({ s: 0, t: 0 });   // 鏡頭中心（米）；小車離開中央 40% 區域時跟隨
   const dragging = useRef<number | null>(null);
   const vtRef = useRef<number[]>([]);
 
@@ -60,28 +63,55 @@ export default function Scene({ plan, onInput }: SceneProps) {
     const mono = (size: number) => `${Math.max(11, size)}px "IBM Plex Mono", monospace`;
     const zh = lang === "zh";
 
-    // ---- 軌道：天空漸層 + 路面 + 黃色中線 + 起點旗 ----（配色只影響畫面，向量顏色仍由 ARROW_STYLE 決定）
+    // ---- 軌道：固定比例 + 鏡頭跟隨 ----（老師：比例重新映射令小車「瞬移」，改為鏡頭跟車、背景流動）
     const tr = L.track; const ty = tr.y + tr.h * 0.62; const pad = 40;
-    const sx = (s: number) => tr.x + pad + ((tr.w - 2 * pad) * (s + tr.smax)) / (2 * tr.smax);
-    const sky = ctx.createLinearGradient(0, tr.y, 0, ty); sky.addColorStop(0, "#e8f4ff"); sky.addColorStop(1, "#f7fbff");
+    const viewW = Math.min(100, Math.max(10, nice(3 * m.vmax)));      // 畫面橫跨的米數，由參數預測的最大速率決定，運行中不變
+    const pxPerM = (tr.w - 2 * pad) / viewW;
+    const body = plan.bodies?.[0]; const carS = body?.position[0] ?? 0;
+    if (m.t < cam.current.t - 1e-9) cam.current.s = 0;                // 重置：鏡頭回到起點
+    { const dz = viewW * 0.2; if (carS > cam.current.s + dz) cam.current.s = carS - dz; else if (carS < cam.current.s - dz) cam.current.s = carS + dz; }
+    cam.current.t = m.t;
+    const sx = (s: number) => tr.x + tr.w / 2 + (s - cam.current.s) * pxPerM;
+    // 天空、雲（視差 0.15）、草地
+    const sky = ctx.createLinearGradient(0, tr.y, 0, ty); sky.addColorStop(0, "#dbeeff"); sky.addColorStop(1, "#f7fbff");
     ctx.fillStyle = sky; ctx.fillRect(tr.x, tr.y, tr.w, ty - tr.y);
-    ctx.fillStyle = "#dfe9d8"; ctx.fillRect(tr.x, ty, tr.w, tr.h - (ty - tr.y));            // 草地
-    ctx.fillStyle = "#4a5568"; ctx.fillRect(tr.x + pad - 6, ty - 7, tr.w - 2 * pad + 12, 14);   // 路面
-    ctx.strokeStyle = "#f2c94c"; ctx.lineWidth = 2; ctx.setLineDash([12, 10]); ctx.beginPath(); ctx.moveTo(tr.x + pad, ty); ctx.lineTo(tr.x + tr.w - pad, ty); ctx.stroke(); ctx.setLineDash([]);
-    const step = nice(tr.smax / 5);
-    ctx.font = mono(11); ctx.fillStyle = ink; ctx.textAlign = "center"; ctx.strokeStyle = ink3; ctx.lineWidth = 1;
-    for (let s = -tr.smax; s <= tr.smax + 1e-9; s += step) { const x = sx(s); ctx.beginPath(); ctx.moveTo(x, ty + 7); ctx.lineTo(x, ty + 13); ctx.stroke(); ctx.fillText(`${sig(s, 3).replace(/\.00$/, "")}`, x, ty + 26); }
-    ctx.fillStyle = ink3; ctx.fillText(zh ? "位移 s / m（向右為正 →）" : "displacement s / m (right = + →)", tr.x + tr.w / 2, ty + 42);
-    // 起點旗（原點）
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    for (let i = 0; i < 4; i++) {
+      const cxCloud = ((i * 271 + 60 - cam.current.s * pxPerM * 0.15) % (tr.w + 160) + tr.w + 160) % (tr.w + 160) - 80;
+      const cy = tr.y + 22 + (i % 2) * 18;
+      ctx.beginPath(); ctx.arc(cxCloud, cy, 14, 0, Math.PI * 2); ctx.arc(cxCloud + 16, cy - 6, 17, 0, Math.PI * 2); ctx.arc(cxCloud + 34, cy, 13, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillStyle = "#cfe3c4"; ctx.fillRect(tr.x, ty, tr.w, tr.h - (ty - tr.y));
+    // 世界座標中的背景物：距離柱（每 step 米，附數字）、樹（柱與柱之間）、路面中線（世界座標的虛線，跟車移動）
+    const step = nice(viewW / 6);
+    const sMin = cam.current.s - viewW * 0.6, sMax = cam.current.s + viewW * 0.6;
+    ctx.fillStyle = "#4a5568"; ctx.fillRect(tr.x, ty - 7, tr.w, 14);
+    ctx.strokeStyle = "#f2c94c"; ctx.lineWidth = 2; ctx.beginPath();
+    for (let s0 = Math.floor(sMin / (step / 2)) * (step / 2); s0 < sMax; s0 += step / 2) { ctx.moveTo(sx(s0), ty); ctx.lineTo(sx(s0 + step / 4), ty); }
+    ctx.stroke();
+    for (let s0 = Math.floor(sMin / step) * step; s0 <= sMax; s0 += step) {
+      const x = sx(s0);
+      // 樹（在兩柱之間）
+      const tx = sx(s0 + step / 2); const hTree = 26 + ((Math.round(s0 / step) % 3) + 3) % 3 * 8;
+      ctx.strokeStyle = "#8a5a2b"; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(tx, ty - 8); ctx.lineTo(tx, ty - 8 - hTree * 0.5); ctx.stroke();
+      ctx.fillStyle = "#3f9d5a"; ctx.beginPath(); ctx.arc(tx, ty - 10 - hTree * 0.5, hTree * 0.45, 0, Math.PI * 2); ctx.fill();
+      // 距離柱
+      ctx.strokeStyle = "#6b7280"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, ty + 7); ctx.lineTo(x, ty + 18); ctx.stroke();
+      ctx.font = mono(11); ctx.fillStyle = ink; ctx.textAlign = "center"; ctx.fillText(tick(s0), x, ty + 31);
+    }
+    ctx.font = mono(11); ctx.fillStyle = ink3; ctx.textAlign = "center"; ctx.fillText(zh ? "位移 s / m（向右為正 →）" : "displacement s / m (right = + →)", tr.x + tr.w / 2, ty + 46);
+    // 起點旗（原點，在畫面內才畫）
     const x0 = sx(0);
-    ctx.strokeStyle = "#6b7280"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x0, ty - 7); ctx.lineTo(x0, ty - 46); ctx.stroke();
-    ctx.fillStyle = "#e0522d"; ctx.beginPath(); ctx.moveTo(x0, ty - 46); ctx.lineTo(x0 + 16, ty - 40); ctx.lineTo(x0, ty - 34); ctx.closePath(); ctx.fill();
+    if (x0 > tr.x - 20 && x0 < tr.x + tr.w + 20) {
+      ctx.strokeStyle = "#6b7280"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x0, ty - 7); ctx.lineTo(x0, ty - 46); ctx.stroke();
+      ctx.fillStyle = "#e0522d"; ctx.beginPath(); ctx.moveTo(x0, ty - 46); ctx.lineTo(x0 + 16, ty - 40); ctx.lineTo(x0, ty - 34); ctx.closePath(); ctx.fill();
+    }
     // 小車：琥珀色車身、深色車輪（避開向量顏色編碼的紅、藍、橙、紫、綠）
-    const body = plan.bodies?.[0]; const cx = sx(body?.position[0] ?? 0);
+    const cx = sx(carS);
     const bw = 48, bh = 22;
     ctx.fillStyle = "#f5a623"; ctx.strokeStyle = "#8a5a00"; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.roundRect(cx - bw / 2, ty - bh - 10, bw, bh, 4); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = "#ffe8b3"; ctx.fillRect(cx - bw / 2 + 6, ty - bh - 6, 14, 9);                 // 車窗
+    ctx.fillStyle = "#ffe8b3"; ctx.fillRect(cx - bw / 2 + 6, ty - bh - 6, 14, 9);
     ctx.fillStyle = "#2b2f36"; ctx.beginPath(); ctx.arc(cx - bw / 3, ty - 7, 6, 0, Math.PI * 2); ctx.arc(cx + bw / 3, ty - 7, 6, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#c8cdd4"; ctx.beginPath(); ctx.arc(cx - bw / 3, ty - 7, 2, 0, Math.PI * 2); ctx.arc(cx + bw / 3, ty - 7, 2, 0, Math.PI * 2); ctx.fill();
     // 箭嘴（顏色與線型由 ARROW_STYLE 決定）。像素比例由參數預測的最大 |v|、|a| 決定，運行中不變（核數員 F8），
@@ -109,7 +139,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
     }
     // 位移標籤
     const lab = plan.labels[0];
-    if (lab) { ctx.font = mono(12); ctx.fillStyle = ink; ctx.textAlign = "center"; ctx.fillText(`s = ${sig(lab.value)} ${lab.unit}`, cx, ty - bh - 62); }
+    if (lab) { ctx.font = mono(12); ctx.fillStyle = ink; ctx.textAlign = "center"; ctx.fillText(`s = ${sig(lab.value)} ${lab.unit}`, cx, Math.max(tr.y + 14, ty - bh - 62)); }
     if (shrunk) { ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "箭嘴已按邊緣空間同步縮短（比例不變）" : "Arrows shortened together to fit the edge (same ratio)", tr.x + pad, tr.y + 14); }
 
     // ---- 三張線圖 ----
@@ -128,11 +158,13 @@ export default function Scene({ plan, onInput }: SceneProps) {
       const x0 = px(p, 0), x1 = px(p, p.tMax), y0 = py(p, 0);
       ctx.strokeStyle = ink3; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, py(p, p.yMax)); ctx.lineTo(x0, py(p, p.yMin)); ctx.moveTo(x0, y0); ctx.lineTo(x1, y0); ctx.stroke();
       ctx.font = mono(10); ctx.fillStyle = ink3; ctx.textAlign = "right";
-      for (const yv of [p.yMax, p.yMax / 2, 0, p.yMin / 2, p.yMin]) { const yy = py(p, yv); ctx.fillText(sig(yv).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1"), x0 - 4, yy + 3); ctx.strokeStyle = line; ctx.beginPath(); ctx.moveTo(x0, yy); ctx.lineTo(x1, yy); ctx.stroke(); }
+      for (const yv of [p.yMax, p.yMax / 2, 0, p.yMin / 2, p.yMin]) { const yy = py(p, yv); ctx.fillText(tick(yv), x0 - 4, yy + 3); ctx.strokeStyle = line; ctx.beginPath(); ctx.moveTo(x0, yy); ctx.lineTo(x1, yy); ctx.stroke(); }
       ctx.textAlign = "center";
-      for (let tv = 0; tv <= p.tMax; tv += p.tMax / 5) ctx.fillText(String(tv), px(p, tv), py(p, p.yMin) + 12);
+      // t 軸刻度與數字放在 y = 0 的軸線上（老師要求）；軸線貼近底部時放上方
+      const below = y0 + 16 < p.y + p.h - 4;
+      for (let tv = 0; tv <= p.tMax; tv += p.tMax / 5) { ctx.strokeStyle = ink3; ctx.beginPath(); ctx.moveTo(px(p, tv), y0 - 3); ctx.lineTo(px(p, tv), y0 + 3); ctx.stroke(); ctx.fillText(String(tv), px(p, tv), below ? y0 + 13 : y0 - 6); }
       ctx.font = `700 ${font(12)}`; ctx.fillStyle = ser.color; ctx.textAlign = "left"; ctx.fillText(ser.title, p.x + 6, p.y + 15);
-      ctx.font = mono(10); ctx.fillStyle = ink3; ctx.textAlign = "right"; ctx.fillText(`${k} / ${ser.unit}`, p.x + p.w - 4, p.y + 12); ctx.fillText("t / s", p.x + p.w - 4, py(p, p.yMin) + 22);
+      ctx.font = mono(10); ctx.fillStyle = ink3; ctx.textAlign = "right"; ctx.fillText(`${k} / ${ser.unit}`, p.x + p.w - 4, p.y + 12); ctx.fillText("t / s", p.x + p.w - 4, below ? y0 - 6 : y0 + 13);
       // 線下面積（只在 v–t，由 0 至 t）
       if (k === "v" && m.area && pts.length > 1) {
         for (let i = 1; i < pts.length; i++) {

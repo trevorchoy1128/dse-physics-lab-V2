@@ -4,11 +4,16 @@ import type { S, P } from "./model";
 // 畫面的物理（純函數）。2D 場景：軌道上的小車 + 三張線圖，線圖以 trails 傳遞（點 = [t, y, 0]），
 // 軸範圍與旗標放 meta（非物理判斷）。
 
-/** 軌道要顯示的位移範圍（正負對稱），取整到好看的刻度 */
+/** s–t 圖軸範圍（正負對稱）：時間窗內 |s| 的最大值取整到好看的刻度；重置時定好，播放期間不變 */
 export function trackExtent(p: P): number {
   let smax: number;
   if (p.mode === "draw") smax = p.vt.reduce((acc, v) => acc + Math.abs(v), 0);      // 每段 1 s，上界
-  else smax = Math.abs(p.u) * p.T + 0.5 * Math.abs(p.a) * p.T * p.T;
+  else {
+    // |s| 在時間窗內的準確最大值：s = ut + ½at² 是二次式，極值只會在端點或頂點 t* = −u/a
+    const sAt = (t: number) => Math.abs(p.u * t + 0.5 * p.a * t * t);
+    const tStar = p.a !== 0 ? -p.u / p.a : -1;
+    smax = Math.max(sAt(p.T), tStar > 0 && tStar < p.T ? sAt(tStar) : 0);
+  }
   smax = Math.max(5, smax);
   const steps = [5, 10, 20, 50, 100, 200, 500, 1000];
   return steps.find(x => x >= smax) ?? Math.ceil(smax / 1000) * 1000;
