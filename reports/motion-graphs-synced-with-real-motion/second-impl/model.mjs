@@ -10,6 +10,8 @@
 //    不歸零（第 2 輪依核數員 F1 修訂；第 1 輪為歸零）。
 //  - draw 模式 vt[i] 為 t = i 秒的節點值，段內線性插值，超出末節點後 v 保持最後值、a = 0。
 //  - avgSpeed = dist / t，avgVel = s / t；t = 0 時兩者為 0。
+//  - 第 5 輪：主實作 0.4.0 凍結時把 t 截斷為恰等於 T（最後一步 h = T − t），與本實作 observe 的 t = min(tRaw, T) 相同；
+//    另提供 simulateMainRule() 以主實作的累加步進規則產生幀時刻（t_{k+1} = t_k + min(dt, T − t_k)），供 dt 不整除 T 的測試。
 //  - 第 4 輪：主實作 0.3.0 在 observe 把 |x| < 1e-9 的 s、dist、v、area、avgSpeed、avgVel 歸零（顯示層）。
 //    本實作的 observe 仍輸出純解析值；另提供 snapZero(obs) 供比對時套用同一顯示規則，
 //    以便檢查主實作的歸零是否只影響 |x| < 1e-9 的值。speed 不在規則內，但取 |v_snapped| 才與 speed = |v| 自洽。
@@ -124,6 +126,20 @@ export function simulate(p, dt, frames) {
   for (let k = 0; k < frames; k++) {
     const t = k / perSec;
     out.push(observe(p, t));
+  }
+  return out;
+}
+
+// 第 5 輪：以主實作的步進規則產生幀時刻（累加，最後一步 h = T − t，之後 h = 0），再用同一 observe 取值。
+// 用於 dt 不整除 T（例如 dt = 0.0007）時檢查：最後一幀 t 恰等於 T、v/a 一致、無 NaN，且與整數格點版本在共同時刻一致。
+export function simulateMainRule(p, dt, frames) {
+  const out = [];
+  let t = 0;
+  for (let k = 0; k < frames; k++) {
+    out.push(observe(p, t));
+    const h = t >= p.T ? 0 : Math.min(dt, p.T - t);
+    t = t + h;
+    if (t > p.T) t = p.T; // 防止 T − t 的浮點捨入越過 T
   }
   return out;
 }

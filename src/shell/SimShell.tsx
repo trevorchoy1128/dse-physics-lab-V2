@@ -40,7 +40,8 @@ export function SimShell({ sim }: SimShellProps) {
   useEffect(() => {
     let raf = 0, last = performance.now();
     const loop = (now: number) => {
-      const dt = Math.min(0.1, (now - last) / 1000); last = now;
+      // 上限 1 s：視窗在背景時瀏覽器把動畫降至每秒 1 幀，仍能保持真實時間（學生試用者：「播放比 1× 慢 30 倍」）
+      const dt = Math.min(1, (now - last) / 1000); last = now;
       if (playing && !document.hidden) runner.current.advance(dt * speed);
       setFrame(f => f + 1);
       raf = requestAnimationFrame(loop);
@@ -81,7 +82,7 @@ export function SimShell({ sim }: SimShellProps) {
             <button type="button" className="primary" onClick={() => setPlaying(p => !p)}>{playing ? "⏸ " + t(UI.pause) : "▶ " + t(UI.play)}</button>
             <button type="button" onClick={() => { setPlaying(false); runner.current.advance(sim.stepSize ?? 0.05); setFrame(f => f + 1); }}>⏭ {t(UI.step)} {sim.stepSize ?? 0.05} s</button>
             <button type="button" onClick={() => { runner.current.reset(); setFrame(f => f + 1); }}>↺ {t(UI.reset)}</button>
-            <button type="button" onClick={() => { setActiveScenario(null); setLayers(Object.fromEntries(sim.layers.map(l => [l.key, l.default]))); applyParams({ ...sim.defaults }); setPlaying(true); }}>⟲ {t(UI.restore)}</button>
+            <button type="button" onClick={() => { setActiveScenario(null); setLayers(Object.fromEntries(sim.layers.map(l => [l.key, l.default]))); applyParams({ ...sim.defaults }); }}>⟲ {t(UI.restore)}</button>
             <label className="speed">{t(UI.speed)}
               <select value={speed} onChange={e => setSpeed(Number(e.target.value))}>{SPEEDS.map(s => <option key={s} value={s}>{s}×</option>)}</select>
             </label>
@@ -92,6 +93,7 @@ export function SimShell({ sim }: SimShellProps) {
                   onChange={e => { setPlaying(false); runner.current.seek(Number(e.target.value)); setFrame(f => f + 1); }} />
                 <input type="number" min={0} max={sim.duration(params)} step={0.1} value={Math.round(Math.min(runner.current.t, sim.duration(params)) * 100) / 100}
                   aria-label={t(UI.time)}
+                  onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); (e.target as HTMLInputElement).blur(); } }}
                   onChange={e => { const v = Number(e.target.value); if (Number.isFinite(v)) { setPlaying(false); runner.current.seek(Math.max(0, Math.min(sim.duration!(params), v))); setFrame(f => f + 1); } }} />
                 <span>s</span>
               </label>

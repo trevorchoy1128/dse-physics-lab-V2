@@ -171,10 +171,13 @@ export default function Scene({ plan, onInput }: SceneProps) {
   }, [plan, lang]);
 
   // ---- 拖動 v–t 控制點（只在 draw 模式；抓取半徑 24 px ≥ 44 px 直徑）----
+  // 在 v–t 圖框內任何位置按下，即拖動時間最接近的那個控制點，不必命中圓點（學生試用者第 5 輪）
   const handleAt = (x: number, y: number): number | null => {
     const L = lay.current; const handles = plan.trails?.find(t => t.key === "vt-handles")?.points; if (!L || !handles) return null;
-    const p = L.panes.v; let best: number | null = null, bd = 30;   // 抓取半徑 30 px（直徑 60 px ≥ 44 px）
-    handles.forEach((q, i) => { const d = Math.hypot(px(p, q[0]) - x, py(p, q[1]) - y); if (d < bd) { bd = d; best = i; } });
+    const p = L.panes.v;
+    if (x < p.x || x > p.x + p.w || y < p.y || y > p.y + p.h) return null;
+    let best: number | null = null, bd = Infinity;
+    handles.forEach((q, i) => { const d = Math.abs(px(p, q[0]) - x); if (d < bd) { bd = d; best = i; } });
     return best;
   };
   const local = (e: React.PointerEvent) => { const r = (e.currentTarget as HTMLElement).getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top] as const; };

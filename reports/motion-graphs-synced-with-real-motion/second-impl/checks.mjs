@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { observe, simulate } from "./model.mjs";
+import { observe, simulate, simulateMainRule } from "./model.mjs";
 const root = "C:/Users/trevor/dev/dse-physics-lab/reports/motion-graphs-synced-with-real-motion";
 const index = JSON.parse(fs.readFileSync(path.join(root, "data/index.json"), "utf8"));
 const out = [];
@@ -138,7 +138,7 @@ const close = (a, b, tol = 1e-9) => Math.abs(a - b) <= tol * Math.max(1, Math.ab
   }
 }
 
-// ---------- 5. 第 2 輪：凍結後 a 保持 T⁻ 值，最後一幀 a 與 v 的一致性（主實作與第二實作各自檢驗） ----------
+// ---------- 5. 第 2/5 輪：凍結後 a 保持 T⁻ 值（第 5 輪起凍結幀 t 恰等於 T），最後一幀 a 與 v 的一致性（主實作與第二實作各自檢驗） ----------
 {
   for (const src of ["data", "second-impl"]) {
     for (const run of index.runs) {
@@ -233,6 +233,40 @@ fs.writeFileSync(path.join(root, "second-impl", "checks-output.txt"), out.join("
     log(`random-2 凍結幀 主 t=${at.t} a=${at.obs.a} v=${at.obs.v} s=${at.obs.s}；T−dt a=${pre.obs.a} v=${pre.obs.v}；末幀 a=${last.obs.a} v=${last.obs.v}；第二 a=${mine.a} v=${mine.v} s=${mine.s}`);
     log(`random-2 主 v(凍結) − 3 = ${(at.obs.v - 3).toExponential(3)}；若以未截斷 t=${at.t} 代入右段 v=3−(t−5)：${(3 - (at.t - 5) - at.obs.v).toExponential(3)}（差 0 表示主實作用未截斷 t 在右段插值）`);
     log("random-2 a 凍結 = 左段斜率 0（兩實作一致）、v 與 3 差 < 1e-12:", at.obs.a === 0 && mine.a === 0 && Math.abs(at.obs.v - 3) < 1e-12 && Math.abs(last.obs.v - 3) < 1e-12);
+  }
+}
+fs.writeFileSync(path.join(root, "second-impl", "checks-output.txt"), out.join("\n"));
+
+// ---------- 7. 第 5 輪：dt 不整除 T（dt = 0.0007）以主實作步進規則（最後一步 h = T − t）跑，檢查末幀 t === T、v/a 一致、無 NaN ----------
+{
+  const dt7 = 0.0007;
+  const cases = index.runs.filter(r => ["default", "scenario-v-zero-a-not", "scenario-below-axis", "random-2", "random-4"].includes(r.name)).map(r => ({ name: r.name, params: r.params }));
+  cases.push({ name: "draw-T20-beyond-nodes", params: { mode: "draw", u: 0, a: 0, T: 20, vt: [0, 1, 2, 3, 3, 3, 2, 1, 0, 0, 0] } });
+  for (const run of cases) {
+    const p = run.params, T = p.T;
+    const nStepsToT = Math.ceil(T / dt7 - 1e-9);
+    const frames = nStepsToT + 50;
+    const F = simulateMainRule(p, dt7, frames);
+    const last = F[F.length - 1];
+    let nonFinite = 0, afterTnotT = 0, firstAtT = -1, frozenSame = true;
+    for (let i = 0; i < F.length; i++) {
+      if (!Number.isFinite(F[i].t)) nonFinite++;
+      for (const k in F[i].obs) if (!Number.isFinite(F[i].obs[k])) nonFinite++;
+      if (F[i].t === T && firstAtT < 0) firstAtT = i;
+      if (firstAtT >= 0 && i >= firstAtT) { if (F[i].t !== T) afterTnotT++; for (const k in F[i].obs) if (F[i].obs[k] !== F[firstAtT].obs[k]) frozenSame = false; }
+    }
+    const pre = F[firstAtT - 1], at = F[firstAtT];
+    const lastStep = T - pre.t;
+    const ref = observe(p, T).obs;
+    const sameAsRef = Object.keys(ref).every(k => at.obs[k] === ref[k]);
+    let vExp, aExp, note;
+    if (p.mode === "draw") { const m = p.vt.length - 1; if (T >= m) { vExp = p.vt[m]; aExp = T > m ? 0 : p.vt[m] - p.vt[m - 1]; note = T > m ? "超出末節點 v 恆定、a=0" : "末節點值、末段斜率"; } else { const i0 = Math.floor(T); vExp = p.vt[i0] + (p.vt[i0 + 1] - p.vt[i0]) * (T - i0); aExp = Number.isInteger(T) ? p.vt[i0] - p.vt[i0 - 1] : p.vt[i0 + 1] - p.vt[i0]; note = "折線 T 值、T⁻ 段斜率"; } }
+    else { vExp = p.u + p.a * T; aExp = p.a; note = "v = u + aT"; }
+    const vOk = close(at.obs.v, vExp), aOk = at.obs.a === aExp;
+    const slope = (at.obs.v - pre.obs.v) / lastStep, slopeOk = close(slope, at.obs.a, 1e-6);
+    let maxDiffCommon = 0, nCommon = 0;
+    for (let k = 0; k * 0.007 < T; k++) { const tt = k * 0.007; const g = observe(p, tt).obs; const i = Math.round(tt / dt7); if (i < F.length && Math.abs(F[i].t - tt) < 1e-9) { nCommon++; for (const kk in g) maxDiffCommon = Math.max(maxDiffCommon, Math.abs(F[i].obs[kk] - g[kk])); } }
+    log("dt=0.0007[" + run.name + "] T=" + T + " 幀數=" + frames + " 首個 t=T 幀=" + firstAtT + "（預期 " + nStepsToT + "）T−h 幀 t=" + pre.t + " 最後一步 h=" + lastStep.toExponential(6) + "（< dt:" + (lastStep < dt7) + "） 末幀 t=" + last.t + "（===T:" + (last.t === T) + "） 凍結後 t≠T:" + afterTnotT + " 非有限值:" + nonFinite + " 凍結後恆定:" + frozenSame + " 與 observe(p,T) 完全相同:" + sameAsRef + " v=" + at.obs.v + "（期望 " + note + " " + vExp + ":" + vOk + "） a=" + at.obs.a + "（期望 " + aExp + ":" + aOk + "） 差分斜率=" + slope.toFixed(6) + "=a:" + slopeOk + " 共同時刻 " + nCommon + " 幀最大差=" + maxDiffCommon.toExponential(2));
   }
 }
 fs.writeFileSync(path.join(root, "second-impl", "checks-output.txt"), out.join("\n"));

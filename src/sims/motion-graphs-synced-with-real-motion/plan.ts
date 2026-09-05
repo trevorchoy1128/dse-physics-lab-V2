@@ -39,7 +39,7 @@ export const plan: PlanFn<S, P> = (s, p, obs, layers) => {
     ],
     scales: { velocity: 0.25, acceleration: 0.25 },
     meta: {
-      t: s.t, T: p.T, s: s.s, v: s.v, a: obs.a,
+      t: s.t, T: p.T, s: obs.s, v: obs.v, a: obs.a,   // 與讀數面板同一來源（圖內斜率標籤曾顯示 2 × 10⁻¹⁵）
       smax: trackExtent(p), sGraph: smaxGraph, vmax, amax, vSeen, aSeen,
       draw: p.mode === "draw" ? 1 : 0,
       tangent: layers.tangent ? 1 : 0, area: layers.area ? 1 : 0,

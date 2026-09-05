@@ -1,10 +1,18 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 export type Draw2D = (ctx: CanvasRenderingContext2D, width: number, height: number) => void;
 
 // 2D 畫布：needs3D 為 low 的模擬用。自動處理 devicePixelRatio 與尺寸變化；frame 改變即重畫。
 export function Canvas2D({ draw, frame, className }: { draw: Draw2D; frame: number; className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const [resizeTick, setResizeTick] = useState(0);
+  // 容器尺寸改變（版面重排、轉向）即重繪，暫停中也不會留下拉伸殘影
+  useLayoutEffect(() => {
+    const parent = ref.current?.parentElement; if (!parent) return;
+    const ro = new ResizeObserver(() => setResizeTick(t => t + 1));
+    ro.observe(parent);
+    return () => ro.disconnect();
+  }, []);
   // useLayoutEffect：在瀏覽器繪製前同步畫出，令畫布與 DOM 讀數屬同一幀（核數員 F4：標籤落後讀數 2–3 幀）
   useLayoutEffect(() => {
     const c = ref.current; if (!c) return;
@@ -18,6 +26,6 @@ export function Canvas2D({ draw, frame, className }: { draw: Draw2D; frame: numb
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
     draw(ctx, w, h);
-  }, [draw, frame]);
+  }, [draw, frame, resizeTick]);
   return <canvas ref={ref} className={className} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", display: "block", touchAction: "none" }} />;
 }

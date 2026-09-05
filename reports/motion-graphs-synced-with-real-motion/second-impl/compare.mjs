@@ -1,4 +1,4 @@
-// 第 4 輪比對：主實作 0.3.0（observe 把 |x| < 1e-9 的 s/dist/v/area/avgSpeed/avgVel 歸零）
+// 第 5 輪比對：主實作 0.4.0（凍結時 t 截斷為恰等於 T，最後一步 h = T − t；折線斜率索引夾住末節點；歸零規則沿 0.3.0）
 import fs from "node:fs";
 import path from "node:path";
 import { snapZero, SNAP_KEYS, SNAP_EPS } from "./model.mjs";
@@ -12,6 +12,7 @@ const rows = [];
 const failures = [];
 const snapReport = [];
 const zeroFrames = [];     // 解析值恰為 0（t > 0）的幀
+const r5 = [];             // 第 5 輪專項
 for (const run of index.runs) {
   const A = JSON.parse(fs.readFileSync(path.join(root, "data", run.name + ".json"), "utf8")).frames;
   const B = JSON.parse(fs.readFileSync(path.join(root, "second-impl", run.name + ".json"), "utf8")).frames;
@@ -81,6 +82,43 @@ for (const run of index.runs) {
       if (bs[k] === 0) r.mineSnapZeroCount[k]++;
     }
   }
+  // ---- C. 第 5 輪專項：凍結幀 t === T、非有限值、末幀 v/a 一致 ----
+  {
+    const T = run.params.T, iT = Math.round(T / dt);
+    const c = { run: run.name, T,
+      mainLastT: A[n - 1].t, mineLastT: B[n - 1].t,
+      mainLastTExact: A[n - 1].t === T, mineLastTExact: B[n - 1].t === T,
+      mainFirstAtT: A.findIndex(f => f.t === T), mineFirstAtT: B.findIndex(f => f.t === T),
+      mainAfterTNotT: 0, mineAfterTNotT: 0, mainNonFinite: 0, mineNonFinite: 0,
+      mainPreT: A[iT - 1].t, mainLastStep: T - A[iT - 1].t };
+    for (let i = 0; i < n; i++) {
+      if (i >= iT) { if (A[i].t !== T) c.mainAfterTNotT++; if (B[i].t !== T) c.mineAfterTNotT++; }
+      if (!Number.isFinite(A[i].t)) c.mainNonFinite++;
+      if (!Number.isFinite(B[i].t)) c.mineNonFinite++;
+      for (const k of keys) { if (!Number.isFinite(A[i].obs[k])) c.mainNonFinite++; if (!Number.isFinite(B[i].obs[k])) c.mineNonFinite++; }
+    }
+    let vExp, aExp;
+    if (run.params.mode === "draw") {
+      const vt = run.params.vt, m = vt.length - 1;
+      if (T >= m) { vExp = vt[m]; aExp = T > m ? 0 : vt[m] - vt[m - 1]; }
+      else { const i0 = Math.floor(T); vExp = vt[i0] + (vt[i0 + 1] - vt[i0]) * (T - i0); aExp = Number.isInteger(T) ? vt[i0] - vt[i0 - 1] : vt[i0 + 1] - vt[i0]; }
+    } else { vExp = run.params.u + run.params.a * T; aExp = run.params.a; }
+    c.vExp = vExp; c.aExp = aExp;
+    c.mainVLast = A[n - 1].obs.v; c.mainALast = A[n - 1].obs.a; c.mineVLast = B[n - 1].obs.v; c.mineALast = B[n - 1].obs.a;
+    c.mainVOk = Math.abs(A[n - 1].obs.v - vExp) <= 1e-9 * Math.max(1, Math.abs(vExp)); c.mainAOk = Math.abs(A[n - 1].obs.a - aExp) <= 1e-12;
+    c.mineVOk = Math.abs(B[n - 1].obs.v - vExp) <= 1e-9 * Math.max(1, Math.abs(vExp)); c.mineAOk = Math.abs(B[n - 1].obs.a - aExp) <= 1e-12;
+    c.mainFrozenSame = true; c.mineFrozenSame = true;
+    for (let i = iT; i < n; i++) { for (const k of keys) { if (A[i].obs[k] !== A[iT].obs[k]) c.mainFrozenSame = false; if (B[i].obs[k] !== B[iT].obs[k]) c.mineFrozenSame = false; } }
+    r5.push(c);
+    if (!c.mainLastTExact) failures.push(run.name + ": 主實作末幀 t=" + c.mainLastT + " ≠ T");
+    if (!c.mineLastTExact) failures.push(run.name + ": 第二實作末幀 t=" + c.mineLastT + " ≠ T");
+    if (c.mainAfterTNotT) failures.push(run.name + ": 主實作凍結後 " + c.mainAfterTNotT + " 幀 t ≠ T");
+    if (c.mainNonFinite) failures.push(run.name + ": 主實作非有限值 " + c.mainNonFinite);
+    if (c.mineNonFinite) failures.push(run.name + ": 第二實作非有限值 " + c.mineNonFinite);
+    if (!c.mainVOk || !c.mainAOk) failures.push(run.name + ": 主實作末幀 v/a 與期望不符 v=" + c.mainVLast + " a=" + c.mainALast);
+    if (!c.mineVOk || !c.mineAOk) failures.push(run.name + ": 第二實作末幀 v/a 與期望不符");
+    if (!c.mainFrozenSame) failures.push(run.name + ": 主實作凍結後 obs 不恆定");
+  }
   snapReport.push(r);
   if (r.mainZeroButMineBig.length) failures.push(`${run.name}: 歸零影響了 |x| ≥ 1e-9 的值 ${r.mainZeroButMineBig.length} 處`);
   if (r.mainTinyNotZero.length) failures.push(`${run.name}: 0 < |x| < 1e-9 未歸零 ${r.mainTinyNotZero.length} 處`);
@@ -103,5 +141,9 @@ for (const r of snapReport) {
 }
 console.log("\n=== 解析值恰為 0 的幀（t > 0）===");
 for (const z of zeroFrames.filter(z => z.run !== "scenario-st-not-path")) console.log(`${z.run} t=${z.t} ${z.k}: 第二=${z.mine} 主=${z.main} 主恰為0:${z.mainExactZero}`);
+console.log("\n=== 第 5 輪專項：凍結幀 t === T、非有限值、末幀 v/a ===");
+console.log("| 運行 | T | 主末幀 t | 第二末幀 t | 主 T−dt 幀 t | 主最後一步 h | 主首個 t=T 幀 | 凍結後 t≠T（主/第二） | 非有限值（主/第二） | 末幀 v（主 / 第二 / 期望） | 末幀 a（主 / 第二 / 期望） | 凍結後恆定（主/第二） |");
+console.log("|---|---|---|---|---|---|---|---|---|---|---|---|");
+for (const c of r5) console.log("| " + [c.run, c.T, c.mainLastT, c.mineLastT, c.mainPreT, c.mainLastStep.toExponential(6), c.mainFirstAtT, c.mainAfterTNotT + "/" + c.mineAfterTNotT, c.mainNonFinite + "/" + c.mineNonFinite, c.mainVLast + " / " + c.mineVLast + " / " + c.vExp + "（" + (c.mainVOk && c.mineVOk ? "一致" : "不符") + "）", c.mainALast + " / " + c.mineALast + " / " + c.aExp + "（" + (c.mainAOk && c.mineAOk ? "一致" : "不符") + "）", c.mainFrozenSame + "/" + c.mineFrozenSame].join(" | ") + " |");
 console.log("\nFAILURES:", JSON.stringify(failures));
-fs.writeFileSync(path.join(root, "second-impl", "compare-result.json"), JSON.stringify({ rows, failures, snapReport, zeroFrames }, null, 1));
+fs.writeFileSync(path.join(root, "second-impl", "compare-result.json"), JSON.stringify({ rows, failures, snapReport, zeroFrames, r5 }, null, 1));
