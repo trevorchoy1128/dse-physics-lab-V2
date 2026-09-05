@@ -63,7 +63,10 @@ describe("運動線圖 畫面", () => {
   it("軌道範圍涵蓋整段運動且取好看刻度", () => {
     expect(trackExtent(live(0, 1, 10))).toBe(50);          // ½·1·100 = 50
     expect(trackExtent(live(5, 10, 20))).toBe(3000);       // 100 + 2000 = 2100 → 超出清單即向上取整至 1000 的倍數
-    expect(trackExtent(draw([2, 2, 2, 2, 2, -2, -2, -2, -2, -2, -2]))).toBe(50);
+    expect(trackExtent(draw([2, 2, 2, 2, 2, -2, -2, -2, -2, -2, -2]))).toBe(10);   // 精確極值：t = 4.5 s 時 s = 9（0.4.x 用 Σ|v| 上界得 50）
+    // 控制點以外的保持段要計入（核數員第 7 輪 F9）：末值 −2 再走 50 s
+    expect(trackExtent({ ...draw([0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2]), T: 60 })).toBeGreaterThanOrEqual(87);
+    expect(trackExtent({ ...draw([5, -5, 5, -5, 5, -5, 5, -5, 5, -5, 5]), T: 60 })).toBeGreaterThanOrEqual(250);
     const p = live(0, 1, 10);
     for (const T of [0, 5, 10]) expect(Math.abs(advance(p, T).s)).toBeLessThanOrEqual(trackExtent(p) + 1e-9);
   });

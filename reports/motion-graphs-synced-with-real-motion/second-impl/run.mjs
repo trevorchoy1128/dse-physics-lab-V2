@@ -7,5 +7,5 @@ for (const run of index.runs) {
   const frames = simulate(run.params, index.dt, index.frames);
   fs.writeFileSync(path.join(root, "second-impl", run.name + ".json"),
     JSON.stringify({ name: run.name, params: run.params, dt: index.dt, frames }));
-  console.log("wrote", run.name, frames.length);
+  console.log("wrote", run.name, frames.length, "last t", frames[frames.length - 1].t);
 }

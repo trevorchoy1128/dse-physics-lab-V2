@@ -104,9 +104,11 @@ export default function Scene({ plan, onInput }: SceneProps) {
       ctx.fillStyle = "#3f9d5a"; ctx.beginPath(); ctx.arc(tx, ty - 10 - hTree * 0.5, hTree * 0.45, 0, Math.PI * 2); ctx.fill();
       // 距離柱
       ctx.strokeStyle = "#6b7280"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, ty + 7); ctx.lineTo(x, ty + 18); ctx.stroke();
-      ctx.font = mono(11); ctx.fillStyle = ink; ctx.textAlign = "center"; ctx.fillText(tick(s0), x, ty + 31);
+      ctx.font = mono(12); ctx.fillStyle = ink; ctx.textAlign = "center"; ctx.fillText(tick(s0), x, ty + 31);
     }
     ctx.font = mono(11); ctx.fillStyle = ink3; ctx.textAlign = "center"; ctx.fillText(zh ? "位移 s / m（向右為正 →）" : "displacement s / m (right = + →)", tr.x + tr.w / 2, ty + 46);
+    // 鏡頭偏離起點時說明「鏡頭跟着小車移動，比例不變」（學生試用者第 7 輪：地面刻度範圍變了，以為是縮放）
+    if (Math.abs(cam.current.s) > 1e-9) { ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "right"; ctx.fillText(zh ? "鏡頭跟着小車移動（比例不變）" : "Camera follows the trolley (same scale)", tr.x + tr.w - 8, tr.y + 14); }
     // 起點旗（原點，在畫面內才畫）
     const x0 = sx(0);
     if (x0 > tr.x - 20 && x0 < tr.x + tr.w + 20) {

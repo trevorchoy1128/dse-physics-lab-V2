@@ -1,0 +1,2045 @@
+{
+ "dt": 0.001,
+ "runs": [
+  {
+   "name": "default",
+   "params": {
+    "mode": "live",
+    "u": 0,
+    "a": 1,
+    "T": 10,
+    "vt": [
+     0,
+     1,
+     2,
+     3,
+     3,
+     3,
+     2,
+     1,
+     0,
+     0,
+     0
+    ]
+   },
+   "frames": 60001,
+   "mode": "live",
+   "time": {
+    "iT": 10000,
+    "tAtT": 10,
+    "tEqualsT": true,
+    "expectedIT": 10000,
+    "tDriftMax": 1.0054179711005418e-12,
+    "tDriftAt": 7997,
+    "frozenOK": 50000,
+    "frozenBad": 0,
+    "nanFrames": 0,
+    "monotoneBad": 0,
+    "lastT": 10
+   },
+   "err": {
+    "s": {
+     "maxAbs": 7.180034344855812e-12,
+     "at": 7.999000000001006,
+     "exp": 31.992000500008047,
+     "got": 31.992000500000866,
+     "maxRel": 2.244321778143885e-13,
+     "fails": 0
+    },
+    "dist": {
+     "maxAbs": 7.180034344855812e-12,
+     "at": 7.999000000001006,
+     "exp": 31.992000500008047,
+     "got": 31.992000500000866,
+     "maxRel": 2.244321778143885e-13,
+     "fails": 0
+    },
+    "v": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "a": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "speed": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "area": {
+     "maxAbs": 7.180034344855812e-12,
+     "at": 7.999000000001006,
+     "exp": 31.992000500008047,
+     "got": 31.992000500000866,
+     "maxRel": 2.244321778143885e-13,
+     "fails": 0
+    },
+    "avgSpeed": {
+     "maxAbs": 8.975042931069765e-13,
+     "at": 7.999000000001006,
+     "exp": 3.999500000000503,
+     "got": 3.9994999999996055,
+     "maxRel": 2.2440412379218995e-13,
+     "fails": 0
+    },
+    "avgVel": {
+     "maxAbs": 8.975042931069765e-13,
+     "at": 7.999000000001006,
+     "exp": 3.999500000000503,
+     "got": 3.9994999999996055,
+     "maxRel": 2.2440412379218995e-13,
+     "fails": 0
+    }
+   },
+   "uniform": {
+    "maxAbs": 1.4360068689711625e-11,
+    "at": 7.999000000001006,
+    "fails": 0
+   },
+   "trap": {
+    "maxAbs": 7.197797913249815e-12,
+    "at": 7.999000000001006,
+    "final": 50.000000000000014,
+    "sFinal": 50.00000000000279
+   },
+   "reverse": {
+    "firstReverse": -1,
+    "framesBefore_distEqAbsS": 10001,
+    "framesBefore_distNeAbsS": 0,
+    "framesAfter_distEqAbsS": 0,
+    "minGapAfter": "n/a"
+   },
+   "atT": {
+    "t": 10,
+    "exp": {
+     "s": 50,
+     "v": 10,
+     "a": 1,
+     "dist": 50,
+     "speed": 10,
+     "area": 50,
+     "avgSpeed": 5,
+     "avgVel": 5
+    },
+    "got": {
+     "s": 50.00000000000279,
+     "dist": 50.00000000000279,
+     "v": 10,
+     "a": 1,
+     "speed": 10,
+     "area": 50.00000000000279,
+     "avgSpeed": 5.000000000000279,
+     "avgVel": 5.000000000000279
+    }
+   },
+   "arrow": {
+    "vecEqV": 60001,
+    "vecNeV": 0,
+    "vecEqA": 60001,
+    "vecNeA": 0,
+    "originEqS": 120002,
+    "originNeS": 0,
+    "yz": [
+     "velocity:0.45,0",
+     "acceleration:0.75,0"
+    ],
+    "labelEqS": 60001,
+    "labelNeS": 0,
+    "scaleSets": {
+     "velocity": [
+      0.25
+     ],
+     "acceleration": [
+      0.25
+     ]
+    },
+    "count": {
+     "velocity": 60001,
+     "acceleration": 60001
+    },
+    "extraKinds": 0,
+    "notTwoArrows": 0,
+    "aLenMin": 1,
+    "aLenMax": 1
+   },
+   "meta": {
+    "metaConst": {
+     "smax": [
+      50
+     ],
+     "vmax": [
+      10
+     ],
+     "amax": [
+      1
+     ],
+     "T": [
+      10
+     ]
+    },
+    "sAbsMax": 50.00000000000279,
+    "vAbsMax": 10,
+    "aAbsMax": 1,
+    "smax": 50,
+    "vmax": 10,
+    "amax": 1,
+    "sInRange": false,
+    "vInRange": true,
+    "aInRange": true,
+    "doneBeforeT": 0,
+    "doneAfterT": 0,
+    "metaMismatch": 0,
+    "predVmax_live": 10,
+    "predSmax_live": 50
+   }
+  },
+  {
+   "name": "scenario-below-axis",
+   "params": {
+    "mode": "draw",
+    "u": 0,
+    "a": 1,
+    "T": 10,
+    "vt": [
+     2,
+     1.6,
+     1.2,
+     0.8,
+     0.4,
+     0,
+     -0.4,
+     -0.8,
+     -1.2,
+     -1.6,
+     -2
+    ]
+   },
+   "frames": 60001,
+   "mode": "draw",
+   "time": {
+    "iT": 10000,
+    "tAtT": 10,
+    "tEqualsT": true,
+    "expectedIT": 10000,
+    "tDriftMax": 1.0054179711005418e-12,
+    "tDriftAt": 7997,
+    "frozenOK": 50000,
+    "frozenBad": 0,
+    "nanFrames": 0,
+    "monotoneBad": 0,
+    "lastT": 10
+   },
+   "err": {
+    "s": {
+     "maxAbs": 9.144933074689554e-13,
+     "at": 9.998999999999898,
+     "exp": 0.0019998000002061644,
+     "got": 0.001999799999291671,
+     "maxRel": 4.5729238292563157e-10,
+     "fails": 0
+    },
+    "dist": {
+     "maxAbs": 1.4459544672718039e-12,
+     "at": 9.998999999999898,
+     "exp": 9.998000199999796,
+     "got": 9.998000200001242,
+     "maxRel": 1.4462436870843765e-13,
+     "fails": 0
+    },
+    "v": {
+     "maxAbs": 1.7763568394002505e-15,
+     "at": 5.000000000000004,
+     "exp": -1.7763568394002505e-15,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "a": {
+     "maxAbs": 0.3999999999999999,
+     "at": 10,
+     "exp": 0,
+     "got": -0.3999999999999999,
+     "maxRel": 5.551115123125781e-16,
+     "fails": 1
+    },
+    "speed": {
+     "maxAbs": 1.7763568394002505e-15,
+     "at": 5.000000000000004,
+     "exp": 1.7763568394002505e-15,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "area": {
+     "maxAbs": 9.144933074689554e-13,
+     "at": 9.998999999999898,
+     "exp": 0.0019998000002061644,
+     "got": 0.001999799999291671,
+     "maxRel": 4.5729238292563157e-10,
+     "fails": 0
+    },
+    "avgSpeed": {
+     "maxAbs": 1.4455103780619538e-13,
+     "at": 9.998999999999898,
+     "exp": 0.9999000100009899,
+     "got": 0.9999000100011345,
+     "maxRel": 1.445654929096883e-13,
+     "fails": 0
+    },
+    "avgVel": {
+     "maxAbs": 1.0752509993494641e-13,
+     "at": 7.999000000001006,
+     "exp": 0.40019999999979894,
+     "got": 0.40019999999990646,
+     "maxRel": 4.5729235280889986e-10,
+     "fails": 0
+    }
+   },
+   "uniform": {
+    "maxAbs": 0,
+    "at": 0,
+    "fails": 0
+   },
+   "trap": {
+    "maxAbs": 9.11005645920504e-13,
+    "at": 9.998999999999898,
+    "final": -2.231288070975168e-15,
+    "sFinal": 0
+   },
+   "reverse": {
+    "firstReverse": -1,
+    "framesBefore_distEqAbsS": 5001,
+    "framesBefore_distNeAbsS": 5000,
+    "framesAfter_distEqAbsS": 0,
+    "minGapAfter": "n/a"
+   },
+   "atT": {
+    "t": 10,
+    "exp": {
+     "s": 1.1102230246251565e-15,
+     "v": -2,
+     "a": 0,
+     "dist": 10.000000000000002,
+     "speed": 2,
+     "area": 1.1102230246251565e-15,
+     "avgSpeed": 1.0000000000000002,
+     "avgVel": 1.1102230246251565e-16
+    },
+    "got": {
+     "s": 0,
+     "dist": 10.000000000001446,
+     "v": -2,
+     "a": -0.3999999999999999,
+     "speed": 2,
+     "area": 0,
+     "avgSpeed": 1.0000000000001446,
+     "avgVel": 0
+    }
+   },
+   "arrow": {
+    "vecEqV": 60001,
+    "vecNeV": 0,
+    "vecEqA": 60001,
+    "vecNeA": 0,
+    "originEqS": 120002,
+    "originNeS": 0,
+    "yz": [
+     "velocity:0.45,0",
+     "acceleration:0.75,0"
+    ],
+    "labelEqS": 60001,
+    "labelNeS": 0,
+    "scaleSets": {
+     "velocity": [
+      0.25
+     ],
+     "acceleration": [
+      0.25
+     ]
+    },
+    "count": {
+     "velocity": 60001,
+     "acceleration": 60001
+    },
+    "extraKinds": 0,
+    "notTwoArrows": 0,
+    "aLenMin": 0.3999999999999999,
+    "aLenMax": 0.40000000000000013
+   },
+   "meta": {
+    "metaConst": {
+     "smax": [
+      20
+     ],
+     "vmax": [
+      2
+     ],
+     "amax": [
+      1
+     ],
+     "T": [
+      10
+     ]
+    },
+    "sAbsMax": 5.00000000000026,
+    "vAbsMax": 2,
+    "aAbsMax": 0.40000000000000013,
+    "smax": 20,
+    "vmax": 2,
+    "amax": 1,
+    "sInRange": true,
+    "vInRange": true,
+    "aInRange": true,
+    "doneBeforeT": 0,
+    "doneAfterT": 0,
+    "metaMismatch": 0,
+    "predVmax_live": null,
+    "predSmax_live": null
+   }
+  },
+  {
+   "name": "scenario-st-not-path",
+   "params": {
+    "mode": "live",
+    "u": 0,
+    "a": 0,
+    "T": 10,
+    "vt": [
+     0,
+     1,
+     2,
+     3,
+     3,
+     3,
+     2,
+     1,
+     0,
+     0,
+     0
+    ]
+   },
+   "frames": 60001,
+   "mode": "live",
+   "time": {
+    "iT": 10000,
+    "tAtT": 10,
+    "tEqualsT": true,
+    "expectedIT": 10000,
+    "tDriftMax": 1.0054179711005418e-12,
+    "tDriftAt": 7997,
+    "frozenOK": 50000,
+    "frozenBad": 0,
+    "nanFrames": 0,
+    "monotoneBad": 0,
+    "lastT": 10
+   },
+   "err": {
+    "s": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "dist": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "v": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "a": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "speed": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "area": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "avgSpeed": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "avgVel": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    }
+   },
+   "uniform": {
+    "maxAbs": 0,
+    "at": 0,
+    "fails": 0
+   },
+   "trap": {
+    "maxAbs": 0,
+    "at": 0,
+    "final": 0,
+    "sFinal": 0
+   },
+   "reverse": {
+    "firstReverse": -1,
+    "framesBefore_distEqAbsS": 10001,
+    "framesBefore_distNeAbsS": 0,
+    "framesAfter_distEqAbsS": 0,
+    "minGapAfter": "n/a"
+   },
+   "atT": {
+    "t": 10,
+    "exp": {
+     "s": 0,
+     "v": 0,
+     "a": 0,
+     "dist": 0,
+     "speed": 0,
+     "area": 0,
+     "avgSpeed": 0,
+     "avgVel": 0
+    },
+    "got": {
+     "s": 0,
+     "dist": 0,
+     "v": 0,
+     "a": 0,
+     "speed": 0,
+     "area": 0,
+     "avgSpeed": 0,
+     "avgVel": 0
+    }
+   },
+   "arrow": {
+    "vecEqV": 60001,
+    "vecNeV": 0,
+    "vecEqA": 60001,
+    "vecNeA": 0,
+    "originEqS": 120002,
+    "originNeS": 0,
+    "yz": [
+     "velocity:0.45,0",
+     "acceleration:0.75,0"
+    ],
+    "labelEqS": 60001,
+    "labelNeS": 0,
+    "scaleSets": {
+     "velocity": [
+      0.25
+     ],
+     "acceleration": [
+      0.25
+     ]
+    },
+    "count": {
+     "velocity": 60001,
+     "acceleration": 60001
+    },
+    "extraKinds": 0,
+    "notTwoArrows": 0,
+    "aLenMin": 0,
+    "aLenMax": 0
+   },
+   "meta": {
+    "metaConst": {
+     "smax": [
+      5
+     ],
+     "vmax": [
+      1
+     ],
+     "amax": [
+      1
+     ],
+     "T": [
+      10
+     ]
+    },
+    "sAbsMax": 0,
+    "vAbsMax": 0,
+    "aAbsMax": 0,
+    "smax": 5,
+    "vmax": 1,
+    "amax": 1,
+    "sInRange": true,
+    "vInRange": true,
+    "aInRange": true,
+    "doneBeforeT": 0,
+    "doneAfterT": 0,
+    "metaMismatch": 0,
+    "predVmax_live": 0,
+    "predSmax_live": 0
+   }
+  },
+  {
+   "name": "scenario-v-zero-a-not",
+   "params": {
+    "mode": "live",
+    "u": 3,
+    "a": -9.81,
+    "T": 5,
+    "vt": [
+     0,
+     1,
+     2,
+     3,
+     3,
+     3,
+     2,
+     1,
+     0,
+     0,
+     0
+    ]
+   },
+   "frames": 60001,
+   "mode": "live",
+   "time": {
+    "iT": 5000,
+    "tAtT": 5,
+    "tEqualsT": true,
+    "expectedIT": 5000,
+    "tDriftMax": 3.2951419370874646e-13,
+    "tDriftAt": 3998,
+    "frozenOK": 55000,
+    "frozenBad": 0,
+    "nanFrames": 0,
+    "monotoneBad": 0,
+    "lastT": 5
+   },
+   "err": {
+    "s": {
+     "maxAbs": 1.4992451724538114e-11,
+     "at": 3.9999999999996705,
+     "exp": -66.47999999998805,
+     "got": -66.48000000000305,
+     "maxRel": 3.5492400867453625e-12,
+     "fails": 0
+    },
+    "dist": {
+     "maxAbs": 1.4978240869822912e-11,
+     "at": 3.9999999999996705,
+     "exp": 67.39743119264861,
+     "got": 67.39743119266359,
+     "maxRel": 2.2223756313514612e-13,
+     "fails": 0
+    },
+    "v": {
+     "maxAbs": 6.458833468059311e-12,
+     "at": 3.9989999999996706,
+     "exp": -36.23018999999677,
+     "got": -36.230190000003226,
+     "maxRel": 3.348202838036909e-12,
+     "fails": 0
+    },
+    "a": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "speed": {
+     "maxAbs": 6.458833468059311e-12,
+     "at": 3.9989999999996706,
+     "exp": 36.23018999999677,
+     "got": 36.230190000003226,
+     "maxRel": 3.348202838036909e-12,
+     "fails": 0
+    },
+    "area": {
+     "maxAbs": 1.4992451724538114e-11,
+     "at": 3.9999999999996705,
+     "exp": -66.47999999998805,
+     "got": -66.48000000000305,
+     "maxRel": 3.5492400867453625e-12,
+     "fails": 0
+    },
+    "avgSpeed": {
+     "maxAbs": 3.744560217455728e-12,
+     "at": 3.9999999999996705,
+     "exp": 16.849357798163542,
+     "got": 16.849357798167286,
+     "maxRel": 2.222375631351278e-13,
+     "fails": 0
+    },
+    "avgVel": {
+     "maxAbs": 3.7481129311345285e-12,
+     "at": 3.9999999999996705,
+     "exp": -16.61999999999838,
+     "got": -16.62000000000213,
+     "maxRel": 3.5491882730214708e-12,
+     "fails": 0
+    }
+   },
+   "uniform": {
+    "maxAbs": 3.1013769330456853e-10,
+    "at": 5,
+    "fails": 0
+   },
+   "trap": {
+    "maxAbs": 7.133849067031406e-12,
+    "at": 3.9999999999996705,
+    "final": -107.62500000001351,
+    "sFinal": -107.6250000000069
+   },
+   "reverse": {
+    "firstReverse": 0.3060000000000002,
+    "framesBefore_distEqAbsS": 306,
+    "framesBefore_distNeAbsS": 0,
+    "framesAfter_distEqAbsS": 0,
+    "minGapAfter": 0.000013882660550523784
+   },
+   "atT": {
+    "t": 5,
+    "exp": {
+     "s": -107.62500000000001,
+     "v": -46.050000000000004,
+     "a": -9.81,
+     "dist": 108.54243119266057,
+     "speed": 46.050000000000004,
+     "area": -107.62500000000001,
+     "avgSpeed": 21.708486238532114,
+     "avgVel": -21.525000000000002
+    },
+    "got": {
+     "s": -107.6250000000069,
+     "dist": 108.54243119266744,
+     "v": -46.050000000004836,
+     "a": -9.81,
+     "speed": 46.050000000004836,
+     "area": -107.6250000000069,
+     "avgSpeed": 21.70848623853349,
+     "avgVel": -21.52500000000138
+    }
+   },
+   "arrow": {
+    "vecEqV": 60001,
+    "vecNeV": 0,
+    "vecEqA": 60001,
+    "vecNeA": 0,
+    "originEqS": 120002,
+    "originNeS": 0,
+    "yz": [
+     "velocity:0.45,0",
+     "acceleration:0.75,0"
+    ],
+    "labelEqS": 60001,
+    "labelNeS": 0,
+    "scaleSets": {
+     "velocity": [
+      0.25
+     ],
+     "acceleration": [
+      0.25
+     ]
+    },
+    "count": {
+     "velocity": 60001,
+     "acceleration": 60001
+    },
+    "extraKinds": 0,
+    "notTwoArrows": 0,
+    "aLenMin": 9.81,
+    "aLenMax": 9.81
+   },
+   "meta": {
+    "metaConst": {
+     "smax": [
+      200
+     ],
+     "vmax": [
+      46.050000000000004
+     ],
+     "amax": [
+      9.81
+     ],
+     "T": [
+      5
+     ]
+    },
+    "sAbsMax": 107.6250000000069,
+    "vAbsMax": 46.050000000004836,
+    "aAbsMax": 9.81,
+    "smax": 200,
+    "vmax": 46.050000000000004,
+    "amax": 9.81,
+    "sInRange": true,
+    "vInRange": false,
+    "aInRange": true,
+    "doneBeforeT": 0,
+    "doneAfterT": 0,
+    "metaMismatch": 0,
+    "predVmax_live": 46.050000000000004,
+    "predSmax_live": 107.62500000000001
+   }
+  },
+  {
+   "name": "scenario-area-not-distance",
+   "params": {
+    "mode": "draw",
+    "u": 0,
+    "a": 1,
+    "T": 10,
+    "vt": [
+     2,
+     2,
+     2,
+     2,
+     2,
+     -2,
+     -2,
+     -2,
+     -2,
+     -2,
+     -2
+    ]
+   },
+   "frames": 60001,
+   "mode": "draw",
+   "time": {
+    "iT": 10000,
+    "tAtT": 10,
+    "tEqualsT": true,
+    "expectedIT": 10000,
+    "tDriftMax": 1.0054179711005418e-12,
+    "tDriftAt": 7997,
+    "frozenOK": 50000,
+    "frozenBad": 0,
+    "nanFrames": 0,
+    "monotoneBad": 0,
+    "lastT": 10
+   },
+   "err": {
+    "s": {
+     "maxAbs": 2.6618707238412753e-12,
+     "at": 7.999000000001006,
+     "exp": 2.001999999997988,
+     "got": 2.00200000000065,
+     "maxRel": 7.759409437932182e-10,
+     "fails": 0
+    },
+    "dist": {
+     "maxAbs": 5.542233338928781e-13,
+     "at": 8.500000000000728,
+     "exp": 16.000000000001457,
+     "got": 16.00000000000201,
+     "maxRel": 3.731177684186412e-14,
+     "fails": 0
+    },
+    "v": {
+     "maxAbs": 6.501466032204917e-13,
+     "at": 4.4999999999998375,
+     "exp": 6.501466032204917e-13,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "a": {
+     "maxAbs": 4,
+     "at": 3.9999999999996705,
+     "exp": 0,
+     "got": -4,
+     "maxRel": 0,
+     "fails": 1
+    },
+    "speed": {
+     "maxAbs": 6.501466032204917e-13,
+     "at": 4.4999999999998375,
+     "exp": 6.501466032204917e-13,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "area": {
+     "maxAbs": 2.6618707238412753e-12,
+     "at": 7.999000000001006,
+     "exp": 2.001999999997988,
+     "got": 2.00200000000065,
+     "maxRel": 7.759409437932182e-10,
+     "fails": 0
+    },
+    "avgSpeed": {
+     "maxAbs": 6.727951529228449e-14,
+     "at": 4.999000000000004,
+     "exp": 1.799960392078416,
+     "got": 1.7999603920783487,
+     "maxRel": 3.7378330983492794e-14,
+     "fails": 0
+    },
+    "avgVel": {
+     "maxAbs": 3.3278935163139067e-13,
+     "at": 7.999000000001006,
+     "exp": 0.2502812851603621,
+     "got": 0.25028128516069487,
+     "maxRel": 7.759409668325535e-10,
+     "fails": 0
+    }
+   },
+   "uniform": {
+    "maxAbs": 0,
+    "at": 0,
+    "fails": 0
+   },
+   "trap": {
+    "maxAbs": 2.667199794359476e-12,
+    "at": 7.999000000001006,
+    "final": -2.0000000000000053,
+    "sFinal": -1.9999999999995581
+   },
+   "reverse": {
+    "firstReverse": -1,
+    "framesBefore_distEqAbsS": 4501,
+    "framesBefore_distNeAbsS": 5500,
+    "framesAfter_distEqAbsS": 0,
+    "minGapAfter": "n/a"
+   },
+   "atT": {
+    "t": 10,
+    "exp": {
+     "s": -2,
+     "v": -2,
+     "a": 0,
+     "dist": 19,
+     "speed": 2,
+     "area": -2,
+     "avgSpeed": 1.9,
+     "avgVel": -0.2
+    },
+    "got": {
+     "s": -1.9999999999995581,
+     "dist": 19.000000000000554,
+     "v": -2,
+     "a": 0,
+     "speed": 2,
+     "area": -1.9999999999995581,
+     "avgSpeed": 1.9000000000000554,
+     "avgVel": -0.19999999999995582
+    }
+   },
+   "arrow": {
+    "vecEqV": 60001,
+    "vecNeV": 0,
+    "vecEqA": 60001,
+    "vecNeA": 0,
+    "originEqS": 120002,
+    "originNeS": 0,
+    "yz": [
+     "velocity:0.45,0",
+     "acceleration:0.75,0"
+    ],
+    "labelEqS": 60001,
+    "labelNeS": 0,
+    "scaleSets": {
+     "velocity": [
+      0.25
+     ],
+     "acceleration": [
+      0.25
+     ]
+    },
+    "count": {
+     "velocity": 60001,
+     "acceleration": 60001
+    },
+    "extraKinds": 0,
+    "notTwoArrows": 0,
+    "aLenMin": 0,
+    "aLenMax": 4
+   },
+   "meta": {
+    "metaConst": {
+     "smax": [
+      50
+     ],
+     "vmax": [
+      2
+     ],
+     "amax": [
+      4
+     ],
+     "T": [
+      10
+     ]
+    },
+    "sAbsMax": 8.499999999999831,
+    "vAbsMax": 2,
+    "aAbsMax": 4,
+    "smax": 50,
+    "vmax": 2,
+    "amax": 4,
+    "sInRange": true,
+    "vInRange": true,
+    "aInRange": true,
+    "doneBeforeT": 0,
+    "doneAfterT": 0,
+    "metaMismatch": 0,
+    "predVmax_live": null,
+    "predSmax_live": null
+   }
+  },
+  {
+   "name": "random-0",
+   "params": {
+    "mode": "live",
+    "u": 3.339946273872604,
+    "a": 8.954049953703791,
+    "T": 4.0809585089240965,
+    "vt": [
+     0,
+     1,
+     2,
+     3,
+     3,
+     3,
+     2,
+     1,
+     0,
+     0,
+     0
+    ]
+   },
+   "frames": 60001,
+   "mode": "live",
+   "time": {
+    "iT": 4081,
+    "tAtT": 4.0809585089240965,
+    "tEqualsT": true,
+    "expectedIT": 4081,
+    "tDriftMax": 3.2951419370874646e-13,
+    "tDriftAt": 3998,
+    "frozenOK": 55919,
+    "frozenBad": 0,
+    "nanFrames": 0,
+    "monotoneBad": 0,
+    "lastT": 4.0809585089240965
+   },
+   "err": {
+    "s": {
+     "maxAbs": 1.510613856225973e-11,
+     "at": 3.9989999999996706,
+     "exp": 84.95303305604413,
+     "got": 84.95303305605924,
+     "maxRel": 1.7873403112042374e-13,
+     "fails": 0
+    },
+    "dist": {
+     "maxAbs": 1.510613856225973e-11,
+     "at": 3.9989999999996706,
+     "exp": 84.95303305604413,
+     "got": 84.95303305605924,
+     "maxRel": 1.7873403112042374e-13,
+     "fails": 0
+    },
+    "v": {
+     "maxAbs": 3.7196912217041245e-12,
+     "at": 3.1989999999997587,
+     "exp": 31.98395207576887,
+     "got": 31.98395207577259,
+     "maxRel": 1.1629867418798981e-13,
+     "fails": 0
+    },
+    "a": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "speed": {
+     "maxAbs": 3.7196912217041245e-12,
+     "at": 3.1989999999997587,
+     "exp": 31.98395207576887,
+     "got": 31.98395207577259,
+     "maxRel": 1.1629867418798981e-13,
+     "fails": 0
+    },
+    "area": {
+     "maxAbs": 1.510613856225973e-11,
+     "at": 3.9989999999996706,
+     "exp": 84.95303305604413,
+     "got": 84.95303305605924,
+     "maxRel": 1.7873403112042374e-13,
+     "fails": 0
+    },
+    "avgSpeed": {
+     "maxAbs": 3.7765346405649325e-12,
+     "at": 3.994999999999671,
+     "exp": 21.22566105639445,
+     "got": 21.225661056398227,
+     "maxRel": 1.787284271239307e-13,
+     "fails": 0
+    },
+    "avgVel": {
+     "maxAbs": 3.7765346405649325e-12,
+     "at": 3.994999999999671,
+     "exp": 21.22566105639445,
+     "got": 21.225661056398227,
+     "maxRel": 1.787284271239307e-13,
+     "fails": 0
+    }
+   },
+   "uniform": {
+    "maxAbs": 1.198259269585833e-10,
+    "at": 4.079999999999697,
+    "fails": 0
+   },
+   "trap": {
+    "maxAbs": 8.483880264975596e-12,
+    "at": 3.9999999999996705,
+    "final": 88.19155160369567,
+    "sFinal": 88.19155160370312
+   },
+   "reverse": {
+    "firstReverse": -1,
+    "framesBefore_distEqAbsS": 4082,
+    "framesBefore_distNeAbsS": 0,
+    "framesAfter_distEqAbsS": 0,
+    "minGapAfter": "n/a"
+   },
+   "atT": {
+    "t": 4.0809585089240965,
+    "exp": {
+     "s": 88.19155160368888,
+     "v": 39.8810526217715,
+     "a": 8.954049953703791,
+     "dist": 88.19155160368888,
+     "speed": 39.8810526217715,
+     "area": 88.19155160368888,
+     "avgSpeed": 21.61049944782205,
+     "avgVel": 21.61049944782205
+    },
+    "got": {
+     "s": 88.19155160370312,
+     "dist": 88.19155160370312,
+     "v": 39.88105262177319,
+     "a": 8.954049953703791,
+     "speed": 39.88105262177319,
+     "area": 88.19155160370312,
+     "avgSpeed": 21.61049944782554,
+     "avgVel": 21.61049944782554
+    }
+   },
+   "arrow": {
+    "vecEqV": 60001,
+    "vecNeV": 0,
+    "vecEqA": 60001,
+    "vecNeA": 0,
+    "originEqS": 120002,
+    "originNeS": 0,
+    "yz": [
+     "velocity:0.45,0",
+     "acceleration:0.75,0"
+    ],
+    "labelEqS": 60001,
+    "labelNeS": 0,
+    "scaleSets": {
+     "velocity": [
+      0.25
+     ],
+     "acceleration": [
+      0.25
+     ]
+    },
+    "count": {
+     "velocity": 60001,
+     "acceleration": 60001
+    },
+    "extraKinds": 0,
+    "notTwoArrows": 0,
+    "aLenMin": 8.954049953703791,
+    "aLenMax": 8.954049953703791
+   },
+   "meta": {
+    "metaConst": {
+     "smax": [
+      100
+     ],
+     "vmax": [
+      39.8810526217715
+     ],
+     "amax": [
+      8.954049953703791
+     ],
+     "T": [
+      4.0809585089240965
+     ]
+    },
+    "sAbsMax": 88.19155160370312,
+    "vAbsMax": 39.88105262177319,
+    "aAbsMax": 8.954049953703791,
+    "smax": 100,
+    "vmax": 39.8810526217715,
+    "amax": 8.954049953703791,
+    "sInRange": true,
+    "vInRange": false,
+    "aInRange": true,
+    "doneBeforeT": 0,
+    "doneAfterT": 0,
+    "metaMismatch": 0,
+    "predVmax_live": 39.8810526217715,
+    "predSmax_live": 88.19155160368888
+   }
+  },
+  {
+   "name": "random-1",
+   "params": {
+    "mode": "live",
+    "u": -4.488447797246486,
+    "a": 5.315743356624498,
+    "T": 35.92592488505222,
+    "vt": [
+     0,
+     1,
+     2,
+     3,
+     3,
+     3,
+     2,
+     1,
+     0,
+     0,
+     0
+    ]
+   },
+   "frames": 60001,
+   "mode": "live",
+   "time": {
+    "iT": 35926,
+    "tAtT": 35.92592488505222,
+    "tEqualsT": true,
+    "expectedIT": 35926,
+    "tDriftMax": 1.6122214674396673e-11,
+    "tDriftAt": 31997,
+    "frozenOK": 24074,
+    "frozenBad": 0,
+    "nanFrames": 0,
+    "monotoneBad": 0,
+    "lastT": 35.92592488505222
+   },
+   "err": {
+    "s": {
+     "maxAbs": 3.5770426620729268e-9,
+     "at": 31.999000000016125,
+     "exp": 2577.864656400783,
+     "got": 2577.864656397206,
+     "maxRel": 3.8239025777513477e-10,
+     "fails": 0
+    },
+    "dist": {
+     "maxAbs": 3.5774974094238132e-9,
+     "at": 31.999000000016125,
+     "exp": 2581.6545616458325,
+     "got": 2581.654561642255,
+     "maxRel": 1.3857398605189523e-12,
+     "fails": 0
+    },
+    "v": {
+     "maxAbs": 1.92898141904152e-10,
+     "at": 31.999000000016125,
+     "exp": 165.61002387146655,
+     "got": 165.61002387127365,
+     "maxRel": 3.249281155263085e-11,
+     "fails": 0
+    },
+    "a": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "speed": {
+     "maxAbs": 1.92898141904152e-10,
+     "at": 31.999000000016125,
+     "exp": 165.61002387146655,
+     "got": 165.61002387127365,
+     "maxRel": 3.249281155263085e-11,
+     "fails": 0
+    },
+    "area": {
+     "maxAbs": 3.5770426620729268e-9,
+     "at": 31.999000000016125,
+     "exp": 2577.864656400783,
+     "got": 2577.864656397206,
+     "maxRel": 3.8239025777513477e-10,
+     "fails": 0
+    },
+    "avgSpeed": {
+     "maxAbs": 1.1179679404449416e-10,
+     "at": 31.999000000016125,
+     "exp": 80.67922627721278,
+     "got": 80.67922627710098,
+     "maxRel": 1.3856949205283876e-12,
+     "fails": 0
+    },
+    "avgVel": {
+     "maxAbs": 1.1179679404449416e-10,
+     "at": 31.999000000016125,
+     "exp": 80.56078803711004,
+     "got": 80.56078803699825,
+     "maxRel": 3.8239024056442694e-10,
+     "fails": 0
+    }
+   },
+   "uniform": {
+    "maxAbs": 3.42406565323472e-8,
+    "at": 35.92592488505222,
+    "fails": 0
+   },
+   "trap": {
+    "maxAbs": 2.1764208213426173e-9,
+    "at": 31.997000000016122,
+    "final": 3269.189125937814,
+    "sFinal": 3269.1891259372483
+   },
+   "reverse": {
+    "firstReverse": 0.8450000000000006,
+    "framesBefore_distEqAbsS": 845,
+    "framesBefore_distNeAbsS": 0,
+    "framesAfter_distEqAbsS": 0,
+    "minGapAfter": 0.000014144338043919902
+   },
+   "atT": {
+    "t": 35.92592488505222,
+    "exp": {
+     "s": 3269.1891259399226,
+     "v": 186.48454874106056,
+     "a": 5.315743356624498,
+     "dist": 3272.979031184972,
+     "speed": 186.48454874106056,
+     "area": 3269.1891259399226,
+     "avgSpeed": 91.10354268281533,
+     "avgVel": 90.99805047190704
+    },
+    "got": {
+     "s": 3269.1891259372483,
+     "dist": 3272.9790311822976,
+     "v": 186.48454874089254,
+     "a": 5.315743356624498,
+     "speed": 186.48454874089254,
+     "area": 3269.1891259372483,
+     "avgSpeed": 91.10354268274088,
+     "avgVel": 90.99805047183258
+    }
+   },
+   "arrow": {
+    "vecEqV": 60001,
+    "vecNeV": 0,
+    "vecEqA": 60001,
+    "vecNeA": 0,
+    "originEqS": 120002,
+    "originNeS": 0,
+    "yz": [
+     "velocity:0.45,0",
+     "acceleration:0.75,0"
+    ],
+    "labelEqS": 60001,
+    "labelNeS": 0,
+    "scaleSets": {
+     "velocity": [
+      0.25
+     ],
+     "acceleration": [
+      0.25
+     ]
+    },
+    "count": {
+     "velocity": 60001,
+     "acceleration": 60001
+    },
+    "extraKinds": 0,
+    "notTwoArrows": 0,
+    "aLenMin": 5.315743356624498,
+    "aLenMax": 5.315743356624498
+   },
+   "meta": {
+    "metaConst": {
+     "smax": [
+      4000
+     ],
+     "vmax": [
+      186.48454874106056
+     ],
+     "amax": [
+      5.315743356624498
+     ],
+     "T": [
+      35.92592488505222
+     ]
+    },
+    "sAbsMax": 3269.1891259372483,
+    "vAbsMax": 186.48454874089254,
+    "aAbsMax": 5.315743356624498,
+    "smax": 4000,
+    "vmax": 186.48454874106056,
+    "amax": 5.315743356624498,
+    "sInRange": true,
+    "vInRange": true,
+    "aInRange": true,
+    "doneBeforeT": 0,
+    "doneAfterT": 0,
+    "metaMismatch": 0,
+    "predVmax_live": 186.48454874106056,
+    "predSmax_live": 3269.1891259399226
+   }
+  },
+  {
+   "name": "random-2",
+   "params": {
+    "mode": "draw",
+    "u": 2.838003895170057,
+    "a": -3.3370677536991744,
+    "T": 13.316564376147728,
+    "vt": [
+     0,
+     1,
+     2,
+     3,
+     3,
+     3,
+     2,
+     1,
+     0,
+     0,
+     0
+    ]
+   },
+   "frames": 60001,
+   "mode": "draw",
+   "time": {
+    "iT": 13317,
+    "tAtT": 13.316564376147728,
+    "tEqualsT": true,
+    "expectedIT": 13317,
+    "tDriftMax": 1.9415580254644738e-12,
+    "tDriftAt": 13316,
+    "frozenOK": 46683,
+    "frozenBad": 0,
+    "nanFrames": 0,
+    "monotoneBad": 0,
+    "lastT": 13.316564376147728
+   },
+   "err": {
+    "s": {
+     "maxAbs": 1.5063505998114124e-12,
+     "at": 7.966000000000995,
+     "exp": 14.999422000000035,
+     "got": 14.999421999998528,
+     "maxRel": 1.180918043013538e-13,
+     "fails": 0
+    },
+    "dist": {
+     "maxAbs": 1.5063505998114124e-12,
+     "at": 7.966000000000995,
+     "exp": 14.999422000000035,
+     "got": 14.999421999998528,
+     "maxRel": 1.180918043013538e-13,
+     "fails": 0
+    },
+    "v": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "a": {
+     "maxAbs": 1,
+     "at": 2.9999999999997806,
+     "exp": 1,
+     "got": 0,
+     "maxRel": 1,
+     "fails": 1
+    },
+    "speed": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "area": {
+     "maxAbs": 1.5063505998114124e-12,
+     "at": 7.966000000000995,
+     "exp": 14.999422000000035,
+     "got": 14.999421999998528,
+     "maxRel": 1.180918043013538e-13,
+     "fails": 0
+    },
+    "avgSpeed": {
+     "maxAbs": 2.2137847111025621e-13,
+     "at": 3.996999999999671,
+     "exp": 1.8741556167124416,
+     "got": 1.874155616712663,
+     "maxRel": 1.181217125921423e-13,
+     "fails": 0
+    },
+    "avgVel": {
+     "maxAbs": 2.2137847111025621e-13,
+     "at": 3.996999999999671,
+     "exp": 1.8741556167124416,
+     "got": 1.874155616712663,
+     "maxRel": 1.181217125921423e-13,
+     "fails": 0
+    }
+   },
+   "uniform": {
+    "maxAbs": 0,
+    "at": 0,
+    "fails": 0
+   },
+   "trap": {
+    "maxAbs": 1.199040866595169e-12,
+    "at": 7.928000000000982,
+    "final": 14.999999999999694,
+    "sFinal": 14.999999999998495
+   },
+   "reverse": {
+    "firstReverse": -1,
+    "framesBefore_distEqAbsS": 13318,
+    "framesBefore_distNeAbsS": 0,
+    "framesAfter_distEqAbsS": 0,
+    "minGapAfter": "n/a"
+   },
+   "atT": {
+    "t": 13.316564376147728,
+    "exp": {
+     "s": 15,
+     "v": 0,
+     "a": 0,
+     "dist": 15,
+     "speed": 0,
+     "area": 15,
+     "avgSpeed": 1.1264166624589445,
+     "avgVel": 1.1264166624589445
+    },
+    "got": {
+     "s": 14.999999999998495,
+     "dist": 14.999999999998495,
+     "v": 0,
+     "a": 0,
+     "speed": 0,
+     "area": 14.999999999998495,
+     "avgSpeed": 1.1264166624588314,
+     "avgVel": 1.1264166624588314
+    }
+   },
+   "arrow": {
+    "vecEqV": 60001,
+    "vecNeV": 0,
+    "vecEqA": 60001,
+    "vecNeA": 0,
+    "originEqS": 120002,
+    "originNeS": 0,
+    "yz": [
+     "velocity:0.45,0",
+     "acceleration:0.75,0"
+    ],
+    "labelEqS": 60001,
+    "labelNeS": 0,
+    "scaleSets": {
+     "velocity": [
+      0.25
+     ],
+     "acceleration": [
+      0.25
+     ]
+    },
+    "count": {
+     "velocity": 60001,
+     "acceleration": 60001
+    },
+    "extraKinds": 0,
+    "notTwoArrows": 0,
+    "aLenMin": 0,
+    "aLenMax": 1
+   },
+   "meta": {
+    "metaConst": {
+     "smax": [
+      20
+     ],
+     "vmax": [
+      3
+     ],
+     "amax": [
+      1
+     ],
+     "T": [
+      13.316564376147728
+     ]
+    },
+    "sAbsMax": 14.999999999998495,
+    "vAbsMax": 3,
+    "aAbsMax": 1,
+    "smax": 20,
+    "vmax": 3,
+    "amax": 1,
+    "sInRange": true,
+    "vInRange": true,
+    "aInRange": true,
+    "doneBeforeT": 0,
+    "doneAfterT": 0,
+    "metaMismatch": 0,
+    "predVmax_live": null,
+    "predSmax_live": null
+   }
+  },
+  {
+   "name": "random-3",
+   "params": {
+    "mode": "live",
+    "u": 2.927044615115525,
+    "a": 9.677692493273732,
+    "T": 10.63542990974869,
+    "vt": [
+     0,
+     1,
+     2,
+     3,
+     3,
+     3,
+     2,
+     1,
+     0,
+     0,
+     0
+    ]
+   },
+   "frames": 60001,
+   "mode": "live",
+   "time": {
+    "iT": 10636,
+    "tAtT": 10.63542990974869,
+    "tEqualsT": true,
+    "expectedIT": 10636,
+    "tDriftMax": 1.0054179711005418e-12,
+    "tDriftAt": 7997,
+    "frozenOK": 49364,
+    "frozenBad": 0,
+    "nanFrames": 0,
+    "monotoneBad": 0,
+    "lastT": 10.63542990974869
+   },
+   "err": {
+    "s": {
+     "maxAbs": 6.298250809777528e-11,
+     "at": 10.634999999999545,
+     "exp": 578.4182352554803,
+     "got": 578.4182352555433,
+     "maxRel": 1.779014696683121e-13,
+     "fails": 0
+    },
+    "dist": {
+     "maxAbs": 6.298250809777528e-11,
+     "at": 10.634999999999545,
+     "exp": 578.4182352554803,
+     "got": 578.4182352555433,
+     "maxRel": 1.779014696683121e-13,
+     "fails": 0
+    },
+    "v": {
+     "maxAbs": 7.176481631177012e-12,
+     "at": 7.999000000001006,
+     "exp": 80.33890686882184,
+     "got": 80.33890686881466,
+     "maxRel": 1.2389075441724405e-13,
+     "fails": 0
+    },
+    "a": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "speed": {
+     "maxAbs": 7.176481631177012e-12,
+     "at": 7.999000000001006,
+     "exp": 80.33890686882184,
+     "got": 80.33890686881466,
+     "maxRel": 1.2389075441724405e-13,
+     "fails": 0
+    },
+    "area": {
+     "maxAbs": 6.298250809777528e-11,
+     "at": 10.634999999999545,
+     "exp": 578.4182352554803,
+     "got": 578.4182352555433,
+     "maxRel": 1.779014696683121e-13,
+     "fails": 0
+    },
+    "avgSpeed": {
+     "maxAbs": 7.410960733977845e-12,
+     "at": 7.999000000001006,
+     "exp": 41.632975741968686,
+     "got": 41.632975741961275,
+     "maxRel": 1.7800699089849408e-13,
+     "fails": 0
+    },
+    "avgVel": {
+     "maxAbs": 7.410960733977845e-12,
+     "at": 7.999000000001006,
+     "exp": 41.632975741968686,
+     "got": 41.632975741961275,
+     "maxRel": 1.7800699089849408e-13,
+     "fails": 0
+    }
+   },
+   "uniform": {
+    "maxAbs": 1.95359461940825e-9,
+    "at": 10.634999999999545,
+    "fails": 0
+   },
+   "trap": {
+    "maxAbs": 7.253220246639103e-11,
+    "at": 7.997000000001005,
+    "final": 578.4637417976575,
+    "sFinal": 578.4637417977212
+   },
+   "reverse": {
+    "firstReverse": -1,
+    "framesBefore_distEqAbsS": 10637,
+    "framesBefore_distNeAbsS": 0,
+    "framesAfter_distEqAbsS": 0,
+    "minGapAfter": "n/a"
+   },
+   "atT": {
+    "t": 10.63542990974869,
+    "exp": {
+     "s": 578.4637417976583,
+     "v": 105.85346481542935,
+     "a": 9.677692493273732,
+     "dist": 578.4637417976583,
+     "speed": 105.85346481542935,
+     "area": 578.4637417976583,
+     "avgSpeed": 54.39025471527244,
+     "avgVel": 54.39025471527244
+    },
+    "got": {
+     "s": 578.4637417977212,
+     "dist": 578.4637417977212,
+     "v": 105.85346481542588,
+     "a": 9.677692493273732,
+     "speed": 105.85346481542588,
+     "area": 578.4637417977212,
+     "avgSpeed": 54.39025471527836,
+     "avgVel": 54.39025471527836
+    }
+   },
+   "arrow": {
+    "vecEqV": 60001,
+    "vecNeV": 0,
+    "vecEqA": 60001,
+    "vecNeA": 0,
+    "originEqS": 120002,
+    "originNeS": 0,
+    "yz": [
+     "velocity:0.45,0",
+     "acceleration:0.75,0"
+    ],
+    "labelEqS": 60001,
+    "labelNeS": 0,
+    "scaleSets": {
+     "velocity": [
+      0.25
+     ],
+     "acceleration": [
+      0.25
+     ]
+    },
+    "count": {
+     "velocity": 60001,
+     "acceleration": 60001
+    },
+    "extraKinds": 0,
+    "notTwoArrows": 0,
+    "aLenMin": 9.677692493273732,
+    "aLenMax": 9.677692493273732
+   },
+   "meta": {
+    "metaConst": {
+     "smax": [
+      1000
+     ],
+     "vmax": [
+      105.85346481542935
+     ],
+     "amax": [
+      9.677692493273732
+     ],
+     "T": [
+      10.63542990974869
+     ]
+    },
+    "sAbsMax": 578.4637417977212,
+    "vAbsMax": 105.85346481542588,
+    "aAbsMax": 9.677692493273732,
+    "smax": 1000,
+    "vmax": 105.85346481542935,
+    "amax": 9.677692493273732,
+    "sInRange": true,
+    "vInRange": true,
+    "aInRange": true,
+    "doneBeforeT": 0,
+    "doneAfterT": 0,
+    "metaMismatch": 0,
+    "predVmax_live": 105.85346481542935,
+    "predSmax_live": 578.4637417976583
+   }
+  },
+  {
+   "name": "random-4",
+   "params": {
+    "mode": "live",
+    "u": -4.658912233849481,
+    "a": -4.67582861644953,
+    "T": 11.71048566499282,
+    "vt": [
+     0,
+     1,
+     2,
+     3,
+     3,
+     3,
+     2,
+     1,
+     0,
+     0,
+     0
+    ]
+   },
+   "frames": 60001,
+   "mode": "live",
+   "time": {
+    "iT": 11711,
+    "tAtT": 11.71048566499282,
+    "tEqualsT": true,
+    "expectedIT": 11711,
+    "tDriftMax": 1.0516032489249483e-12,
+    "tDriftAt": 11710,
+    "frozenOK": 48289,
+    "frozenBad": 0,
+    "nanFrames": 0,
+    "monotoneBad": 0,
+    "lastT": 11.71048566499282
+   },
+   "err": {
+    "s": {
+     "maxAbs": 5.4569682106375694e-11,
+     "at": 7.999000000001006,
+     "exp": -186.855750393972,
+     "got": -186.85575039391742,
+     "maxRel": 2.920417594391365e-13,
+     "fails": 0
+    },
+    "dist": {
+     "maxAbs": 5.4569682106375694e-11,
+     "at": 7.999000000001006,
+     "exp": 186.855750393972,
+     "got": 186.85575039391742,
+     "maxRel": 2.920417594391365e-13,
+     "fails": 0
+    },
+    "v": {
+     "maxAbs": 8.341771717823576e-12,
+     "at": 7.998000000001006,
+     "exp": -42.05618950821753,
+     "got": -42.05618950820919,
+     "maxRel": 1.9834825302453147e-13,
+     "fails": 0
+    },
+    "a": {
+     "maxAbs": 0,
+     "at": 0,
+     "exp": 0,
+     "got": 0,
+     "maxRel": 0,
+     "fails": 0
+    },
+    "speed": {
+     "maxAbs": 8.341771717823576e-12,
+     "at": 7.998000000001006,
+     "exp": 42.05618950821753,
+     "got": 42.05618950820919,
+     "maxRel": 1.9834825302453147e-13,
+     "fails": 0
+    },
+    "area": {
+     "maxAbs": 5.4569682106375694e-11,
+     "at": 7.999000000001006,
+     "exp": -186.855750393972,
+     "got": -186.85575039391742,
+     "maxRel": 2.920417594391365e-13,
+     "fails": 0
+    },
+    "avgSpeed": {
+     "maxAbs": 6.821210263296962e-12,
+     "at": 7.999000000001006,
+     "exp": 23.359888785341727,
+     "got": 23.359888785334906,
+     "maxRel": 2.920052542192433e-13,
+     "fails": 0
+    },
+    "avgVel": {
+     "maxAbs": 6.821210263296962e-12,
+     "at": 7.999000000001006,
+     "exp": -23.359888785341727,
+     "got": -23.359888785334906,
+     "maxRel": 2.920052542192433e-13,
+     "fails": 0
+    }
+   },
+   "uniform": {
+    "maxAbs": 3.915374691132456e-10,
+    "at": 11.704999999998952,
+    "fails": 0
+   },
+   "trap": {
+    "maxAbs": 6.571099220309407e-11,
+    "at": 11.703999999998953,
+    "final": -375.16911295104813,
+    "sFinal": -375.16911295111385
+   },
+   "reverse": {
+    "firstReverse": -1,
+    "framesBefore_distEqAbsS": 11712,
+    "framesBefore_distNeAbsS": 0,
+    "framesAfter_distEqAbsS": 0,
+    "minGapAfter": "n/a"
+   },
+   "atT": {
+    "t": 11.71048566499282,
+    "exp": {
+     "s": -375.169112951081,
+     "v": -59.415136218744905,
+     "a": -4.67582861644953,
+     "dist": 375.169112951081,
+     "speed": 59.415136218744905,
+     "area": -375.169112951081,
+     "avgSpeed": 32.03702422629719,
+     "avgVel": -32.03702422629719
+    },
+    "got": {
+     "s": -375.16911295111385,
+     "dist": 375.16911295111385,
+     "v": -59.41513621874421,
+     "a": -4.67582861644953,
+     "speed": 59.41513621874421,
+     "area": -375.16911295111385,
+     "avgSpeed": 32.0370242263,
+     "avgVel": -32.0370242263
+    }
+   },
+   "arrow": {
+    "vecEqV": 60001,
+    "vecNeV": 0,
+    "vecEqA": 60001,
+    "vecNeA": 0,
+    "originEqS": 120002,
+    "originNeS": 0,
+    "yz": [
+     "velocity:0.45,0",
+     "acceleration:0.75,0"
+    ],
+    "labelEqS": 60001,
+    "labelNeS": 0,
+    "scaleSets": {
+     "velocity": [
+      0.25
+     ],
+     "acceleration": [
+      0.25
+     ]
+    },
+    "count": {
+     "velocity": 60001,
+     "acceleration": 60001
+    },
+    "extraKinds": 0,
+    "notTwoArrows": 0,
+    "aLenMin": 4.67582861644953,
+    "aLenMax": 4.67582861644953
+   },
+   "meta": {
+    "metaConst": {
+     "smax": [
+      500
+     ],
+     "vmax": [
+      59.415136218744905
+     ],
+     "amax": [
+      4.67582861644953
+     ],
+     "T": [
+      11.71048566499282
+     ]
+    },
+    "sAbsMax": 375.16911295111385,
+    "vAbsMax": 59.41513621874421,
+    "aAbsMax": 4.67582861644953,
+    "smax": 500,
+    "vmax": 59.415136218744905,
+    "amax": 4.67582861644953,
+    "sInRange": true,
+    "vInRange": true,
+    "aInRange": true,
+    "doneBeforeT": 0,
+    "doneAfterT": 0,
+    "metaMismatch": 0,
+    "predVmax_live": 59.415136218744905,
+    "predSmax_live": 375.169112951081
+   }
+  }
+ ]
+}

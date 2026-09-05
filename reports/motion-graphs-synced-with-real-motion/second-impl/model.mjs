@@ -1,110 +1,83 @@
-// 第二實作（獨立，純 JavaScript）：模擬器 7 運動線圖與真實運動同步
-// 規格方程：v = u + a t, s = u t + ½ a t², s = ∫ v dt（線下面積），a = Δv/Δt（斜率）
+// 第二實作（第 7 輪，獨立、純 JavaScript）：模擬器 7 運動線圖與真實運動同步
 //
-// 積分方法：解析逐段積分。兩種模式下 v(t) 都是分段線性，故每段 s 為精確二次式，
-// 不需數值積分；路程 dist 在段內找 v = 0 的交叉點（最多一個）分割後取絕對值相加。
-// 步長 dt 只用來決定輸出幀的時刻 t_k = k / (1/dt)（用整數除法避免累加誤差）。
+// 規格方程：v = u + a t，s = u t + ½ a t²，v² = u² + 2 a s；s = ∫ v dt（v–t 線下面積），a = Δv/Δt（斜率）。
 //
-// 慣例（規格未寫明，見報告「規格待釐清」）：
-//  - t ≥ T 後運動停止，狀態凍結於 t = T；a 讀數保持 T⁻（時間窗結束前最後一段）的值，
-//    不歸零（第 2 輪依核數員 F1 修訂；第 1 輪為歸零）。
-//  - draw 模式 vt[i] 為 t = i 秒的節點值，段內線性插值，超出末節點後 v 保持最後值、a = 0。
-//  - avgSpeed = dist / t，avgVel = s / t；t = 0 時兩者為 0。
-//  - 第 5 輪：主實作 0.4.0 凍結時把 t 截斷為恰等於 T（最後一步 h = T − t），與本實作 observe 的 t = min(tRaw, T) 相同；
-//    另提供 simulateMainRule() 以主實作的累加步進規則產生幀時刻（t_{k+1} = t_k + min(dt, T − t_k)），供 dt 不整除 T 的測試。
-//  - 第 4 輪：主實作 0.3.0 在 observe 把 |x| < 1e-9 的 s、dist、v、area、avgSpeed、avgVel 歸零（顯示層）。
-//    本實作的 observe 仍輸出純解析值；另提供 snapZero(obs) 供比對時套用同一顯示規則，
-//    以便檢查主實作的歸零是否只影響 |x| < 1e-9 的值。speed 不在規則內，但取 |v_snapped| 才與 speed = |v| 自洽。
-//  - area（v–t 線下面積）= s（含號）。speed = |v|。
+// 積分方法：閉式逐段積分（非數值步進）。兩種模式的 v(t) 都是分段線性折線：
+//   live：單一段，v(t) = u + a t，t ∈ [0, ∞)
+//   draw：節點 vt[i] 位於 t = i 秒，段內線性；t ≥ 最後節點後 v 保持末節點值（斜率 0）
+// 把兩種模式統一成「折線段列表」後，每段的位移為精確二次式 v0 τ + ½ m τ²；
+// 路程在段內 v 變號處（最多一處）分割，取兩半絕對值之和。
+// 步長 dt 只決定輸出幀時刻：t_k = min(k·dt, T)，k 用整數除法（k / (1/dt)）避免累加漂移。
+//
+// 規格未寫明、本實作採用的慣例（列入報告「規格待釐清」）：
+//   C1 時間窗：t ≥ T 後模型凍結於 t = T，各讀數不再變化；a 讀數保持 T⁻（凍結前最後一段）的斜率。
+//   C2 draw 模式節點處 a 取右段斜率（右連續）；T 落在節點上時凍結 a 取左段斜率。
+//   C3 avgSpeed = dist / t，avgVel = s / t；t = 0 時定義為 0。
+//   C4 area（線下面積）= s（含號）；speed = |v|。
+//   C5 顯示層歸零：主實作把 |x| < 1e-9 的 s、dist、v、area、avgSpeed、avgVel 歸零；本實作 observe 輸出純解析值，
+//      另提供 snapZero() 供比對時套用同一規則（speed 取 |v_snapped| 以維持 speed = |v|）。
 
-// 在一段上：v(τ) = v0 + m τ，回傳 τ 內的位移增量與路程增量
-function segmentIntegrals(v0, m, tau) {
-  const s = v0 * tau + 0.5 * m * tau * tau;
-  let dist;
+// 把參數轉成折線段列表：每段 { t0, v0, m, len }（len 可為 Infinity）
+function segmentsOf(p) {
+  if (p.mode === "draw") {
+    const vt = p.vt;
+    const segs = [];
+    for (let i = 0; i + 1 < vt.length; i++) segs.push({ t0: i, v0: vt[i], m: vt[i + 1] - vt[i], len: 1 });
+    const last = vt.length - 1;
+    segs.push({ t0: last, v0: vt[last], m: 0, len: Infinity });
+    return segs;
+  }
+  return [{ t0: 0, v0: p.u, m: p.a, len: Infinity }];
+}
+
+// 一段內走 τ 的位移與路程
+function walk(v0, m, tau) {
+  const ds = v0 * tau + 0.5 * m * tau * tau;
+  let dd = Math.abs(ds);
   if (m !== 0) {
-    const tStar = -v0 / m; // v = 0 的時刻
-    if (tStar > 0 && tStar < tau) {
-      const sStar = v0 * tStar + 0.5 * m * tStar * tStar;
-      dist = Math.abs(sStar) + Math.abs(s - sStar);
-    } else {
-      dist = Math.abs(s);
+    const tz = -v0 / m;                       // v = 0 的時刻（相對段起點）
+    if (tz > 0 && tz < tau) {
+      const sz = v0 * tz + 0.5 * m * tz * tz; // 到變號點的位移
+      dd = Math.abs(sz) + Math.abs(ds - sz);
     }
-  } else {
-    dist = Math.abs(s);
   }
-  return { s, dist };
+  return { ds, dd };
 }
 
-// live 模式：恆定加速度
-function liveState(p, t) {
-  const { u, a } = p;
-  const v = u + a * t;
-  const { s, dist } = segmentIntegrals(u, a, t);
-  return { s, dist, v, a };
-}
-
-// draw 模式：vt 折線
-function drawState(p, t) {
-  const vt = p.vt;
-  const n = vt.length;
-  let s = 0, dist = 0;
-  let v = vt[0], a = 0;
-  if (n === 1) {
-    // 單一節點：v 恆定
-    const r = segmentIntegrals(vt[0], 0, t);
-    return { s: r.s, dist: r.dist, v: vt[0], a: 0 };
-  }
-  // 完整走過的段
-  const iFull = Math.min(Math.floor(t), n - 1);
-  for (let i = 0; i < iFull; i++) {
-    const m = vt[i + 1] - vt[i];
-    const r = segmentIntegrals(vt[i], m, 1);
-    s += r.s; dist += r.dist;
-  }
-  if (iFull < n - 1) {
-    // 位於段 iFull 內
-    const m = vt[iFull + 1] - vt[iFull];
-    const tau = t - iFull;
-    const r = segmentIntegrals(vt[iFull], m, tau);
-    s += r.s; dist += r.dist;
-    v = vt[iFull] + m * tau;
-    a = m;
-  } else {
-    // 超出末節點：v 保持最後值
-    const tau = t - (n - 1);
-    const r = segmentIntegrals(vt[n - 1], 0, tau);
-    s += r.s; dist += r.dist;
-    v = vt[n - 1];
-    a = 0;
+// 在 t 時刻的解析狀態：s、dist、v、a（a 為右連續斜率）
+function stateAt(p, t) {
+  const segs = segmentsOf(p);
+  let s = 0, dist = 0, v = segs[0].v0, a = segs[0].m;
+  for (const seg of segs) {
+    if (t < seg.t0) break;
+    const tau = Math.min(t - seg.t0, seg.len);
+    const r = walk(seg.v0, seg.m, tau);
+    s += r.ds; dist += r.dd;
+    if (t - seg.t0 < seg.len) {               // t 落在此段內（含起點）
+      v = seg.v0 + seg.m * tau; a = seg.m; break;
+    }
   }
   return { s, dist, v, a };
 }
 
-// a 在 T⁻ 的值：live 為常數 a；draw 為包含 T⁻ 的那一段的斜率
-// （T 為整數節點時取左段，即段 T−1；T 超出末節點則為 0）
-function aLeft(p, T) {
-  if (p.mode !== "draw") return p.a;
-  const vt = p.vt, n = vt.length;
-  if (n < 2 || T <= 0) return 0;
-  const seg = Math.ceil(T) - 1;          // 包含 T⁻ 的段
-  if (seg >= n - 1) return 0;            // 超出末節點：v 恆定
-  return vt[seg + 1] - vt[seg];
+// 凍結時的 a：包含 T⁻ 的段的斜率
+function slopeLeftOf(p, T) {
+  const segs = segmentsOf(p);
+  let a = segs[0].m;
+  for (const seg of segs) { if (seg.t0 < T) a = seg.m; else break; }
+  return a;
 }
 
 export function observe(p, tRaw) {
-  const stopped = tRaw >= p.T;
-  const t = stopped ? p.T : tRaw;
-  const st = p.mode === "draw" ? drawState(p, t) : liveState(p, t);
-  const a = stopped ? aLeft(p, p.T) : st.a;
+  const frozen = tRaw >= p.T;
+  const t = frozen ? p.T : tRaw;
+  const st = stateAt(p, t);
+  const a = frozen ? slopeLeftOf(p, p.T) : st.a;
   return {
     t,
     obs: {
-      s: st.s,
-      dist: st.dist,
-      v: st.v,
-      a,
-      speed: Math.abs(st.v),
-      area: st.s,
+      s: st.s, dist: st.dist, v: st.v, a,
+      speed: Math.abs(st.v), area: st.s,
       avgSpeed: t > 0 ? st.dist / t : 0,
       avgVel: t > 0 ? st.s / t : 0,
     },
@@ -122,24 +95,7 @@ export function snapZero(obs) {
 
 export function simulate(p, dt, frames) {
   const perSec = Math.round(1 / dt);
-  const out = [];
-  for (let k = 0; k < frames; k++) {
-    const t = k / perSec;
-    out.push(observe(p, t));
-  }
-  return out;
-}
-
-// 第 5 輪：以主實作的步進規則產生幀時刻（累加，最後一步 h = T − t，之後 h = 0），再用同一 observe 取值。
-// 用於 dt 不整除 T（例如 dt = 0.0007）時檢查：最後一幀 t 恰等於 T、v/a 一致、無 NaN，且與整數格點版本在共同時刻一致。
-export function simulateMainRule(p, dt, frames) {
-  const out = [];
-  let t = 0;
-  for (let k = 0; k < frames; k++) {
-    out.push(observe(p, t));
-    const h = t >= p.T ? 0 : Math.min(dt, p.T - t);
-    t = t + h;
-    if (t > p.T) t = p.T; // 防止 T − t 的浮點捨入越過 T
-  }
+  const out = new Array(frames);
+  for (let k = 0; k < frames; k++) out[k] = observe(p, k / perSec);
   return out;
 }

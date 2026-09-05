@@ -7,7 +7,17 @@ import type { S, P } from "./model";
 /** s–t 圖軸範圍（正負對稱）：時間窗內 |s| 的最大值取整到好看的刻度；重置時定好，播放期間不變 */
 export function trackExtent(p: P): number {
   let smax: number;
-  if (p.mode === "draw") smax = p.vt.reduce((acc, v) => acc + Math.abs(v), 0);      // 每段 1 s，上界
+  if (p.mode === "draw") {
+    // 折線逐段（每段 1 s）精確積分，段內 v 變號處也取值；控制點以外（t > n）v 保持末值，這段位移必須計入（核數員第 7 輪 F9）
+    const n = p.vt.length - 1; let acc = 0; smax = 0;
+    for (let k = 0; k < n; k++) {
+      const dur = Math.min(1, p.T - k); if (dur <= 0) break;
+      const v0 = p.vt[k], v1 = v0 + (p.vt[k + 1] - v0) * dur;
+      if (v0 * v1 < 0) { const f = v0 / (v0 - v1); smax = Math.max(smax, Math.abs(acc + 0.5 * v0 * f * dur)); }
+      acc += 0.5 * (v0 + v1) * dur; smax = Math.max(smax, Math.abs(acc));
+    }
+    if (p.T > n) smax = Math.max(smax, Math.abs(acc + p.vt[n] * (p.T - n)));
+  }
   else {
     // |s| 在時間窗內的準確最大值：s = ut + ½at² 是二次式，極值只會在端點或頂點 t* = −u/a
     const sAt = (t: number) => Math.abs(p.u * t + 0.5 * p.a * t * t);
