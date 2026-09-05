@@ -126,6 +126,11 @@ ${existsSync(join(dir, "escalation.md")) ? `<section>
 <div class="report">${mdToHtml(readFileSync(join(dir, "escalation.md"), "utf8").replace(/^# .*\n/, ""))}</div>
 </section>` : ""}
 
+${md("escalation.md") ? `<section>
+<h2>驗收歷程與升級報告</h2>
+<div class="report">${mdToHtml(md("escalation.md").replace(/^# [^\n]*\n/, ""))}</div>
+</section>` : ""}
+
 <section>
 <h2>請老師決定</h2>
 <div class="decide">

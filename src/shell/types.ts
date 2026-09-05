@@ -117,4 +117,6 @@ export interface SimModule<S = unknown, P = Record<string, unknown>> {
   duration?: (params: P) => number;
   /** 「逐格」每按一次前進的模擬時間（秒），預設 0.05 */
   stepSize?: number;
+  /** 首次進入的三步提示（不填則用 shell 預設） */
+  hints?: [Text, Text, Text];
 }

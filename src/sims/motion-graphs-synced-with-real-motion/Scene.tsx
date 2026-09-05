@@ -60,21 +60,30 @@ export default function Scene({ plan, onInput }: SceneProps) {
     const mono = (size: number) => `${Math.max(11, size)}px "IBM Plex Mono", monospace`;
     const zh = lang === "zh";
 
-    // ---- 軌道 ----
+    // ---- 軌道：天空漸層 + 路面 + 黃色中線 + 起點旗 ----（配色只影響畫面，向量顏色仍由 ARROW_STYLE 決定）
     const tr = L.track; const ty = tr.y + tr.h * 0.62; const pad = 40;
     const sx = (s: number) => tr.x + pad + ((tr.w - 2 * pad) * (s + tr.smax)) / (2 * tr.smax);
-    ctx.strokeStyle = line; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(tr.x + pad, ty); ctx.lineTo(tr.x + tr.w - pad, ty); ctx.stroke();
+    const sky = ctx.createLinearGradient(0, tr.y, 0, ty); sky.addColorStop(0, "#e8f4ff"); sky.addColorStop(1, "#f7fbff");
+    ctx.fillStyle = sky; ctx.fillRect(tr.x, tr.y, tr.w, ty - tr.y);
+    ctx.fillStyle = "#dfe9d8"; ctx.fillRect(tr.x, ty, tr.w, tr.h - (ty - tr.y));            // 草地
+    ctx.fillStyle = "#4a5568"; ctx.fillRect(tr.x + pad - 6, ty - 7, tr.w - 2 * pad + 12, 14);   // 路面
+    ctx.strokeStyle = "#f2c94c"; ctx.lineWidth = 2; ctx.setLineDash([12, 10]); ctx.beginPath(); ctx.moveTo(tr.x + pad, ty); ctx.lineTo(tr.x + tr.w - pad, ty); ctx.stroke(); ctx.setLineDash([]);
     const step = nice(tr.smax / 5);
-    ctx.font = mono(11); ctx.fillStyle = ink3; ctx.textAlign = "center"; ctx.strokeStyle = line; ctx.lineWidth = 1;
-    for (let s = -tr.smax; s <= tr.smax + 1e-9; s += step) { const x = sx(s); ctx.beginPath(); ctx.moveTo(x, ty - 5); ctx.lineTo(x, ty + 5); ctx.stroke(); ctx.fillText(`${sig(s, 3).replace(/\.00$/, "")}`, x, ty + 20); }
-    ctx.fillText(zh ? "位移 s / m（向右為正）" : "displacement s / m (right = +)", tr.x + tr.w / 2, ty + 36);
-    // 原點
-    ctx.strokeStyle = ink3; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(sx(0), ty - 40); ctx.lineTo(sx(0), ty + 8); ctx.stroke(); ctx.setLineDash([]);
-    // 小車
+    ctx.font = mono(11); ctx.fillStyle = ink; ctx.textAlign = "center"; ctx.strokeStyle = ink3; ctx.lineWidth = 1;
+    for (let s = -tr.smax; s <= tr.smax + 1e-9; s += step) { const x = sx(s); ctx.beginPath(); ctx.moveTo(x, ty + 7); ctx.lineTo(x, ty + 13); ctx.stroke(); ctx.fillText(`${sig(s, 3).replace(/\.00$/, "")}`, x, ty + 26); }
+    ctx.fillStyle = ink3; ctx.fillText(zh ? "位移 s / m（向右為正 →）" : "displacement s / m (right = + →)", tr.x + tr.w / 2, ty + 42);
+    // 起點旗（原點）
+    const x0 = sx(0);
+    ctx.strokeStyle = "#6b7280"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x0, ty - 7); ctx.lineTo(x0, ty - 46); ctx.stroke();
+    ctx.fillStyle = "#e0522d"; ctx.beginPath(); ctx.moveTo(x0, ty - 46); ctx.lineTo(x0 + 16, ty - 40); ctx.lineTo(x0, ty - 34); ctx.closePath(); ctx.fill();
+    // 小車：琥珀色車身、深色車輪（避開向量顏色編碼的紅、藍、橙、紫、綠）
     const body = plan.bodies?.[0]; const cx = sx(body?.position[0] ?? 0);
-    const bw = 44, bh = 22;
-    ctx.fillStyle = ink; ctx.fillRect(cx - bw / 2, ty - bh - 8, bw, bh);
-    ctx.beginPath(); ctx.arc(cx - bw / 3, ty - 6, 5, 0, Math.PI * 2); ctx.arc(cx + bw / 3, ty - 6, 5, 0, Math.PI * 2); ctx.fill();
+    const bw = 48, bh = 22;
+    ctx.fillStyle = "#f5a623"; ctx.strokeStyle = "#8a5a00"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect(cx - bw / 2, ty - bh - 10, bw, bh, 4); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#ffe8b3"; ctx.fillRect(cx - bw / 2 + 6, ty - bh - 6, 14, 9);                 // 車窗
+    ctx.fillStyle = "#2b2f36"; ctx.beginPath(); ctx.arc(cx - bw / 3, ty - 7, 6, 0, Math.PI * 2); ctx.arc(cx + bw / 3, ty - 7, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#c8cdd4"; ctx.beginPath(); ctx.arc(cx - bw / 3, ty - 7, 2, 0, Math.PI * 2); ctx.arc(cx + bw / 3, ty - 7, 2, 0, Math.PI * 2); ctx.fill();
     // 箭嘴（顏色與線型由 ARROW_STYLE 決定）。像素比例由參數預測的最大 |v|、|a| 決定，運行中不變（核數員 F8），
     // 兩支箭嘴共用，最長不超過軌道闊度的 30%；再按小車與邊緣的距離同步縮短，箭頭永遠在畫布內（F3、F5）
     const maxMag = Math.max(1, m.vmax * (plan.scales.velocity ?? 1), m.amax * (plan.scales.acceleration ?? 1));
@@ -90,9 +99,9 @@ export default function Scene({ plan, onInput }: SceneProps) {
       const st = ARROW_STYLE[a.kind]; const len = a.vector[0] * (plan.scales[a.kind] ?? 1) * pxPerUnit;
       if (Math.abs(len) < 1) continue;
       if (pxPerUnit < Math.min(88, (0.3 * (tr.w - 2 * pad)) / maxMag) - 1e-9) shrunk = true;
-      const yA = ty - bh - 8 - (a.kind === "velocity" ? 16 : 40); const x0 = cx, x1 = cx + len;
-      ctx.strokeStyle = st.color; ctx.lineWidth = st.dashed ? 2 : 3; ctx.setLineDash(st.dashed ? [6, 4] : []);
-      ctx.beginPath(); ctx.moveTo(x0, yA); ctx.lineTo(x1, yA); ctx.stroke(); ctx.setLineDash([]);
+      const yA = ty - bh - 12 - (a.kind === "velocity" ? 16 : 40); const xs = cx, x1 = cx + len;
+      ctx.strokeStyle = st.color; ctx.lineWidth = st.dashed ? 2.5 : 3.5; ctx.setLineDash(st.dashed ? [6, 4] : []);
+      ctx.beginPath(); ctx.moveTo(xs, yA); ctx.lineTo(x1, yA); ctx.stroke(); ctx.setLineDash([]);
       const dir = Math.sign(len);
       if (st.head === "open") { ctx.beginPath(); ctx.moveTo(x1 - dir * 9, yA - 6); ctx.lineTo(x1, yA); ctx.lineTo(x1 - dir * 9, yA + 6); ctx.stroke(); }
       else { ctx.fillStyle = st.color; ctx.beginPath(); ctx.moveTo(x1, yA); ctx.lineTo(x1 - dir * 10, yA - 6); ctx.lineTo(x1 - dir * 10, yA + 6); ctx.closePath(); ctx.fill(); }
@@ -100,19 +109,21 @@ export default function Scene({ plan, onInput }: SceneProps) {
     }
     // 位移標籤
     const lab = plan.labels[0];
-    if (lab) { ctx.font = mono(12); ctx.fillStyle = ink; ctx.textAlign = "center"; ctx.fillText(`s = ${sig(lab.value)} ${lab.unit}`, cx, ty - bh - 56); }
+    if (lab) { ctx.font = mono(12); ctx.fillStyle = ink; ctx.textAlign = "center"; ctx.fillText(`s = ${sig(lab.value)} ${lab.unit}`, cx, ty - bh - 62); }
     if (shrunk) { ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "箭嘴已按邊緣空間同步縮短（比例不變）" : "Arrows shortened together to fit the edge (same ratio)", tr.x + pad, tr.y + 14); }
 
     // ---- 三張線圖 ----
-    const series: Record<"s" | "v" | "a", { key: string; title: string; unit: string; color: string }> = {
-      s: { key: "s-t", title: zh ? "s–t 圖（位移—時間）" : "s–t graph", unit: "m", color: accent },
-      v: { key: "v-t", title: zh ? "v–t 圖（速度—時間）" : "v–t graph", unit: "m s⁻¹", color: ARROW_STYLE.velocity.color },
-      a: { key: "a-t", title: zh ? "a–t 圖（加速度—時間）" : "a–t graph", unit: "m s⁻²", color: ARROW_STYLE.acceleration.color },
+    // 三張圖各有自己的色系：s 藍綠、v 綠（與速度箭嘴同色）、a 青藍；圖名用彩色標題條
+    const series: Record<"s" | "v" | "a", { key: string; title: string; unit: string; color: string; tint: string }> = {
+      s: { key: "s-t", title: zh ? "s–t 圖（位移—時間）" : "s–t graph", unit: "m", color: accent, tint: "rgba(14,111,106,0.08)" },
+      v: { key: "v-t", title: zh ? "v–t 圖（速度—時間）" : "v–t graph", unit: "m s⁻¹", color: ARROW_STYLE.velocity.color, tint: "rgba(26,156,75,0.08)" },
+      a: { key: "a-t", title: zh ? "a–t 圖（加速度—時間）" : "a–t graph", unit: "m s⁻²", color: "#0b8f9d", tint: "rgba(11,143,157,0.08)" },
     };
     for (const k of ["s", "v", "a"] as const) {
       const p = L.panes[k]; const ser = series[k];
       const pts = plan.trails?.find(t => t.key === ser.key)?.points ?? [];
-      ctx.fillStyle = "rgba(127,127,127,0.06)"; ctx.fillRect(p.x, p.y, p.w, p.h);
+      ctx.fillStyle = ser.tint; ctx.fillRect(p.x, p.y, p.w, p.h);
+      ctx.fillStyle = ser.color; ctx.fillRect(p.x, p.y, p.w, 3);   // 頂部色條
       // 軸
       const x0 = px(p, 0), x1 = px(p, p.tMax), y0 = py(p, 0);
       ctx.strokeStyle = ink3; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, py(p, p.yMax)); ctx.lineTo(x0, py(p, p.yMin)); ctx.moveTo(x0, y0); ctx.lineTo(x1, y0); ctx.stroke();
@@ -120,7 +131,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
       for (const yv of [p.yMax, p.yMax / 2, 0, p.yMin / 2, p.yMin]) { const yy = py(p, yv); ctx.fillText(sig(yv).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1"), x0 - 4, yy + 3); ctx.strokeStyle = line; ctx.beginPath(); ctx.moveTo(x0, yy); ctx.lineTo(x1, yy); ctx.stroke(); }
       ctx.textAlign = "center";
       for (let tv = 0; tv <= p.tMax; tv += p.tMax / 5) ctx.fillText(String(tv), px(p, tv), py(p, p.yMin) + 12);
-      ctx.font = font(12); ctx.fillStyle = ink; ctx.textAlign = "left"; ctx.fillText(ser.title, p.x + 6, p.y + 12);
+      ctx.font = `700 ${font(12)}`; ctx.fillStyle = ser.color; ctx.textAlign = "left"; ctx.fillText(ser.title, p.x + 6, p.y + 15);
       ctx.font = mono(10); ctx.fillStyle = ink3; ctx.textAlign = "right"; ctx.fillText(`${k} / ${ser.unit}`, p.x + p.w - 4, p.y + 12); ctx.fillText("t / s", p.x + p.w - 4, py(p, p.yMin) + 22);
       // 線下面積（只在 v–t，由 0 至 t）
       if (k === "v" && m.area && pts.length > 1) {
@@ -137,13 +148,17 @@ export default function Scene({ plan, onInput }: SceneProps) {
         ctx.strokeStyle = ser.color; ctx.globalAlpha = 0.35; ctx.lineWidth = 2; ctx.beginPath();
         handles.forEach((q, i) => (i ? ctx.lineTo(px(p, q[0]), py(p, q[1])) : ctx.moveTo(px(p, q[0]), py(p, q[1])))); ctx.stroke(); ctx.globalAlpha = 1;
         handles.forEach((q, i) => {
-          ctx.fillStyle = dragging.current === i ? ser.color : "#fff"; ctx.strokeStyle = ser.color; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(px(p, q[0]), py(p, q[1]), 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-          if (dragging.current === i) {   // 拖動中即時顯示數值（學生試用者第 3 輪）
-            ctx.font = mono(12); ctx.fillStyle = ink; ctx.textAlign = "center";
-            ctx.fillText(`t = ${q[0]} s，v = ${sig(q[1]).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1")} m s⁻¹`, px(p, q[0]), py(p, q[1]) - 16);
+          const on = dragging.current === i; const hx = px(p, q[0]), hy = py(p, q[1]);
+          ctx.fillStyle = on ? "#f5a623" : "#fff"; ctx.strokeStyle = on ? "#8a5a00" : ser.color; ctx.lineWidth = 2.5;
+          ctx.beginPath(); ctx.arc(hx, hy, on ? 10 : 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+          // 每粒圓點下方標明它是第幾秒（學生試用者第 6 輪：唔知邊粒對應邊個 t）
+          if (handles.length <= 12 || i % 2 === 0) { ctx.font = mono(10); ctx.fillStyle = ser.color; ctx.textAlign = "center"; ctx.fillText(`${q[0]}s`, hx, py(p, p.yMin) - 6); }
+          if (on) {   // 拖動中即時顯示數值（第 3 輪）
+            ctx.font = `700 ${mono(12)}`; ctx.fillStyle = ink; ctx.textAlign = "center";
+            ctx.fillText(`t = ${q[0]} s，v = ${sig(q[1]).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1")} m s⁻¹`, hx, hy - 18);
           }
         });
-        ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "上下拖動圓點改變該秒的 v（每格 0.5）" : "Drag a dot up/down to set v at that second (steps of 0.5)", x0 + 6, py(p, p.yMin) - 6);
+        ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "在圖框內按住任何一秒的位置上下拖，就改變該秒的 v（每格 0.5）" : "Press anywhere in the graph and drag up/down to set v at that second (steps of 0.5)", x0 + 6, p.y + p.h - 44);
       }
       // 已走過的曲線
       if (pts.length > 1) {

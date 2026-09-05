@@ -39,7 +39,7 @@ for (const r of runs) {
   for (let i = 0; i < ${FRAMES}; i++) {
     const obs = model.observe(s, r.params);
     const p = plan(s, r.params, obs, allLayers);
-    frames.push({ t: s.t ?? i * ${DT}, obs, arrows: p.arrows, labels: p.labels, scales: p.scales });
+    frames.push({ t: s.t ?? i * ${DT}, obs, arrows: p.arrows, labels: p.labels, scales: p.scales, meta: p.meta });
     s = model.step(s, r.params, ${DT});
   }
   result.push({ name: r.name, params: r.params, dt: ${DT}, frames });

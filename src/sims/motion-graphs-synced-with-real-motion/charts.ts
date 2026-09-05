@@ -16,8 +16,8 @@ export const layers: LayerDef[] = [
 
 export const readouts: ReadoutDef[] = [
   { key: "t", symbol: "t", label: { zh: "時間", en: "Time" }, unit: "s" },
-  { key: "s", symbol: "s", label: { zh: "位移", en: "Displacement" }, unit: "m" },
-  { key: "dist", symbol: "d", label: { zh: "路程", en: "Distance" }, unit: "m" },
+  { key: "s", symbol: "s", label: { zh: "位移", en: "Displacement" }, unit: "m", hint: { zh: "離起點多遠，向右為正、向左為負", en: "How far from the start; right +, left −" } },
+  { key: "dist", symbol: "d", label: { zh: "路程", en: "Distance" }, unit: "m", hint: { zh: "走過的總長度，不理方向", en: "Total length travelled, direction ignored" } },
   { key: "v", symbol: "v", label: { zh: "速度", en: "Velocity" }, unit: "m s⁻¹" },
   { key: "a", symbol: "a", label: { zh: "加速度", en: "Acceleration" }, unit: "m s⁻²" },
   { key: "area", symbol: "", label: { zh: "v–t 線下面積（等於位移）", en: "Area under v–t (equals displacement)" }, unit: "m" },

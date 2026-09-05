@@ -7,6 +7,7 @@ import { withUnit } from "./format";
 import { Guide } from "./Guide";
 import { useLang, useT } from "@/i18n/lang";
 import { UI } from "@/i18n/ui";
+import { UNIT_COLORS } from "@/app/units";
 import type { ControlDef, Layers, SimModule, Scenario } from "./types";
 
 const SPEEDS = [0.1, 0.25, 0.5, 1, 2];
@@ -56,6 +57,12 @@ export function SimShell({ sim }: SimShellProps) {
   const readouts = formatReadouts({ ...obs, t: runner.current.t }, sim.readouts ?? []);
   const Scene = sim.Scene;
 
+  // 首次進入的三步提示（學生試用者：不知第一步按甚麼）；按「知道了」後記在瀏覽器
+  const hintKey = `dsepl-hint-${sim.manifest.id}`;
+  const [showHint, setShowHint] = useState(() => { try { return localStorage.getItem(hintKey) !== "1"; } catch { return true; } });
+  const dismissHint = () => { setShowHint(false); try { localStorage.setItem(hintKey, "1"); } catch { /* 私隱模式 */ } };
+  const unitColor = UNIT_COLORS[sim.manifest.unit];
+
   const runScenario = (s: Scenario<Record<string, unknown>>) => {
     setActiveScenario(s);
     if (s.layers) setLayers(prev => ({ ...prev, ...Object.fromEntries(s.layers!.map(k => [k, true])) }));
@@ -63,7 +70,7 @@ export function SimShell({ sim }: SimShellProps) {
   };
 
   return (
-    <div className="sim">
+    <div className="sim" style={{ ["--unit" as string]: unitColor }}>
       <header className="sim-head">
         <a className="brand" href="#/">⚗ DSE Physics Lab</a>
         <div className="sim-title">
@@ -100,6 +107,14 @@ export function SimShell({ sim }: SimShellProps) {
             )}
             <span className="clock"><i>t</i> = {withUnit(runner.current.t, "s")}</span>
           </div>
+          {showHint && (
+            <div className="hint-strip" role="note">
+              <span><b>1</b> {t(sim.hints?.[0] ?? { zh: "畫面已在播放，按 ⏸ 可隨時暫停", en: "It is already playing; press ⏸ to pause any time" })}</span>
+              <span><b>2</b> {t(sim.hints?.[1] ?? { zh: "右邊的滑桿可以隨時拖動，畫面即時跟着變", en: "Drag the sliders on the right any time; the scene follows" })}</span>
+              <span><b>3</b> {t(sim.hints?.[2] ?? { zh: "按「試試看」看看你的想法對不對", en: "Press a Try-it card to test your own prediction" })}</span>
+              <button type="button" onClick={dismissHint}>{t({ zh: "知道了", en: "Got it" })}</button>
+            </div>
+          )}
           <div className="stage-canvas">
             {sim.mode === "3d" ? (
               <Canvas shadows="percentage" camera={{ position: sim.camera?.position ?? [6, 4, 8], fov: sim.camera?.fov ?? 40 }} dpr={[1, 2]}>
@@ -138,7 +153,7 @@ export function SimShell({ sim }: SimShellProps) {
           {readouts.length > 0 && <>
             <h2>{t(UI.readouts)}</h2>
             <table className="readouts"><tbody>
-              {readouts.map(r => <tr key={r.key}><th><i>{r.symbol}</i> <span>{t(r.label)}</span></th><td>{r.text}</td></tr>)}
+              {readouts.map(r => <tr key={r.key}><th><i>{r.symbol}</i> <span>{t(r.label)}</span>{r.hint && <small className="hint">{t(r.hint)}</small>}</th><td>{r.text}</td></tr>)}
             </tbody></table>
           </>}
 

@@ -41,7 +41,7 @@ export function Home() {
                   {UNITS.filter(u => u.group === g.key).map(u => {
                     const list = simsOf(u.id); const e = list.filter(s => s.type === "e").length;
                     return (
-                      <a key={u.id} className="unit" href={`#/unit/${u.id}`} onClick={ev => { ev.preventDefault(); navigate(`#/unit/${u.id}`); }}>
+                      <a key={u.id} className="unit" style={{ ["--unit" as string]: u.color }} href={`#/unit/${u.id}`} onClick={ev => { ev.preventDefault(); navigate(`#/unit/${u.id}`); }}>
                         <span className="icon">{u.icon}</span>
                         <span className="code">{t(u.code)}</span>
                         <span className="name">{t(u.name)}</span>

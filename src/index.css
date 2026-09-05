@@ -180,3 +180,24 @@ i { font-style: italic; font-family: "Noto Serif TC", "Times New Roman", serif; 
   .unit { min-height: 130px; }
 }
 @media (hover: none) { .unit:hover, .card.live:hover { background: var(--paper); border-color: var(--line); } }
+
+/* ===== 單元主色（--unit 由 SimShell / 單元格設定）與引導 ===== */
+.sim-head { border-bottom: 4px solid var(--unit, var(--accent)); }
+.sim-title .code { color: var(--unit, var(--accent)); }
+.transport button.primary { background: var(--unit, var(--accent)); border-color: var(--unit, var(--accent)); color: #fff; }
+.scenarios > button { border-left: 4px solid var(--unit, var(--accent)); }
+.scenarios > button.on { background: color-mix(in srgb, var(--unit, var(--accent)) 14%, var(--paper)); border-color: var(--unit, var(--accent)); }
+.segment button[aria-pressed="true"] { background: var(--unit, var(--accent)); border-color: var(--unit, var(--accent)); color: #fff; }
+.modes button[aria-pressed="true"] { background: var(--unit, var(--accent)); }
+.hint-strip { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; padding: 8px 14px; background: color-mix(in srgb, var(--unit, var(--accent)) 10%, var(--paper)); border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.hint-strip b { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--unit, var(--accent)); color: #fff; font-weight: 700; margin-right: 6px; font-size: 12px; }
+.hint-strip button { margin-left: auto; min-height: 36px; padding: 0 14px; border: 1px solid var(--unit, var(--accent)); color: var(--unit, var(--accent)); background: var(--paper); border-radius: 4px; cursor: pointer; }
+.readouts th small.hint { display: block; font-size: 11.5px; color: var(--ink-3); line-height: 1.3; margin-top: -2px; }
+.stage { background: linear-gradient(180deg, #f9fcfb 0%, #f1f6f3 100%); }
+@media (min-width: 1025px) { .panel { position: sticky; top: 8px; align-self: start; max-height: calc(100vh - 16px); } }
+.unit { border-top: 4px solid var(--unit, var(--accent)); }
+.unit .icon, .unit .code { color: var(--unit, var(--accent)); }
+.unit .count .e::before { background: var(--unit, var(--accent)); }
+.unit-head .icon, .unit-head .code { color: var(--unit, var(--accent)); }
+.chip-ch[aria-pressed="true"] { background: var(--unit, var(--accent)); border-color: var(--unit, var(--accent)); }
+.card .top .ch { color: var(--unit, var(--accent)); }

@@ -21,7 +21,7 @@ export function UnitPage({ id }: { id: string }) {
   return (
     <>
       <TopBar />
-      <main className="wrap">
+      <main className="wrap" style={{ ["--unit" as string]: u.color }}>
         <button type="button" className="back" onClick={() => navigate("#/")}>
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round"><path d="M9 2 4 7l5 5" /></svg>{t(UI.backHome)}
         </button>
