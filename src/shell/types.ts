@@ -115,4 +115,6 @@ export interface SimModule<S = unknown, P = Record<string, unknown>> {
   liveParams?: string[];
   /** 運行的總時長（秒）；提供則播放列顯示時間拉桿，可跳到任何時刻（重置後快進） */
   duration?: (params: P) => number;
+  /** 「逐格」每按一次前進的模擬時間（秒），預設 0.05 */
+  stepSize?: number;
 }

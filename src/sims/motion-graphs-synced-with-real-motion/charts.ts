@@ -20,7 +20,7 @@ export const readouts: ReadoutDef[] = [
   { key: "dist", symbol: "d", label: { zh: "路程", en: "Distance" }, unit: "m" },
   { key: "v", symbol: "v", label: { zh: "速度", en: "Velocity" }, unit: "m s⁻¹" },
   { key: "a", symbol: "a", label: { zh: "加速度", en: "Acceleration" }, unit: "m s⁻²" },
-  { key: "area", symbol: "A", label: { zh: "v–t 線下面積", en: "Area under v–t" }, unit: "m" },
+  { key: "area", symbol: "", label: { zh: "v–t 線下面積（等於位移）", en: "Area under v–t (equals displacement)" }, unit: "m" },
   { key: "avgSpeed", symbol: "", label: { zh: "平均速率（路程 ÷ 時間）", en: "Average speed (distance ÷ time)" }, unit: "m s⁻¹" },
   { key: "avgVel", symbol: "", label: { zh: "平均速度（位移 ÷ 時間）", en: "Average velocity (displacement ÷ time)" }, unit: "m s⁻¹" },
 ];

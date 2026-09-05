@@ -137,4 +137,42 @@ const close = (a, b, tol = 1e-9) => Math.abs(a - b) <= tol * Math.max(1, Math.ab
     log(`規格驗證[${run.name}] 面積=位移:${areaEqS} speed=|v|:${speedAbs} 平均量一致:${avgOk} 未反向 dist=|s|:${distEqS} 反向後 dist>|s|:${distNeS}(曾反向:${reversed}) 運動方程一致:${vtLive}`);
   }
 }
+
+// ---------- 5. 第 2 輪：凍結後 a 保持 T⁻ 值，最後一幀 a 與 v 的一致性（主實作與第二實作各自檢驗） ----------
+{
+  for (const src of ["data", "second-impl"]) {
+    for (const run of index.runs) {
+      const F = JSON.parse(fs.readFileSync(path.join(root, src, run.name + ".json"), "utf8")).frames;
+      const T = run.params.T, dt = index.dt;
+      const last = F[F.length - 1];
+      // 凍結前最後一幀（t < T − dt/2）與凍結後第一幀
+      let iFreeze = F.findIndex(fr => fr.t >= T - dt / 2);
+      if (iFreeze < 0) iFreeze = F.length - 1;
+      const pre = F[iFreeze - 1], at = F[iFreeze];
+      // (a) 凍結後所有幀 a、v、s 完全相同（狀態凍結）
+      let frozen = true;
+      for (let i = iFreeze; i < F.length; i++) frozen &&= F[i].obs.a === at.obs.a && F[i].obs.v === at.obs.v && F[i].obs.s === at.obs.s;
+      // (b) a 跨越 T 不跳變：a(T) = a(T − dt)（即 T⁻ 的值）
+      const aHold = at.obs.a === pre.obs.a;
+      // (c) 最後一幀 a 與 v 一致
+      let aExpected, vExpected, note;
+      if (run.params.mode === "draw") {
+        const vt = run.params.vt, seg = Math.min(Math.ceil(T) - 1, vt.length - 2);
+        aExpected = seg >= vt.length - 1 ? 0 : vt[seg + 1] - vt[seg];   // 折線末段斜率
+        vExpected = vt[Math.min(Math.round(T), vt.length - 1)];         // 節點值
+        note = "折線末段斜率";
+      } else {
+        aExpected = run.params.a;
+        vExpected = run.params.u + run.params.a * T;                     // v = u + aT
+        note = "v = u + aT";
+      }
+      const aOk = close(last.obs.a, aExpected, 1e-9);
+      const vOk = close(last.obs.v, vExpected, 1e-9);
+      // (d) 差分斜率：(v(T) − v(T−dt)) / dt 應等於最後一幀的 a（T⁻ 段內）
+      const slope = (at.obs.v - pre.obs.v) / (at.t - pre.t);
+      const slopeOk = close(slope, last.obs.a, 1e-6);
+      log(`末幀[${src}/${run.name}] 凍結後狀態不變:${frozen} a(T)=a(T−dt):${aHold} a_last=${last.obs.a.toFixed(6)} 期望 ${aExpected.toFixed(6)}:${aOk} v_last=${last.obs.v.toFixed(6)} 期望(${note}) ${vExpected.toFixed(6)}:${vOk} 差分斜率 ${slope.toFixed(6)}=a_last:${slopeOk}`);
+    }
+  }
+}
 fs.writeFileSync(path.join(root, "second-impl", "checks-output.txt"), out.join("\n"));

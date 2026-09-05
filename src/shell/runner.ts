@@ -10,6 +10,8 @@ export interface Runner<S, P> {
   advance(elapsed: number): { steps: number; events: SimEvent[] };
   /** 單步 */
   step(): SimEvent[];
+  /** 由 0 精確跳到 t（重置後步進 round(t/dt) 步；不受 maxStepsPerAdvance 限制） */
+  seek(t: number): void;
   reset(params?: P): void;
 }
 
@@ -39,6 +41,11 @@ export function createRunner<S, P>(model: SimModel<S, P>, params: P, dt = 1e-3, 
       return { steps, events };
     },
     step: () => doStep(),
+    seek(target) {
+      state = model.init(params); t = 0; acc = 0;
+      const n = Math.max(0, Math.round(target / dt));
+      for (let i = 0; i < n; i++) doStep();
+    },
     reset(p) { if (p) params = p; state = model.init(params); t = 0; acc = 0; },
   };
 }

@@ -570,8 +570,8 @@
   {
    "run": "random-2",
    "key": "s",
-   "maxAbs": 2.1671553440683056e-13,
-   "maxRel": 4.819112971119984e-14,
+   "maxAbs": 2.291500322826323e-13,
+   "maxRel": 1.8122062049211355e-10,
    "firstT": null,
    "nEventTolerated": 0,
    "pass": true
@@ -579,8 +579,8 @@
   {
    "run": "random-2",
    "key": "dist",
-   "maxAbs": 2.1671553440683056e-13,
-   "maxRel": 4.819112971119984e-14,
+   "maxAbs": 2.7355895326763857e-13,
+   "maxRel": 1.699930838922252e-14,
    "firstT": null,
    "nEventTolerated": 0,
    "pass": true
@@ -588,8 +588,8 @@
   {
    "run": "random-2",
    "key": "v",
-   "maxAbs": 2.1938006966593093e-13,
-   "maxRel": 7.317547353766875e-14,
+   "maxAbs": 5.293543381412746e-13,
+   "maxRel": 2.0962869303517983e-11,
    "firstT": null,
    "nEventTolerated": 0,
    "pass": true
@@ -606,8 +606,8 @@
   {
    "run": "random-2",
    "key": "speed",
-   "maxAbs": 2.1938006966593093e-13,
-   "maxRel": 7.317547353766875e-14,
+   "maxAbs": 5.293543381412746e-13,
+   "maxRel": 2.0962869303517983e-11,
    "firstT": null,
    "nEventTolerated": 0,
    "pass": true
@@ -615,8 +615,8 @@
   {
    "run": "random-2",
    "key": "area",
-   "maxAbs": 2.1671553440683056e-13,
-   "maxRel": 4.819112971119984e-14,
+   "maxAbs": 2.291500322826323e-13,
+   "maxRel": 1.8122062049211355e-10,
    "firstT": null,
    "nEventTolerated": 0,
    "pass": true
@@ -624,8 +624,8 @@
   {
    "run": "random-2",
    "key": "avgSpeed",
-   "maxAbs": 1.2878587085651816e-13,
-   "maxRel": 6.869610478260381e-14,
+   "maxAbs": 2.993161274389422e-13,
+   "maxRel": 7.337902544303705e-14,
    "firstT": null,
    "nEventTolerated": 0,
    "pass": true
@@ -633,8 +633,8 @@
   {
    "run": "random-2",
    "key": "avgVel",
-   "maxAbs": 1.2878587085651816e-13,
-   "maxRel": 6.869610478260381e-14,
+   "maxAbs": 2.611244553918368e-13,
+   "maxRel": 1.8126571395991902e-10,
    "firstT": null,
    "nEventTolerated": 0,
    "pass": true

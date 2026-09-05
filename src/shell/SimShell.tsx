@@ -96,7 +96,7 @@ export function SimShell({ sim }: SimShellProps) {
           )}
           <div className="transport">
             <button type="button" className="primary" onClick={() => setPlaying(p => !p)}>{playing ? "⏸ " + t(UI.pause) : "▶ " + t(UI.play)}</button>
-            <button type="button" onClick={() => { setPlaying(false); runner.current.step(); setFrame(f => f + 1); }}>⏭ {t(UI.step)}</button>
+            <button type="button" onClick={() => { setPlaying(false); runner.current.advance(sim.stepSize ?? 0.05); setFrame(f => f + 1); }}>⏭ {t(UI.step)} {sim.stepSize ?? 0.05} s</button>
             <button type="button" onClick={() => { runner.current.reset(); setFrame(f => f + 1); }}>↺ {t(UI.reset)}</button>
             <label className="speed">{t(UI.speed)}
               <select value={speed} onChange={e => setSpeed(Number(e.target.value))}>{SPEEDS.map(s => <option key={s} value={s}>{s}×</option>)}</select>
@@ -104,7 +104,7 @@ export function SimShell({ sim }: SimShellProps) {
             {sim.duration && (
               <label className="scrub" aria-label={t(UI.time)}>
                 <input type="range" min={0} max={sim.duration(params)} step={0.01} value={Math.min(runner.current.t, sim.duration(params))}
-                  onChange={e => { const target = Number(e.target.value); setPlaying(false); runner.current.reset(); runner.current.advance(target); setFrame(f => f + 1); }} />
+                  onChange={e => { setPlaying(false); runner.current.seek(Number(e.target.value)); setFrame(f => f + 1); }} />
               </label>
             )}
             <span className="clock"><i>t</i> = {withUnit(runner.current.t, "s")}</span>

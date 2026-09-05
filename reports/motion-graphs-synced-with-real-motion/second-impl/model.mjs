@@ -6,7 +6,8 @@
 // 步長 dt 只用來決定輸出幀的時刻 t_k = k / (1/dt)（用整數除法避免累加誤差）。
 //
 // 慣例（規格未寫明，見報告「規格待釐清」）：
-//  - t ≥ T 後運動停止，狀態凍結於 t = T，a 讀數為 0。
+//  - t ≥ T 後運動停止，狀態凍結於 t = T；a 讀數保持 T⁻（時間窗結束前最後一段）的值，
+//    不歸零（第 2 輪依核數員 F1 修訂；第 1 輪為歸零）。
 //  - draw 模式 vt[i] 為 t = i 秒的節點值，段內線性插值，超出末節點後 v 保持最後值、a = 0。
 //  - avgSpeed = dist / t，avgVel = s / t；t = 0 時兩者為 0。
 //  - area（v–t 線下面積）= s（含號）。speed = |v|。
@@ -74,11 +75,22 @@ function drawState(p, t) {
   return { s, dist, v, a };
 }
 
+// a 在 T⁻ 的值：live 為常數 a；draw 為包含 T⁻ 的那一段的斜率
+// （T 為整數節點時取左段，即段 T−1；T 超出末節點則為 0）
+function aLeft(p, T) {
+  if (p.mode !== "draw") return p.a;
+  const vt = p.vt, n = vt.length;
+  if (n < 2 || T <= 0) return 0;
+  const seg = Math.ceil(T) - 1;          // 包含 T⁻ 的段
+  if (seg >= n - 1) return 0;            // 超出末節點：v 恆定
+  return vt[seg + 1] - vt[seg];
+}
+
 export function observe(p, tRaw) {
   const stopped = tRaw >= p.T;
   const t = stopped ? p.T : tRaw;
   const st = p.mode === "draw" ? drawState(p, t) : liveState(p, t);
-  const a = stopped ? 0 : st.a;
+  const a = stopped ? aLeft(p, p.T) : st.a;
   return {
     t,
     obs: {

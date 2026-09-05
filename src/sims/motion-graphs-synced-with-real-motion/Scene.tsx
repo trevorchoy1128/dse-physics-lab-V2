@@ -20,8 +20,13 @@ function layoutOf(w: number, h: number, meta: Record<string, number>): Layout {
   const mk = (i: number, yAbs: number): Pane => ({ x: gap + i * (gw + gap), y: top, w: gw, h: gh, yMin: -yAbs, yMax: yAbs, tMax: T });
   return {
     track: { x: 0, y: 0, w, h: trackH, smax: meta.smax },
-    // s 軸用可預測的範圍（與軌道相同），曲線不會邊畫邊縮放
-    panes: { s: mk(0, meta.smax), v: mk(1, nice(Math.max(1, meta.vmax * 1.2))), a: mk(2, nice(Math.max(1, meta.amax * 1.2))) },
+    // 軸範圍固定：s 與軌道相同；畫圖模式 v ±5、a ±10（即拖動範圍，學生試用者：拖動時軸比例不可跳）；
+    // 由運動生成圖模式由 u、a、T 預先算出，運行中不變
+    panes: {
+      s: mk(0, meta.smax),
+      v: mk(1, meta.draw ? 5 : nice(Math.max(1, meta.vmax * 1.2))),
+      a: mk(2, meta.draw ? 10 : nice(Math.max(1, meta.amax * 1.2))),
+    },
   };
 }
 const px = (p: Pane, t: number) => p.x + 44 + ((p.w - 56) * t) / p.tMax;
@@ -39,8 +44,9 @@ export default function Scene({ plan, onInput }: SceneProps) {
     const L = layoutOf(w, h, m); lay.current = L;
     const css = getComputedStyle(document.documentElement);
     const ink = css.getPropertyValue("--ink").trim() || "#1b2530", ink3 = css.getPropertyValue("--ink-3").trim() || "#7b8591", line = css.getPropertyValue("--line").trim() || "#d8ddd7", accent = css.getPropertyValue("--accent").trim() || "#0e6f6a";
-    const font = (size: number) => `${size}px "Noto Sans TC", system-ui, sans-serif`;
-    const mono = (size: number) => `${size}px "IBM Plex Mono", monospace`;
+    // 窄畫面（iPad）字體不再縮小：最少 12 px（學生試用者：圖內文字太細）
+    const font = (size: number) => `${Math.max(12, size)}px "Noto Sans TC", system-ui, sans-serif`;
+    const mono = (size: number) => `${Math.max(11, size)}px "IBM Plex Mono", monospace`;
     const zh = lang === "zh";
 
     // ---- 軌道 ----

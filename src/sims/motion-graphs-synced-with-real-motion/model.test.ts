@@ -87,4 +87,13 @@ describe("運動線圖與真實運動同步（S7）", () => {
     const q = draw([2, 1.6, 1.2, 0.8, 0.4, 0, -0.4, -0.8, -1.2, -1.6, -2]);
     expect(model.observe(run(q, 11).at(-1)!, q).a).toBeCloseTo(-0.4, 9);
   });
+
+  it("畫圖模式而時間窗落在節點上（T = 5）：凍結後 a 取 T⁻ 那一段的斜率（第二實作者建議）", () => {
+    const vt = [0, 1, 3, 3, 0, -2, -2, 1, 1, 0, 0];
+    const p: P = { mode: "draw", u: 0, a: 0, T: 5, vt };
+    const end = run(p, 6).at(-1)!;
+    expect(end.done).toBe(true);
+    expect(end.v).toBeCloseTo(vt[5], 9);                       // 末節點值 −2
+    expect(model.observe(end, p).a).toBeCloseTo(vt[5] - vt[4], 9);   // 段 4→5 的斜率 −2，而非段 5→6 的 0
+  });
 });

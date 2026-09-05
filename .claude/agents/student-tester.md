@@ -32,7 +32,7 @@ model: sonnet
 - 不修改任何東西。
 
 ## 輸出
-寫 `reports/<simId>/student-test.md`（網址若是首頁則用 `reports/home/`），固定結構：
+寫派發者指定的檔名（預設 `reports/<simId>/student-test.md`；第 N 輪用 `student-test-r<N>.md`，因為你沒有 Read 工具，不能覆蓋既有檔案），固定結構：
 
 ```
 # 學生試用：<網址>

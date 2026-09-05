@@ -34,6 +34,12 @@ describe("固定步長運行器", () => {
     r.advance(0.5); r.reset({ v: 3 }); r.advance(0.1);
     expect(r.state.x).toBeCloseTo(0.3, 9);
   });
+  it("seek 精確跳到任何時刻，不受每次推進的步數上限影響（學生試用者：時間拉桿卡在 2 s）", () => {
+    const r = createRunner(model, { v: 1 }, 1e-3, 2000);
+    r.seek(7.5); expect(r.t).toBeCloseTo(7.5, 9); expect(r.state.x).toBeCloseTo(7.5, 9);
+    r.seek(0.25); expect(r.t).toBeCloseTo(0.25, 9);
+    r.seek(0); expect(r.t).toBe(0);
+  });
   it("長時間離開後不會追趕過久", () => {
     const r = createRunner(model, { v: 1 }, 1e-3, 2000);
     expect(r.advance(60).steps).toBe(2000);

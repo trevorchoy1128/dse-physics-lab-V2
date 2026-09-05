@@ -29,7 +29,7 @@ const runs = [
   { name: "default", params: { ...defaults } },
   ...scenarios.map(s => ({ name: "scenario-" + s.key, params: { ...defaults, ...s.params } })),
   ...Array.from({ length: ${RANDOM} }, (_, k) => ({ name: "random-" + k, params: { ...defaults, ...Object.fromEntries(controls.map(c =>
-      [c.key, c.kind === "select" ? c.options[Math.floor(rnd() * c.options.length)].value
+      [c.key, (c.kind === "select" || c.kind === "segment") ? c.options[Math.floor(rnd() * c.options.length)].value
             : c.kind === "toggle" ? rnd() < 0.5
             : c.min + rnd() * (c.max - c.min)])) } })),
 ];

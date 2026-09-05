@@ -1,11 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 export type Draw2D = (ctx: CanvasRenderingContext2D, width: number, height: number) => void;
 
 // 2D 畫布：needs3D 為 low 的模擬用。自動處理 devicePixelRatio 與尺寸變化；frame 改變即重畫。
 export function Canvas2D({ draw, frame, className }: { draw: Draw2D; frame: number; className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
+  // useLayoutEffect：在瀏覽器繪製前同步畫出，令畫布與 DOM 讀數屬同一幀（核數員 F4：標籤落後讀數 2–3 幀）
+  useLayoutEffect(() => {
     const c = ref.current; if (!c) return;
     const parent = c.parentElement!;
     const dpr = window.devicePixelRatio || 1;

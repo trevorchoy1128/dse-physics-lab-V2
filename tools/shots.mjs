@@ -50,8 +50,11 @@ const scenarioShot = async (i, phase) => shot(`scenario-${i + 1}-${phase}`, { wi
     await btn.click(); await speed.selectOption("2");
     // 有時間拉桿就直接跳到末端；否則等 12 s 實時（2× → 24 s 模擬時間）
     const scrub = page.locator(".scrub input");
-    if (await scrub.count()) { const max = await scrub.getAttribute("max"); await scrub.fill(String(max)); await page.waitForTimeout(500); }
-    else await page.waitForTimeout(12000);
+    if (await scrub.count()) {
+      // range 輸入不能用 fill：以原生 setter 設值再派發 input 事件，React 的 onChange 才會收到
+      await scrub.evaluate(el => { const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set; set.call(el, el.max); el.dispatchEvent(new Event("input", { bubbles: true })); });
+      await page.waitForTimeout(800);
+    } else await page.waitForTimeout(12000);
   }
   if (phase === "early") console.log(`  scenario-${i + 1}: ${label}`);
 });
