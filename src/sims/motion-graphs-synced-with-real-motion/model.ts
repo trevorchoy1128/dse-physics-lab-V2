@@ -37,7 +37,7 @@ export function vAt(vt: number[], t: number): number {
 export function aAt(vt: number[], t: number): number {
   const n = vt.length - 1;
   if (t < 0 || t >= n) return 0;
-  const k = Math.floor(t + 1e-12);
+  const k = Math.min(n - 1, Math.floor(t + 1e-12));   // 容差不可把 k 推過末節點（第 4 輪 F7：a = NaN）
   return vt[k + 1] - vt[k];
 }
 
@@ -52,22 +52,23 @@ export const model: SimModel<S, P> = {
 
   step(s, p, dt) {
     if (s.done) return s;
-    const t2 = s.t + dt;
+    // 凍結時把 t 截斷為 T：最後一步只走到 T，v、s、路程都在 T 精確計算（第二實作者第 4 輪建議）
+    let t2 = s.t + dt, h = dt, done = false;
+    if (t2 >= p.T - 1e-12) { t2 = p.T; h = p.T - s.t; done = true; }
     const a = accel(p, s.t);
     // v：live 模式 v = u + at 的逐步形式；draw 模式直接取折線（精確）
-    const v2 = p.mode === "draw" ? vel(p, t2, s.v) : s.v + a * dt;
+    const v2 = p.mode === "draw" ? vel(p, t2, s.v) : s.v + a * h;
     // s：梯形法，對分段線性的 v 精確
-    const ds = 0.5 * (s.v + v2) * dt;
+    const ds = 0.5 * (s.v + v2) * h;
     // 路程：若此步內 v 變號，按比例分段取絕對值
     let dd: number;
     if (s.v * v2 < 0) {
       const f = s.v / (s.v - v2);            // 變號時刻在步內的比例
-      dd = 0.5 * Math.abs(s.v) * f * dt + 0.5 * Math.abs(v2) * (1 - f) * dt;
+      dd = 0.5 * Math.abs(s.v) * f * h + 0.5 * Math.abs(v2) * (1 - f) * h;
     } else dd = Math.abs(ds);
-    const done = t2 >= p.T - 1e-12;
     const next: S = { t: t2, s: s.s + ds, v: v2, dist: s.dist + dd, done, hist: s.hist };
     if (Math.floor(t2 / SAMPLE_DT + 1e-9) > Math.floor(s.t / SAMPLE_DT + 1e-9) || done) {
-      next.hist = [...s.hist, { t: t2, s: next.s, v: v2, a: accel(p, t2) }];
+      next.hist = [...s.hist, { t: t2, s: next.s, v: v2, a: accel(p, Math.min(t2, p.T - 1e-9)) }];
     }
     return next;
   },

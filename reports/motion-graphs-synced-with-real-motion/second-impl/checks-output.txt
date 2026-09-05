@@ -18,7 +18,7 @@
 規格驗證[scenario-area-not-distance] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:true) 運動方程一致:true
 規格驗證[random-0] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:false) 運動方程一致:true
 規格驗證[random-1] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:true) 運動方程一致:true
-規格驗證[random-2] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:true) 運動方程一致:true
+規格驗證[random-2] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:false) 運動方程一致:true
 規格驗證[random-3] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:false) 運動方程一致:true
 規格驗證[random-4] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:false) 運動方程一致:true
 末幀[data/default] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=1.000000 期望 1.000000:true v_last=10.000000 期望(v = u + aT) 10.000000:true 差分斜率 1.000000=a_last:true
@@ -28,7 +28,7 @@
 末幀[data/scenario-area-not-distance] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=0.000000 期望 0.000000:true v_last=-2.000000 期望(折線末段斜率) -2.000000:true 差分斜率 0.000000=a_last:true
 末幀[data/random-0] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=8.954050 期望 8.954050:true v_last=48.110196 期望(v = u + aT) 48.110196:true 差分斜率 8.954050=a_last:true
 末幀[data/random-1] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=5.315743 期望 5.315743:true v_last=48.668986 期望(v = u + aT) 48.668986:true 差分斜率 5.315743=a_last:true
-末幀[data/random-2] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=-3.337068 期望 -3.337068:true v_last=-13.847335 期望(v = u + aT) -13.847335:true 差分斜率 -3.337068=a_last:true
+末幀[data/random-2] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=0.000000 期望 0.000000:true v_last=3.000000 期望(折線末段斜率) 3.000000:true 差分斜率 -0.000000=a_last:true
 末幀[data/random-3] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=9.677692 期望 9.677692:true v_last=51.315507 期望(v = u + aT) 51.315507:true 差分斜率 9.677692=a_last:true
 末幀[data/random-4] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=-4.675829 期望 -4.675829:true v_last=-28.038055 期望(v = u + aT) -28.038055:true 差分斜率 -4.675829=a_last:true
 末幀[second-impl/default] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=1.000000 期望 1.000000:true v_last=10.000000 期望(v = u + aT) 10.000000:true 差分斜率 1.000000=a_last:true
@@ -38,6 +38,26 @@
 末幀[second-impl/scenario-area-not-distance] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=0.000000 期望 0.000000:true v_last=-2.000000 期望(折線末段斜率) -2.000000:true 差分斜率 0.000000=a_last:true
 末幀[second-impl/random-0] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=8.954050 期望 8.954050:true v_last=48.110196 期望(v = u + aT) 48.110196:true 差分斜率 8.954050=a_last:true
 末幀[second-impl/random-1] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=5.315743 期望 5.315743:true v_last=48.668986 期望(v = u + aT) 48.668986:true 差分斜率 5.315743=a_last:true
-末幀[second-impl/random-2] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=-3.337068 期望 -3.337068:true v_last=-13.847335 期望(v = u + aT) -13.847335:true 差分斜率 -3.337068=a_last:true
+末幀[second-impl/random-2] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=0.000000 期望 0.000000:true v_last=3.000000 期望(折線末段斜率) 3.000000:true 差分斜率 0.000000=a_last:true
 末幀[second-impl/random-3] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=9.677692 期望 9.677692:true v_last=51.315507 期望(v = u + aT) 51.315507:true 差分斜率 9.677692=a_last:true
 末幀[second-impl/random-4] 凍結後狀態不變:true a(T)=a(T−dt):true a_last=-4.675829 期望 -4.675829:true v_last=-28.038055 期望(v = u + aT) -28.038055:true 差分斜率 -4.675829=a_last:true
+歸零規則：|x|<1e-9 歸零、恰 1e-9 不歸零、a 不動、speed=|v|: true
+歸零規則：冪等: true
+歸零規則：反號對稱: true
+歸零[default] 主實作歸零(幀×鍵)=6 歸零處真值最大=0.00e+0 非零處真值最小=5.00e-7 歸零但真值≥1e-9:0 真值<1e-9但未歸零:0 近閾值歧義:0
+歸零[scenario-below-axis] 主實作歸零(幀×鍵)=9 歸零處真值最大=2.07e-13 非零處真值最小=2.00e-4 歸零但真值≥1e-9:0 真值<1e-9但未歸零:0 近閾值歧義:0
+歸零[scenario-st-not-path] 主實作歸零(幀×鍵)=60006 歸零處真值最大=0.00e+0 非零處真值最小=— 歸零但真值≥1e-9:0 真值<1e-9但未歸零:0 近閾值歧義:0
+歸零[scenario-v-zero-a-not] 主實作歸零(幀×鍵)=5 歸零處真值最大=0.00e+0 非零處真值最小=1.14e-3 歸零但真值≥1e-9:0 真值<1e-9但未歸零:0 近閾值歧義:0
+歸零[scenario-area-not-distance] 主實作歸零(幀×鍵)=9 歸零處真值最大=9.02e-13 非零處真值最小=2.22e-4 歸零但真值≥1e-9:0 真值<1e-9但未歸零:0 近閾值歧義:0
+歸零[random-0] 主實作歸零(幀×鍵)=5 歸零處真值最大=0.00e+0 非零處真值最小=3.34e-3 歸零但真值≥1e-9:0 真值<1e-9但未歸零:0 近閾值歧義:0
+歸零[random-1] 主實作歸零(幀×鍵)=5 歸零處真值最大=0.00e+0 非零處真值最小=6.97e-4 歸零但真值≥1e-9:0 真值<1e-9但未歸零:0 近閾值歧義:0
+歸零[random-2] 主實作歸零(幀×鍵)=6 歸零處真值最大=0.00e+0 非零處真值最小=5.00e-7 歸零但真值≥1e-9:0 真值<1e-9但未歸零:0 近閾值歧義:0
+歸零[random-3] 主實作歸零(幀×鍵)=5 歸零處真值最大=0.00e+0 非零處真值最小=2.93e-3 歸零但真值≥1e-9:0 真值<1e-9但未歸零:0 近閾值歧義:0
+歸零[random-4] 主實作歸零(幀×鍵)=5 歸零處真值最大=0.00e+0 非零處真值最小=4.66e-3 歸零但真值≥1e-9:0 真值<1e-9但未歸零:0 近閾值歧義:0
+解析零[scenario-below-axis] 幀 t=9.999999999999897: s=0(恰0:true) area=0(恰0:true) avgVel=0(恰0:true)
+解析零[scenario-below-axis] 幀 t=5.000000000000004: v=0(恰0:true) speed=0(恰0:true)
+解析零[scenario-area-not-distance] 幀 t=9.000000000000451: s=0(恰0:true) area=0(恰0:true) avgVel=0(恰0:true)
+解析零[scenario-area-not-distance] 幀 t=4.4999999999998375: v=0(恰0:true) speed=0(恰0:true)
+random-2 凍結幀 主 t=5.000000000000004 a=0 v=2.9999999999999956 s=10.50000000000001；T−dt a=0 v=3；末幀 a=0 v=2.9999999999999956；第二 a=0 v=3 s=10.5
+random-2 主 v(凍結) − 3 = -4.441e-15；若以未截斷 t=5.000000000000004 代入右段 v=3−(t−5)：0.000e+0（差 0 表示主實作用未截斷 t 在右段插值）
+random-2 a 凍結 = 左段斜率 0（兩實作一致）、v 與 3 差 < 1e-12: true

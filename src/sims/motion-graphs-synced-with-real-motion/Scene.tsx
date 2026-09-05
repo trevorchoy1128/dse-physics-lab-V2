@@ -75,9 +75,9 @@ export default function Scene({ plan, onInput }: SceneProps) {
     const bw = 44, bh = 22;
     ctx.fillStyle = ink; ctx.fillRect(cx - bw / 2, ty - bh - 8, bw, bh);
     ctx.beginPath(); ctx.arc(cx - bw / 3, ty - 6, 5, 0, Math.PI * 2); ctx.arc(cx + bw / 3, ty - 6, 5, 0, Math.PI * 2); ctx.fill();
-    // 箭嘴（顏色與線型由 ARROW_STYLE 決定）。像素比例按至今出現過的最大 |v|、|a| 設定，兩支箭嘴共用，
-    // 最長不超過軌道闊度的 30%；再按小車與邊緣的距離同步縮短，箭頭永遠在畫布內（核數員 F3、F5）
-    const maxMag = Math.max(1, m.vSeen * (plan.scales.velocity ?? 1), m.aSeen * (plan.scales.acceleration ?? 1));
+    // 箭嘴（顏色與線型由 ARROW_STYLE 決定）。像素比例由參數預測的最大 |v|、|a| 決定，運行中不變（核數員 F8），
+    // 兩支箭嘴共用，最長不超過軌道闊度的 30%；再按小車與邊緣的距離同步縮短，箭頭永遠在畫布內（F3、F5）
+    const maxMag = Math.max(1, m.vmax * (plan.scales.velocity ?? 1), m.amax * (plan.scales.acceleration ?? 1));
     let pxPerUnit = Math.min(88, (0.3 * (tr.w - 2 * pad)) / maxMag);
     const room = (dir: number) => (dir > 0 ? tr.x + tr.w - 8 - cx : cx - tr.x - 8);
     for (const a of plan.arrows) {

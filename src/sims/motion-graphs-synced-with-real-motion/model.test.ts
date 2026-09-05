@@ -88,6 +88,20 @@ describe("運動線圖與真實運動同步（S7）", () => {
     expect(model.observe(run(q, 11).at(-1)!, q).a).toBeCloseTo(-0.4, 9);
   });
 
+  it("歷史樣本與讀數永無 NaN；凍結幀 t 恰等於 T（核數員 F7、第二實作者第 4 輪）", () => {
+    for (const p of [draw([2, 1.6, 1.2, 0.8, 0.4, 0, -0.4, -0.8, -1.2, -1.6, -2]), live(3, -9.81, 5), draw([0, 1, 3, 3, 0, -2])]) {
+      const end = run(p, p.T + 1, 1e-3).at(-1)!;
+      expect(end.done).toBe(true);
+      expect(end.t).toBe(p.T);
+      for (const h of end.hist) for (const k of ["t", "s", "v", "a"] as const) expect(Number.isFinite(h[k])).toBe(true);
+      const o = model.observe(end, p);
+      for (const k of Object.keys(o)) expect(Number.isFinite(o[k])).toBe(true);
+    }
+    // dt 不整除 T：末步截斷，t 仍恰為 T
+    const p = live(1, 0, 5); const end = run(p, 5.4, 0.0007).at(-1)!;
+    expect(end.t).toBe(5); expect(end.s).toBeCloseTo(5, 9);
+  });
+
   it("對稱往返後位移的捨入殘餘顯示為 0（核數員 F6）", () => {
     const p = draw([2, 1.6, 1.2, 0.8, 0.4, 0, -0.4, -0.8, -1.2, -1.6, -2]);   // 奇對稱，s(10) 解析值 0
     const end = run(p, 10.5).at(-1)!;

@@ -176,3 +176,63 @@ const close = (a, b, tol = 1e-9) => Math.abs(a - b) <= tol * Math.max(1, Math.ab
   }
 }
 fs.writeFileSync(path.join(root, "second-impl", "checks-output.txt"), out.join("\n"));
+
+// ---------- 6. 第 4 輪：歸零（|x| < 1e-9 → 0）專項 ----------
+{
+  const { snapZero, SNAP_KEYS, SNAP_EPS } = await import("./model.mjs");
+  // (a) 歸零規則本身：冪等、只動 |x|<1e-9、反號對稱
+  const o1 = { s: 5e-10, dist: -9.99e-10, v: 1e-9, a: 3e-10, speed: 1e-9, area: 5e-10, avgSpeed: 2e-9, avgVel: -5e-10 };
+  const z1 = snapZero(o1);
+  log("歸零規則：|x|<1e-9 歸零、恰 1e-9 不歸零、a 不動、speed=|v|:",
+    z1.s === 0 && z1.dist === 0 && z1.v === 1e-9 && z1.a === 3e-10 && z1.speed === 1e-9 && z1.avgSpeed === 2e-9 && z1.avgVel === 0);
+  log("歸零規則：冪等:", JSON.stringify(snapZero(z1)) === JSON.stringify(z1));
+  const neg = Object.fromEntries(Object.entries(o1).map(([k, x]) => [k, -x]));
+  const zn = snapZero(neg);
+  log("歸零規則：反號對稱:", SNAP_KEYS.every(k => zn[k] === -z1[k] || (zn[k] === 0 && z1[k] === 0)));
+  // (b) 主實作每個被歸零的幀：以主實作自身的 t（累加值，非整數格點）代入解析式，真值必須 < 1e-9；
+  //     反之主實作非零的幀，解析真值必須 ≥ 1e-9（近閾值 ±1e-11 內視為歧義，另計）
+  for (const run of index.runs) {
+    const A = JSON.parse(fs.readFileSync(path.join(root, "data", run.name + ".json"), "utf8")).frames;
+    let nZero = 0, bad = [], badNotZero = [], ambiguous = 0, maxTrueAtZero = 0, minTrueAtNonzero = Infinity;
+    for (const f of A) {
+      const truth = observe(run.params, f.t).obs;   // 用主實作的 t
+      for (const k of SNAP_KEYS) {
+        const x = f.obs[k], tv = Math.abs(truth[k]);
+        if (x === 0) {
+          nZero++;
+          maxTrueAtZero = Math.max(maxTrueAtZero, tv);
+          if (tv >= SNAP_EPS) bad.push({ t: f.t, k, truth: truth[k] });
+        } else {
+          minTrueAtNonzero = Math.min(minTrueAtNonzero, tv);
+          if (tv < SNAP_EPS - 1e-11) badNotZero.push({ t: f.t, k, truth: truth[k], main: x });
+          else if (tv < SNAP_EPS) ambiguous++;
+        }
+      }
+    }
+    log(`歸零[${run.name}] 主實作歸零(幀×鍵)=${nZero} 歸零處真值最大=${maxTrueAtZero.toExponential(2)} 非零處真值最小=${minTrueAtNonzero === Infinity ? "—" : minTrueAtNonzero.toExponential(2)} 歸零但真值≥1e-9:${bad.length} 真值<1e-9但未歸零:${badNotZero.length} 近閾值歧義:${ambiguous}`
+      + (bad.length ? " " + JSON.stringify(bad.slice(0, 3)) : "") + (badNotZero.length ? " " + JSON.stringify(badNotZero.slice(0, 3)) : ""));
+  }
+  // (c) 解析值恰為 0 的幀（奇對稱 v–t 的 s(10)、area-not-distance 的 s(9) 與 v(4.5)、below-axis 的 v(5)）主實作是否恰為 0
+  const want = [
+    ["scenario-below-axis", 10, ["s", "area", "avgVel"]],
+    ["scenario-below-axis", 5, ["v", "speed"]],
+    ["scenario-area-not-distance", 9, ["s", "area", "avgVel"]],
+    ["scenario-area-not-distance", 4.5, ["v", "speed"]],
+  ];
+  for (const [name, tt, ks] of want) {
+    const A = JSON.parse(fs.readFileSync(path.join(root, "data", name + ".json"), "utf8")).frames;
+    const f = A[Math.round(tt / index.dt)];
+    log(`解析零[${name}] 幀 t=${f.t}: ` + ks.map(k => `${k}=${f.obs[k]}(恰0:${f.obs[k] === 0})`).join(" "));
+  }
+  // (d) random-2（draw, T=5，T 恰落在節點 5）凍結幀：a 取左段 vt[5]−vt[4]=0 而非右段 −1；v 應為節點值 3
+  {
+    const A = JSON.parse(fs.readFileSync(path.join(root, "data", "random-2.json"), "utf8")).frames;
+    const pre = A[4999], at = A[5000], last = A[10000];
+    const p = index.runs.find(r => r.name === "random-2").params;
+    const mine = observe(p, 5).obs;
+    log(`random-2 凍結幀 主 t=${at.t} a=${at.obs.a} v=${at.obs.v} s=${at.obs.s}；T−dt a=${pre.obs.a} v=${pre.obs.v}；末幀 a=${last.obs.a} v=${last.obs.v}；第二 a=${mine.a} v=${mine.v} s=${mine.s}`);
+    log(`random-2 主 v(凍結) − 3 = ${(at.obs.v - 3).toExponential(3)}；若以未截斷 t=${at.t} 代入右段 v=3−(t−5)：${(3 - (at.t - 5) - at.obs.v).toExponential(3)}（差 0 表示主實作用未截斷 t 在右段插值）`);
+    log("random-2 a 凍結 = 左段斜率 0（兩實作一致）、v 與 3 差 < 1e-12:", at.obs.a === 0 && mine.a === 0 && Math.abs(at.obs.v - 3) < 1e-12 && Math.abs(last.obs.v - 3) < 1e-12);
+  }
+}
+fs.writeFileSync(path.join(root, "second-impl", "checks-output.txt"), out.join("\n"));

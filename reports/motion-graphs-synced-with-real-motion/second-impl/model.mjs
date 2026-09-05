@@ -10,6 +10,9 @@
 //    不歸零（第 2 輪依核數員 F1 修訂；第 1 輪為歸零）。
 //  - draw 模式 vt[i] 為 t = i 秒的節點值，段內線性插值，超出末節點後 v 保持最後值、a = 0。
 //  - avgSpeed = dist / t，avgVel = s / t；t = 0 時兩者為 0。
+//  - 第 4 輪：主實作 0.3.0 在 observe 把 |x| < 1e-9 的 s、dist、v、area、avgSpeed、avgVel 歸零（顯示層）。
+//    本實作的 observe 仍輸出純解析值；另提供 snapZero(obs) 供比對時套用同一顯示規則，
+//    以便檢查主實作的歸零是否只影響 |x| < 1e-9 的值。speed 不在規則內，但取 |v_snapped| 才與 speed = |v| 自洽。
 //  - area（v–t 線下面積）= s（含號）。speed = |v|。
 
 // 在一段上：v(τ) = v0 + m τ，回傳 τ 內的位移增量與路程增量
@@ -104,6 +107,15 @@ export function observe(p, tRaw) {
       avgVel: t > 0 ? st.s / t : 0,
     },
   };
+}
+
+export const SNAP_EPS = 1e-9;
+export const SNAP_KEYS = ["s", "dist", "v", "area", "avgSpeed", "avgVel"];
+export function snapZero(obs) {
+  const o = { ...obs };
+  for (const k of SNAP_KEYS) if (Math.abs(o[k]) < SNAP_EPS) o[k] = 0;
+  o.speed = Math.abs(o.v);
+  return o;
 }
 
 export function simulate(p, dt, frames) {

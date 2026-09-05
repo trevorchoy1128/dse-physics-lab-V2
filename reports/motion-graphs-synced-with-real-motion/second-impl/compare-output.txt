@@ -1,0 +1,136 @@
+| 運行 | key | 最大絕對誤差 | 最大相對誤差 | 首次超限 t | 節點容限幀 | 通過 |
+|---|---|---|---|---|---|---|
+| default | s | 1.80e-12 | 6.27e-14 | — | 0 | 是 |
+| default | dist | 1.80e-12 | 6.27e-14 | — | 0 | 是 |
+| default | v | 1.01e-12 | 1.26e-13 | — | 0 | 是 |
+| default | a | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| default | speed | 1.01e-12 | 1.26e-13 | — | 0 | 是 |
+| default | area | 1.80e-12 | 6.27e-14 | — | 0 | 是 |
+| default | avgSpeed | 3.95e-13 | 9.87e-14 | — | 0 | 是 |
+| default | avgVel | 3.95e-13 | 9.87e-14 | — | 0 | 是 |
+| default | (t) | 1.01e-12 | 0.00e+0 | — | 0 | 是 |
+| scenario-below-axis | s | 7.15e-13 | 1.11e-3 | — | 0 | 是 |
+| scenario-below-axis | dist | 1.25e-12 | 1.41e-13 | — | 0 | 是 |
+| scenario-below-axis | v | 4.03e-13 | 4.44e-12 | — | 0 | 是 |
+| scenario-below-axis | a | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| scenario-below-axis | speed | 4.03e-13 | 4.44e-12 | — | 0 | 是 |
+| scenario-below-axis | area | 7.15e-13 | 1.11e-3 | — | 0 | 是 |
+| scenario-below-axis | avgSpeed | 1.48e-13 | 1.34e-13 | — | 0 | 是 |
+| scenario-below-axis | avgVel | 1.48e-13 | 1.11e-4 | — | 0 | 是 |
+| scenario-below-axis | (t) | 1.01e-12 | 0.00e+0 | — | 0 | 是 |
+| scenario-st-not-path | s | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| scenario-st-not-path | dist | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| scenario-st-not-path | v | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| scenario-st-not-path | a | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| scenario-st-not-path | speed | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| scenario-st-not-path | area | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| scenario-st-not-path | avgSpeed | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| scenario-st-not-path | avgVel | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| scenario-st-not-path | (t) | 1.01e-12 | 0.00e+0 | — | 0 | 是 |
+| scenario-v-zero-a-not | s | 7.09e-12 | 2.18e-12 | — | 0 | 是 |
+| scenario-v-zero-a-not | dist | 7.06e-12 | 6.52e-14 | — | 0 | 是 |
+| scenario-v-zero-a-not | v | 4.87e-12 | 2.15e-12 | — | 0 | 是 |
+| scenario-v-zero-a-not | a | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| scenario-v-zero-a-not | speed | 4.87e-12 | 2.15e-12 | — | 0 | 是 |
+| scenario-v-zero-a-not | area | 7.09e-12 | 2.18e-12 | — | 0 | 是 |
+| scenario-v-zero-a-not | avgSpeed | 2.15e-12 | 1.27e-13 | — | 0 | 是 |
+| scenario-v-zero-a-not | avgVel | 2.13e-12 | 2.18e-12 | — | 0 | 是 |
+| scenario-v-zero-a-not | (t) | 3.30e-13 | 0.00e+0 | — | 0 | 是 |
+| scenario-area-not-distance | s | 6.59e-13 | 3.25e-10 | — | 0 | 是 |
+| scenario-area-not-distance | dist | 2.01e-12 | 1.26e-13 | — | 0 | 是 |
+| scenario-area-not-distance | v | 1.32e-12 | 1.63e-10 | — | 0 | 是 |
+| scenario-area-not-distance | a | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| scenario-area-not-distance | speed | 1.32e-12 | 1.63e-10 | — | 0 | 是 |
+| scenario-area-not-distance | area | 6.59e-13 | 3.25e-10 | — | 0 | 是 |
+| scenario-area-not-distance | avgSpeed | 7.53e-14 | 4.00e-14 | — | 0 | 是 |
+| scenario-area-not-distance | avgVel | 7.24e-14 | 3.25e-10 | — | 0 | 是 |
+| scenario-area-not-distance | (t) | 1.01e-12 | 0.00e+0 | — | 0 | 是 |
+| random-0 | s | 2.34e-12 | 3.47e-14 | — | 0 | 是 |
+| random-0 | dist | 2.34e-12 | 3.47e-14 | — | 0 | 是 |
+| random-0 | v | 3.72e-12 | 7.73e-14 | — | 0 | 是 |
+| random-0 | a | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| random-0 | speed | 3.72e-12 | 7.73e-14 | — | 0 | 是 |
+| random-0 | area | 2.34e-12 | 3.47e-14 | — | 0 | 是 |
+| random-0 | avgSpeed | 2.31e-12 | 1.12e-13 | — | 0 | 是 |
+| random-0 | avgVel | 2.31e-12 | 1.12e-13 | — | 0 | 是 |
+| random-0 | (t) | 3.30e-13 | 0.00e+0 | — | 0 | 是 |
+| random-1 | s | 1.43e-11 | 9.51e-11 | — | 0 | 是 |
+| random-1 | dist | 1.42e-11 | 6.34e-14 | — | 0 | 是 |
+| random-1 | v | 5.58e-12 | 3.43e-11 | — | 0 | 是 |
+| random-1 | a | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| random-1 | speed | 5.58e-12 | 3.43e-11 | — | 0 | 是 |
+| random-1 | area | 1.43e-11 | 9.51e-11 | — | 0 | 是 |
+| random-1 | avgSpeed | 1.65e-12 | 8.87e-14 | — | 0 | 是 |
+| random-1 | avgVel | 1.66e-12 | 9.52e-11 | — | 0 | 是 |
+| random-1 | (t) | 1.01e-12 | 0.00e+0 | — | 0 | 是 |
+| random-2 | s | 2.17e-13 | 4.82e-14 | — | 0 | 是 |
+| random-2 | dist | 2.17e-13 | 4.82e-14 | — | 0 | 是 |
+| random-2 | v | 2.19e-13 | 7.32e-14 | — | 0 | 是 |
+| random-2 | a | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| random-2 | speed | 2.19e-13 | 7.32e-14 | — | 0 | 是 |
+| random-2 | area | 2.17e-13 | 4.82e-14 | — | 0 | 是 |
+| random-2 | avgSpeed | 1.29e-13 | 6.87e-14 | — | 0 | 是 |
+| random-2 | avgVel | 1.29e-13 | 6.87e-14 | — | 0 | 是 |
+| random-2 | (t) | 3.30e-13 | 0.00e+0 | — | 0 | 是 |
+| random-3 | s | 2.36e-12 | 3.21e-14 | — | 0 | 是 |
+| random-3 | dist | 2.36e-12 | 3.21e-14 | — | 0 | 是 |
+| random-3 | v | 5.12e-12 | 9.97e-14 | — | 0 | 是 |
+| random-3 | a | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| random-3 | speed | 5.12e-12 | 9.97e-14 | — | 0 | 是 |
+| random-3 | area | 2.36e-12 | 3.21e-14 | — | 0 | 是 |
+| random-3 | avgSpeed | 1.53e-12 | 6.88e-14 | — | 0 | 是 |
+| random-3 | avgVel | 1.53e-12 | 6.88e-14 | — | 0 | 是 |
+| random-3 | (t) | 3.30e-13 | 0.00e+0 | — | 0 | 是 |
+| random-4 | s | 3.72e-12 | 4.57e-14 | — | 0 | 是 |
+| random-4 | dist | 3.72e-12 | 4.57e-14 | — | 0 | 是 |
+| random-4 | v | 2.03e-12 | 7.26e-14 | — | 0 | 是 |
+| random-4 | a | 0.00e+0 | 0.00e+0 | — | 0 | 是 |
+| random-4 | speed | 2.03e-12 | 7.26e-14 | — | 0 | 是 |
+| random-4 | area | 3.72e-12 | 4.57e-14 | — | 0 | 是 |
+| random-4 | avgSpeed | 7.60e-13 | 5.43e-14 | — | 0 | 是 |
+| random-4 | avgVel | 7.60e-13 | 5.43e-14 | — | 0 | 是 |
+| random-4 | (t) | 3.30e-13 | 0.00e+0 | — | 0 | 是 |
+
+=== 歸零專項 ===
+default (live, T=10): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 speed/v零不一致:0 s與avgVel歸零不同步:0 套規則後完全相等:10676/80008
+   主實作各鍵零幀數 {"s":1,"dist":1,"v":1,"a":0,"speed":1,"area":1,"avgSpeed":1,"avgVel":1}
+   第二套規則零幀數 {"s":1,"dist":1,"v":1,"a":0,"speed":1,"area":1,"avgSpeed":1,"avgVel":1}
+scenario-below-axis (draw, T=10): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 speed/v零不一致:0 s與avgVel歸零不同步:0 套規則後完全相等:11950/80008
+   主實作各鍵零幀數 {"s":2,"dist":1,"v":1,"a":0,"speed":1,"area":2,"avgSpeed":1,"avgVel":2}
+   第二套規則零幀數 {"s":2,"dist":1,"v":1,"a":0,"speed":1,"area":2,"avgSpeed":1,"avgVel":2}
+scenario-st-not-path (live, T=10): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 speed/v零不一致:0 s與avgVel歸零不同步:0 套規則後完全相等:80008/80008
+   主實作各鍵零幀數 {"s":10001,"dist":10001,"v":10001,"a":10001,"speed":10001,"area":10001,"avgSpeed":10001,"avgVel":10001}
+   第二套規則零幀數 {"s":10001,"dist":10001,"v":10001,"a":10001,"speed":10001,"area":10001,"avgSpeed":10001,"avgVel":10001}
+scenario-v-zero-a-not (live, T=5): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 speed/v零不一致:0 s與avgVel歸零不同步:0 套規則後完全相等:10131/80008
+   主實作各鍵零幀數 {"s":1,"dist":1,"v":0,"a":0,"speed":0,"area":1,"avgSpeed":1,"avgVel":1}
+   第二套規則零幀數 {"s":1,"dist":1,"v":0,"a":0,"speed":0,"area":1,"avgSpeed":1,"avgVel":1}
+scenario-area-not-distance (draw, T=10): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 speed/v零不一致:0 s與avgVel歸零不同步:0 套規則後完全相等:36074/80008
+   主實作各鍵零幀數 {"s":2,"dist":1,"v":1,"a":9001,"speed":1,"area":2,"avgSpeed":1,"avgVel":2}
+   第二套規則零幀數 {"s":2,"dist":1,"v":1,"a":9001,"speed":1,"area":2,"avgSpeed":1,"avgVel":2}
+random-0 (live, T=5): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 speed/v零不一致:0 s與avgVel歸零不同步:0 套規則後完全相等:10130/80008
+   主實作各鍵零幀數 {"s":1,"dist":1,"v":0,"a":0,"speed":0,"area":1,"avgSpeed":1,"avgVel":1}
+   第二套規則零幀數 {"s":1,"dist":1,"v":0,"a":0,"speed":0,"area":1,"avgSpeed":1,"avgVel":1}
+random-1 (live, T=10): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 speed/v零不一致:0 s與avgVel歸零不同步:0 套規則後完全相等:10110/80008
+   主實作各鍵零幀數 {"s":1,"dist":1,"v":0,"a":0,"speed":0,"area":1,"avgSpeed":1,"avgVel":1}
+   第二套規則零幀數 {"s":1,"dist":1,"v":0,"a":0,"speed":0,"area":1,"avgSpeed":1,"avgVel":1}
+random-2 (draw, T=5): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 speed/v零不一致:0 s與avgVel歸零不同步:0 套規則後完全相等:24715/80008
+   主實作各鍵零幀數 {"s":1,"dist":1,"v":1,"a":7001,"speed":1,"area":1,"avgSpeed":1,"avgVel":1}
+   第二套規則零幀數 {"s":1,"dist":1,"v":1,"a":7001,"speed":1,"area":1,"avgSpeed":1,"avgVel":1}
+random-3 (live, T=5): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 speed/v零不一致:0 s與avgVel歸零不同步:0 套規則後完全相等:10157/80008
+   主實作各鍵零幀數 {"s":1,"dist":1,"v":0,"a":0,"speed":0,"area":1,"avgSpeed":1,"avgVel":1}
+   第二套規則零幀數 {"s":1,"dist":1,"v":0,"a":0,"speed":0,"area":1,"avgSpeed":1,"avgVel":1}
+random-4 (live, T=5): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 speed/v零不一致:0 s與avgVel歸零不同步:0 套規則後完全相等:10043/80008
+   主實作各鍵零幀數 {"s":1,"dist":1,"v":0,"a":0,"speed":0,"area":1,"avgSpeed":1,"avgVel":1}
+   第二套規則零幀數 {"s":1,"dist":1,"v":0,"a":0,"speed":0,"area":1,"avgSpeed":1,"avgVel":1}
+
+=== 解析值恰為 0 的幀（t > 0）===
+scenario-below-axis t=5 v: 第二=0 主=0 主恰為0:true
+scenario-below-axis t=10 s: 第二=1.1102230246251565e-15 主=0 主恰為0:true
+scenario-below-axis t=10 area: 第二=1.1102230246251565e-15 主=0 主恰為0:true
+scenario-below-axis t=10 avgVel: 第二=1.1102230246251565e-16 主=0 主恰為0:true
+scenario-area-not-distance t=4.5 v: 第二=0 主=0 主恰為0:true
+scenario-area-not-distance t=9 s: 第二=0 主=0 主恰為0:true
+scenario-area-not-distance t=9 area: 第二=0 主=0 主恰為0:true
+scenario-area-not-distance t=9 avgVel: 第二=0 主=0 主恰為0:true
+
+FAILURES: []

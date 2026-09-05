@@ -15,10 +15,11 @@ export function trackExtent(p: P): number {
 }
 
 export const plan: PlanFn<S, P> = (s, p, obs, layers) => {
-  const pos: Vec3 = [s.s, 0, 0];
+  // 位置、標籤、箭嘴一律用 observe() 歸零後的值，畫面與讀數面板一致（核數員 F6）
+  const pos: Vec3 = [obs.s, 0, 0];
   const arrows: ArrowPlan[] = [];
-  if (layers.velocity) arrows.push({ kind: "velocity", origin: [s.s, 0.45, 0], vector: [s.v, 0, 0], label: "v", layer: "velocity" });
-  if (layers.acceleration) arrows.push({ kind: "acceleration", origin: [s.s, 0.75, 0], vector: [obs.a, 0, 0], label: "a", layer: "acceleration" });
+  if (layers.velocity) arrows.push({ kind: "velocity", origin: [obs.s, 0.45, 0], vector: [obs.v, 0, 0], label: "v", layer: "velocity" });
+  if (layers.acceleration) arrows.push({ kind: "acceleration", origin: [obs.s, 0.75, 0], vector: [obs.a, 0, 0], label: "a", layer: "acceleration" });
   const vmax = p.mode === "draw" ? Math.max(1, ...p.vt.map(Math.abs)) : Math.max(1, Math.abs(p.u), Math.abs(p.u + p.a * p.T));
   const amax = p.mode === "draw" ? Math.max(1, ...p.vt.slice(1).map((v, k) => Math.abs(v - p.vt[k]))) : Math.max(1, Math.abs(p.a));
   const smaxGraph = Math.max(1, ...s.hist.map(h => Math.abs(h.s)), Math.abs(s.s));
@@ -28,7 +29,7 @@ export const plan: PlanFn<S, P> = (s, p, obs, layers) => {
   return {
     bodies: [{ key: "trolley", shape: "box", position: pos, size: [0.6, 0.3, 0.3], color: "#1c2530" }],
     arrows,
-    labels: [{ position: [s.s, -0.5, 0], symbol: "s", value: s.s, unit: "m" }],
+    labels: [{ position: [obs.s, -0.5, 0], symbol: "s", value: obs.s, unit: "m" }],
     trails: [
       { key: "s-t", points: s.hist.map(h => [h.t, h.s, 0] as Vec3) },
       { key: "v-t", points: s.hist.map(h => [h.t, h.v, 0] as Vec3) },

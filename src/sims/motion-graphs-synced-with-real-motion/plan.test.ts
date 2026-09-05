@@ -45,6 +45,16 @@ describe("運動線圖 畫面", () => {
     for (const a of pl.arrows) expect(typeof pl.scales[a.kind]).toBe("number");
     for (const l of pl.labels) { expect(l.value).toBe(obs[l.symbol]); expect(UNITS_ALLOWED).toContain(l.unit); }
   });
+  it("meta 內所有數值有限（NaN 會令畫布比例失效，第 4 輪 F7）；標籤與起點用歸零後的 s（F6）", () => {
+    const p = draw([2, 1.6, 1.2, 0.8, 0.4, 0, -0.4, -0.8, -1.2, -1.6, -2]);
+    const s = advance(p, 10.5); const obs = model.observe(s, p); const pl = plan(s, p, obs, all);
+    for (const [k, v] of Object.entries(pl.meta!)) expect(Number.isFinite(v), k).toBe(true);
+    expect(obs.s).toBe(0);
+    expect(pl.labels[0].value).toBe(0); expect(pl.labels[0].position[0]).toBe(0);
+    for (const a of pl.arrows) expect(a.origin[0]).toBe(0);
+    expect(pl.arrows.find(a => a.kind === "velocity")!.vector[0]).toBeCloseTo(-2, 12);
+  });
+
   it("圖層關閉時箭嘴不畫；meta 旗標跟隨圖層", () => {
     const p = live(1, 1); const s = model.init(p);
     const pl = plan(s, p, model.observe(s, p), { velocity: false, acceleration: false, tangent: false, area: false });

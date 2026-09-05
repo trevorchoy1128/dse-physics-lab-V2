@@ -1,5 +1,7 @@
+// 第 4 輪比對：主實作 0.3.0（observe 把 |x| < 1e-9 的 s/dist/v/area/avgSpeed/avgVel 歸零）
 import fs from "node:fs";
 import path from "node:path";
+import { snapZero, SNAP_KEYS, SNAP_EPS } from "./model.mjs";
 const root = "C:/Users/trevor/dev/dse-physics-lab/reports/motion-graphs-synced-with-real-motion";
 const index = JSON.parse(fs.readFileSync(path.join(root, "data/index.json"), "utf8"));
 const dt = index.dt;
@@ -8,14 +10,16 @@ const EVENT_DT = 2 * dt;   // 事件（a 在節點處跳變）時刻容限
 const keys = ["s", "dist", "v", "a", "speed", "area", "avgSpeed", "avgVel"];
 const rows = [];
 const failures = [];
+const snapReport = [];
+const zeroFrames = [];     // 解析值恰為 0（t > 0）的幀
 for (const run of index.runs) {
   const A = JSON.parse(fs.readFileSync(path.join(root, "data", run.name + ".json"), "utf8")).frames;
   const B = JSON.parse(fs.readFileSync(path.join(root, "second-impl", run.name + ".json"), "utf8")).frames;
   if (A.length !== B.length) failures.push(`${run.name}: 幀數不同 ${A.length} vs ${B.length}`);
   const n = Math.min(A.length, B.length);
-  // 幀時刻
   let maxTdiff = 0;
   for (let i = 0; i < n; i++) maxTdiff = Math.max(maxTdiff, Math.abs(A[i].t - B[i].t));
+  // ---- A. 容限比對（主實作 vs 第二實作純解析值） ----
   for (const k of keys) {
     let maxAbs = 0, maxRel = 0, firstT = null, nEventTolerated = 0, nFail = 0;
     for (let i = 0; i < n; i++) {
@@ -24,8 +28,6 @@ for (const run of index.runs) {
       const rel = d / Math.max(Math.abs(a), Math.abs(b), 1e-12);
       const ok = d <= TOL || rel <= TOL;
       if (!ok) {
-        // a 是分段常數，在 draw 模式節點處跳變；若該幀落在節點 ±2dt 內，
-        // 且主實作值等於相鄰段的斜率，視為事件時刻容限內
         let tolerated = false;
         if (k === "a" && run.params.mode === "draw") {
           const t = B[i].t, node = Math.round(t);
@@ -41,17 +43,65 @@ for (const run of index.runs) {
         if (tolerated) nEventTolerated++;
         else { nFail++; if (firstT === null) firstT = B[i].t; }
       }
-      if (!(k === "a" && d > TOL && firstT === null && nFail === 0 && rel > TOL)) {
-        maxAbs = Math.max(maxAbs, d); maxRel = Math.max(maxRel, rel);
-      }
+      maxAbs = Math.max(maxAbs, d); maxRel = Math.max(maxRel, rel);
     }
     rows.push({ run: run.name, key: k, maxAbs, maxRel, firstT, nEventTolerated, pass: nFail === 0 });
     if (nFail > 0) failures.push(`${run.name}.${k}: ${nFail} 幀超限，首次 t=${firstT}`);
   }
   rows.push({ run: run.name, key: "(t)", maxAbs: maxTdiff, maxRel: 0, firstT: null, nEventTolerated: 0, pass: maxTdiff < dt / 10 });
+
+  // ---- B. 歸零專項檢查 ----
+  const r = { run: run.name, mode: run.params.mode, T: run.params.T,
+    mainZeroButMineBig: [],      // 主實作為 0 但 |第二| ≥ 1e-9：歸零影響了不該影響的值
+    mainTinyNotZero: [],         // 主實作 0 < |x| < 1e-9：應歸零而未歸零
+    mineTinyMainNotZero: [],     // |第二| < 1e-9 但主實作 ≠ 0（近閾值歧義以外即為問題）
+    aSnapped: [],                // a 被歸零（規則不含 a）
+    speedNeAbsV: 0,              // 主實作 speed ≠ |v|
+    speedZeroMismatch: 0,        // speed 為 0 與 v 為 0 不一致
+    sZeroAvgVelNot: [],          // s 歸零但 avgVel 未歸零（或反之），僅觀察
+    snappedExact: 0, snappedTotal: 0, // 套用同一規則後完全相等的 (幀,key) 數
+    mainZeroCount: {}, mineSnapZeroCount: {} };
+  for (const k of keys) { r.mainZeroCount[k] = 0; r.mineSnapZeroCount[k] = 0; }
+  for (let i = 0; i < n; i++) {
+    const a = A[i].obs, b = B[i].obs, bs = snapZero(b), t = B[i].t;
+    for (const k of SNAP_KEYS) {
+      if (a[k] === 0 && Math.abs(b[k]) >= SNAP_EPS) r.mainZeroButMineBig.push({ t, k, mine: b[k] });
+      if (a[k] !== 0 && Math.abs(a[k]) < SNAP_EPS) r.mainTinyNotZero.push({ t, k, main: a[k] });
+      if (Math.abs(b[k]) < SNAP_EPS && a[k] !== 0) r.mineTinyMainNotZero.push({ t, k, mine: b[k], main: a[k] });
+      if (t > 0 && Math.abs(b[k]) <= 1e-12) zeroFrames.push({ run: run.name, t, k, mine: b[k], main: a[k], mainExactZero: a[k] === 0 });
+    }
+    if (a.a === 0 && b.a !== 0) r.aSnapped.push({ t, mine: b.a });
+    if (a.speed !== Math.abs(a.v)) r.speedNeAbsV++;
+    if ((a.speed === 0) !== (a.v === 0)) r.speedZeroMismatch++;
+    if (t > 0 && ((a.s === 0) !== (a.avgVel === 0))) r.sZeroAvgVelNot.push({ t, s: a.s, avgVel: a.avgVel });
+    for (const k of keys) {
+      r.snappedTotal++;
+      if (a[k] === bs[k]) r.snappedExact++;
+      if (a[k] === 0) r.mainZeroCount[k]++;
+      if (bs[k] === 0) r.mineSnapZeroCount[k]++;
+    }
+  }
+  snapReport.push(r);
+  if (r.mainZeroButMineBig.length) failures.push(`${run.name}: 歸零影響了 |x| ≥ 1e-9 的值 ${r.mainZeroButMineBig.length} 處`);
+  if (r.mainTinyNotZero.length) failures.push(`${run.name}: 0 < |x| < 1e-9 未歸零 ${r.mainTinyNotZero.length} 處`);
+  if (r.aSnapped.length) failures.push(`${run.name}: a 被歸零 ${r.aSnapped.length} 處`);
+  if (r.speedNeAbsV) failures.push(`${run.name}: speed ≠ |v| ${r.speedNeAbsV} 幀`);
+  // 近閾值歧義：|第二| 在 [1e-9 − 1e-11, 1e-9) 內可容許；其餘視為未歸零
+  const strict = r.mineTinyMainNotZero.filter(x => Math.abs(x.mine) < SNAP_EPS - 1e-11);
+  if (strict.length) failures.push(`${run.name}: 第二實作 |x| < 1e-9 但主實作未歸零 ${strict.length} 處（首個 t=${strict[0].t} ${strict[0].k} 主=${strict[0].main}）`);
 }
 console.log("| 運行 | key | 最大絕對誤差 | 最大相對誤差 | 首次超限 t | 節點容限幀 | 通過 |");
 console.log("|---|---|---|---|---|---|---|");
 for (const r of rows) console.log(`| ${r.run} | ${r.key} | ${r.maxAbs.toExponential(2)} | ${r.maxRel.toExponential(2)} | ${r.firstT === null ? "—" : r.firstT} | ${r.nEventTolerated} | ${r.pass ? "是" : "否"} |`);
+console.log("\n=== 歸零專項 ===");
+for (const r of snapReport) {
+  console.log(`${r.run} (${r.mode}, T=${r.T}): 主0但第二≥1e-9:${r.mainZeroButMineBig.length} 主0<|x|<1e-9未歸零:${r.mainTinyNotZero.length} 第二<1e-9但主≠0:${r.mineTinyMainNotZero.length} a被歸零:${r.aSnapped.length} speed≠|v|:${r.speedNeAbsV} speed/v零不一致:${r.speedZeroMismatch} s與avgVel歸零不同步:${r.sZeroAvgVelNot.length} 套規則後完全相等:${r.snappedExact}/${r.snappedTotal}`);
+  console.log(`   主實作各鍵零幀數 ${JSON.stringify(r.mainZeroCount)}`);
+  console.log(`   第二套規則零幀數 ${JSON.stringify(r.mineSnapZeroCount)}`);
+  if (r.mineTinyMainNotZero.length) console.log("   第二<1e-9但主≠0:", JSON.stringify(r.mineTinyMainNotZero.slice(0, 5)));
+  if (r.sZeroAvgVelNot.length) console.log("   s/avgVel 不同步:", JSON.stringify(r.sZeroAvgVelNot.slice(0, 5)));
+}
+console.log("\n=== 解析值恰為 0 的幀（t > 0）===");
+for (const z of zeroFrames.filter(z => z.run !== "scenario-st-not-path")) console.log(`${z.run} t=${z.t} ${z.k}: 第二=${z.mine} 主=${z.main} 主恰為0:${z.mainExactZero}`);
 console.log("\nFAILURES:", JSON.stringify(failures));
-fs.writeFileSync(path.join(root, "second-impl", "compare-result.json"), JSON.stringify({ rows, failures }, null, 1));
+fs.writeFileSync(path.join(root, "second-impl", "compare-result.json"), JSON.stringify({ rows, failures, snapReport, zeroFrames }, null, 1));

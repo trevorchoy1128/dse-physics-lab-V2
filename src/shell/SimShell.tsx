@@ -77,6 +77,27 @@ export function SimShell({ sim }: SimShellProps) {
 
       <div className="sim-main">
         <div className="stage">
+          <div className="transport">
+            <button type="button" className="primary" onClick={() => setPlaying(p => !p)}>{playing ? "⏸ " + t(UI.pause) : "▶ " + t(UI.play)}</button>
+            <button type="button" onClick={() => { setPlaying(false); runner.current.advance(sim.stepSize ?? 0.05); setFrame(f => f + 1); }}>⏭ {t(UI.step)} {sim.stepSize ?? 0.05} s</button>
+            <button type="button" onClick={() => { runner.current.reset(); setFrame(f => f + 1); }}>↺ {t(UI.reset)}</button>
+            <button type="button" onClick={() => { setActiveScenario(null); setLayers(Object.fromEntries(sim.layers.map(l => [l.key, l.default]))); applyParams({ ...sim.defaults }); setPlaying(true); }}>⟲ {t(UI.restore)}</button>
+            <label className="speed">{t(UI.speed)}
+              <select value={speed} onChange={e => setSpeed(Number(e.target.value))}>{SPEEDS.map(s => <option key={s} value={s}>{s}×</option>)}</select>
+            </label>
+            {sim.duration && (
+              <label className="scrub" aria-label={t(UI.time)}>
+                <span className="scrub-label">{lang === "zh" ? "跳到" : "Jump to"} <i>t</i> =</span>
+                <input type="range" min={0} max={sim.duration(params)} step={0.01} value={Math.min(runner.current.t, sim.duration(params))}
+                  onChange={e => { setPlaying(false); runner.current.seek(Number(e.target.value)); setFrame(f => f + 1); }} />
+                <input type="number" min={0} max={sim.duration(params)} step={0.1} value={Math.round(Math.min(runner.current.t, sim.duration(params)) * 100) / 100}
+                  aria-label={t(UI.time)}
+                  onChange={e => { const v = Number(e.target.value); if (Number.isFinite(v)) { setPlaying(false); runner.current.seek(Math.max(0, Math.min(sim.duration!(params), v))); setFrame(f => f + 1); } }} />
+                <span>s</span>
+              </label>
+            )}
+            <span className="clock"><i>t</i> = {withUnit(runner.current.t, "s")}</span>
+          </div>
           <div className="stage-canvas">
             {sim.mode === "3d" ? (
               <Canvas shadows="percentage" camera={{ position: sim.camera?.position ?? [6, 4, 8], fov: sim.camera?.fov ?? 40 }} dpr={[1, 2]}>
@@ -94,26 +115,7 @@ export function SimShell({ sim }: SimShellProps) {
           {sim.manifest.assumptions.length > 0 && (
             <div className="assumptions"><b>{t(UI.assumptions)}：</b>{sim.manifest.assumptions.map(a => t(a)).join("；")}</div>
           )}
-          <div className="transport">
-            <button type="button" className="primary" onClick={() => setPlaying(p => !p)}>{playing ? "⏸ " + t(UI.pause) : "▶ " + t(UI.play)}</button>
-            <button type="button" onClick={() => { setPlaying(false); runner.current.advance(sim.stepSize ?? 0.05); setFrame(f => f + 1); }}>⏭ {t(UI.step)} {sim.stepSize ?? 0.05} s</button>
-            <button type="button" onClick={() => { runner.current.reset(); setFrame(f => f + 1); }}>↺ {t(UI.reset)}</button>
-            <label className="speed">{t(UI.speed)}
-              <select value={speed} onChange={e => setSpeed(Number(e.target.value))}>{SPEEDS.map(s => <option key={s} value={s}>{s}×</option>)}</select>
-            </label>
-            {sim.duration && (
-              <label className="scrub" aria-label={t(UI.time)}>
-                <span className="scrub-label">{lang === "zh" ? "跳到" : "Jump to"} <i>t</i> =</span>
-                <input type="range" min={0} max={sim.duration(params)} step={0.01} value={Math.min(runner.current.t, sim.duration(params))}
-                  onChange={e => { setPlaying(false); runner.current.seek(Number(e.target.value)); setFrame(f => f + 1); }} />
-                <input type="number" min={0} max={sim.duration(params)} step={0.1} value={Math.round(Math.min(runner.current.t, sim.duration(params)) * 100) / 100}
-                  aria-label={t(UI.time)}
-                  onChange={e => { const v = Number(e.target.value); if (Number.isFinite(v)) { setPlaying(false); runner.current.seek(Math.max(0, Math.min(sim.duration!(params), v))); setFrame(f => f + 1); } }} />
-                <span>s</span>
-              </label>
-            )}
-            <span className="clock"><i>t</i> = {withUnit(runner.current.t, "s")}</span>
-          </div>
+
         </div>
 
         <aside className="panel">
