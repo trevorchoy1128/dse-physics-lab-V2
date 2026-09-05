@@ -25,10 +25,16 @@ export function SimShell({ sim }: SimShellProps) {
   const [activeScenario, setActiveScenario] = useState<Scenario<Record<string, unknown>> | null>(null);
   const runner = useRef(createRunner(sim.model, params));
 
-  // 參數改變：重置運行（實驗流程：改參數要重做）
-  const applyParams = useCallback((next: Record<string, unknown>) => {
-    setParams(next); runner.current.reset(next); setFrame(f => f + 1);
+  // 參數改變：重置運行（實驗流程：改參數要重做）；liveParams 例外，即時生效不重置
+  const applyParams = useCallback((next: Record<string, unknown>, live = false) => {
+    setParams(next);
+    if (live) runner.current.params = next; else runner.current.reset(next);
+    setFrame(f => f + 1);
   }, []);
+  const setParam = useCallback((key: string, value: unknown) => {
+    setParams(prev => { const next = { ...prev, [key]: value }; const live = sim.liveParams?.includes(key) ?? false; if (live) runner.current.params = next; else runner.current.reset(next); return next; });
+    setFrame(f => f + 1);
+  }, [sim]);
 
   // 固定步長 + RAF；分頁隱藏時暫停
   useEffect(() => {
@@ -82,7 +88,7 @@ export function SimShell({ sim }: SimShellProps) {
                 <OrbitControls makeDefault enableDamping dampingFactor={0.1} target={sim.camera?.target ?? [0, 0, 0]} />
               </Canvas>
             ) : (
-              <Scene plan={plan} />
+              <Scene plan={plan} onInput={setParam} />
             )}
           </div>
           {sim.manifest.assumptions.length > 0 && (
@@ -102,7 +108,7 @@ export function SimShell({ sim }: SimShellProps) {
         <aside className="panel">
           <h2>{t(UI.params)}</h2>
           <div className="controls">
-            {sim.controls.map(c => <Control key={c.key} def={c} value={params[c.key]} onChange={v => applyParams({ ...params, [c.key]: v })} />)}
+            {sim.controls.filter(c => c.visible?.(params) ?? true).map(c => <Control key={c.key} def={c} value={params[c.key]} onChange={v => setParam(c.key, v)} />)}
           </div>
 
           {sim.layers.length > 0 && <>
@@ -146,7 +152,7 @@ function Control({ def, value, onChange }: { def: ControlDef; value: unknown; on
   const id = `ctl-${def.key}`;
   return (
     <div className="control">
-      <label htmlFor={id}>{def.symbol && <i>{def.symbol}</i>} {t(def.label)}{def.unit ? <span className="unit"> / {def.unit}</span> : null}</label>
+      <label htmlFor={id}>{def.symbol && <i>{def.symbol}</i>} {t(def.label)}{def.unit ? <span className="u-unit"> / {def.unit}</span> : null}</label>
       {kind === "slider" && (
         <div className="slider-row">
           <input id={id} type="range" min={def.min} max={def.max} step={def.step} value={Number(value)} onChange={e => onChange(Number(e.target.value))} />

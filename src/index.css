@@ -56,7 +56,7 @@ i { font-style: italic; font-family: "Noto Serif TC", "Times New Roman", serif; 
 .panel h2:first-child { margin-top: 0; }
 .control { margin-bottom: 10px; }
 .control label { display: block; font-size: 13.5px; color: var(--ink); margin-bottom: 2px; }
-.control .unit { color: var(--ink-3); }
+.control .u-unit { color: var(--ink-3); }
 .slider-row { display: flex; align-items: center; gap: 8px; }
 .slider-row input[type="range"] { flex: 1; min-height: 44px; accent-color: var(--accent); }
 .slider-row input[type="number"] { width: 84px; min-height: 40px; padding: 0 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-family: "IBM Plex Mono", monospace; }

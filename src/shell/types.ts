@@ -47,6 +47,8 @@ export interface ControlDef {
   step?: number;
   default: number | string | boolean;
   options?: ControlOption[];
+  /** 只在某些參數組合下顯示（如某模式專用的滑桿）；不影響物理，只影響面板 */
+  visible?: (params: Record<string, unknown>) => boolean;
 }
 
 export interface ChartDef {
@@ -83,10 +85,16 @@ export interface RenderPlan {
   labels: LabelPlan[];
   trails?: { key: string; points: Vec3[] }[];
   scales: Partial<Record<ArrowKind, number>>;
+  /** 非物理的畫面資料（2D 場景的軸範圍、當前時間、模式旗標）；不可放物理判斷 */
+  meta?: Record<string, number>;
 }
 export type PlanFn<S, P> = (state: S, params: P, obs: Record<string, number>, layers: Layers) => RenderPlan;
 
-export interface SceneProps { plan: RenderPlan }
+export interface SceneProps {
+  plan: RenderPlan;
+  /** 場景的輸入（如在圖上拖畫）交回 shell 更新參數；場景本身不算物理 */
+  onInput?: (key: string, value: unknown) => void;
+}
 
 // 一個模擬模組的完整匯出（每個 src/sims/<id>/index.ts）
 export interface SimModule<S = unknown, P = Record<string, unknown>> {
@@ -103,4 +111,6 @@ export interface SimModule<S = unknown, P = Record<string, unknown>> {
   mode: "3d" | "2d";
   /** 3D 相機預設：打開時一眼看到規格「學生應該看見的現象」第 1 項 */
   camera?: { position: Vec3; target: Vec3; fov?: number };
+  /** 這些參數改變時不重置運行（即時控制，如運動線圖的加速度滑桿） */
+  liveParams?: string[];
 }
