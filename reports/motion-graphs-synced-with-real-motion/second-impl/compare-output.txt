@@ -64,14 +64,14 @@
 | random-1 | avgSpeed | 7.45e-11 | 8.55e-13 | — | 0 | 是 |
 | random-1 | avgVel | 7.45e-11 | 9.52e-11 | — | 0 | 是 |
 | random-2 | (t) | 1.94e-12 | 0 | — | 0 | 是 |
-| random-2 | s | 1.50e-12 | 1.00e-13 | — | 0 | 是 |
-| random-2 | dist | 1.50e-12 | 1.00e-13 | — | 0 | 是 |
-| random-2 | v | 1.01e-12 | 1.01e-9 | — | 0 | 是 |
+| random-2 | s | 8.72e-8 | 6.24e-9 | — | 0 | 是 |
+| random-2 | dist | 8.72e-8 | 6.24e-9 | — | 0 | 是 |
+| random-2 | v | 7.56e-13 | 1.85e-9 | — | 0 | 是 |
 | random-2 | a | 0 | 0 | — | 0 | 是 |
-| random-2 | speed | 1.01e-12 | 1.01e-9 | — | 0 | 是 |
-| random-2 | area | 1.50e-12 | 1.00e-13 | — | 0 | 是 |
-| random-2 | avgSpeed | 4.24e-13 | 2.26e-13 | — | 0 | 是 |
-| random-2 | avgVel | 4.24e-13 | 2.26e-13 | — | 0 | 是 |
+| random-2 | speed | 7.56e-13 | 1.85e-9 | — | 0 | 是 |
+| random-2 | area | 8.72e-8 | 6.24e-9 | — | 0 | 是 |
+| random-2 | avgSpeed | 1.31e-8 | 6.24e-9 | — | 0 | 是 |
+| random-2 | avgVel | 1.31e-8 | 6.24e-9 | — | 0 | 是 |
 | random-3 | (t) | 1.01e-12 | 0 | — | 0 | 是 |
 | random-3 | s | 6.30e-11 | 1.09e-13 | — | 0 | 是 |
 | random-3 | dist | 6.30e-11 | 1.09e-13 | — | 0 | 是 |
@@ -113,14 +113,47 @@ scenario-v-zero-a-not T=5 [0–5) s:7.09e-12 v:4.87e-12 dist:7.06e-12 avgVel:2.1
 scenario-area-not-distance T=10 [0–5) s:6.59e-13 v:1.32e-12 dist:6.59e-13 avgVel:3.20e-14 | [5–10) s:6.52e-13 v:0 dist:2.01e-12 avgVel:7.24e-14
 random-0 T=4.0809585089240965 [0–5) s:2.34e-12 v:1.56e-12 dist:2.34e-12 avgVel:2.31e-12
 random-1 T=35.92592488505222 [0–5) s:6.18e-13 v:8.56e-13 dist:6.89e-13 avgVel:4.17e-13 | [5–10) s:1.43e-11 v:5.58e-12 dist:1.42e-11 avgVel:1.65e-12 | [10–15) s:4.12e-11 v:8.61e-12 dist:4.11e-11 avgVel:9.44e-12 | [15–20) s:5.70e-11 v:3.45e-11 dist:5.72e-11 avgVel:1.02e-11 | [20–25) s:3.05e-10 v:6.48e-11 dist:3.05e-10 avgVel:3.10e-11 | [25–30) s:7.04e-10 v:9.51e-11 dist:7.05e-10 avgVel:5.78e-11 | [30–35) s:1.26e-9 v:1.25e-10 dist:1.26e-9 avgVel:6.89e-11 | [35–40) s:1.37e-9 v:1.31e-10 dist:1.37e-9 avgVel:5.90e-11
-random-2 T=13.316564376147728 [0–5) s:2.17e-13 v:2.19e-13 dist:2.17e-13 avgVel:1.29e-13 | [5–10) s:1.50e-12 v:1.01e-12 dist:1.50e-12 avgVel:4.24e-13 | [10–15) s:1.50e-12 v:0 dist:1.50e-12 avgVel:1.35e-13
+random-2 T=13.316564376147728 [0–5) s:1.12e-8 v:2.47e-13 dist:1.12e-8 avgVel:2.80e-9 | [5–10) s:8.72e-8 v:7.56e-13 dist:8.72e-8 avgVel:1.31e-8 | [10–15) s:8.72e-8 v:3.49e-13 dist:8.72e-8 avgVel:8.72e-9
 random-3 T=10.63542990974869 [0–5) s:2.36e-12 v:5.12e-12 dist:2.36e-12 avgVel:1.53e-12 | [5–10) s:2.26e-11 v:9.24e-12 dist:2.26e-11 avgVel:2.54e-12 | [10–15) s:1.89e-11 v:7.87e-12 dist:1.89e-11 avgVel:3.72e-12
 random-4 T=11.71048566499282 [0–5) s:3.72e-12 v:2.03e-12 dist:3.72e-12 avgVel:7.60e-13 | [5–10) s:2.07e-11 v:4.71e-12 dist:2.07e-11 avgVel:4.47e-12 | [10–15) s:2.96e-11 v:5.62e-12 dist:2.96e-11 avgVel:1.78e-12
 
-=== draw 模式超出末節點 ===
-{"run":"scenario-below-axis","T":10,"lastNode":10,"vEnd":-2,"framesBeyond":0,"vBad":0,"aBad":0,"firstBad":null}
-{"run":"scenario-area-not-distance","T":10,"lastNode":10,"vEnd":-2,"framesBeyond":0,"vBad":0,"aBad":0,"firstBad":null}
-{"run":"random-2","T":13.316564376147728,"lastNode":10,"vEnd":0,"framesBeyond":50000,"vBad":0,"aBad":0,"firstBad":null}
+=== draw 模式 nodeDt 專項 ===
+{"run":"scenario-below-axis","T":10,"nodeDt":1,"lastNode":10,"vEnd":-2,"framesBeyond":0,"vBad":0,"aBad":0,"firstBad":null,"segABad":0,"segAFirst":null,"nodeVBad":0}
+  node 0 t_k=0 frame t=0 offset=0.00e+0 v=2 v_exp=2 dv=0.00e+0
+  node 1 t_k=1 frame t=1.0000000000000007 offset=6.66e-16 v=1.5999999999999999 v_exp=1.5999999999999999 dv=0.00e+0
+  node 2 t_k=2 frame t=1.9999999999998905 offset=-1.09e-13 v=1.2000000000000437 v_exp=1.2000000000000437 dv=0.00e+0
+  node 3 t_k=3 frame t=2.9999999999997806 offset=-2.19e-13 v=0.8000000000000878 v_exp=0.8000000000000878 dv=0.00e+0
+  node 4 t_k=4 frame t=3.9999999999996705 offset=-3.30e-13 v=0.4000000000001318 v_exp=0.4000000000001318 dv=0.00e+0
+  node 5 t_k=5 frame t=5.000000000000004 offset=4.44e-15 v=0 v_exp=-1.7763568394002505e-15 dv=1.78e-15
+  node 6 t_k=6 frame t=6.000000000000338 offset=3.38e-13 v=-0.40000000000013536 v_exp=-0.40000000000013536 dv=0.00e+0
+  node 7 t_k=7 frame t=7.000000000000672 offset=6.72e-13 v=-0.8000000000002689 v_exp=-0.8000000000002689 dv=0.00e+0
+  node 8 t_k=8 frame t=8.000000000001005 offset=1.01e-12 v=-1.200000000000402 v_exp=-1.200000000000402 dv=0.00e+0
+  node 9 t_k=9 frame t=9.000000000000451 offset=4.51e-13 v=-1.6000000000001806 v_exp=-1.6000000000001806 dv=0.00e+0
+  node 10 t_k=10 frame t=10 offset=0.00e+0 v=-2 v_exp=-2 dv=0.00e+0
+{"run":"scenario-area-not-distance","T":10,"nodeDt":1,"lastNode":10,"vEnd":-2,"framesBeyond":0,"vBad":0,"aBad":0,"firstBad":null,"segABad":0,"segAFirst":null,"nodeVBad":0}
+  node 0 t_k=0 frame t=0 offset=0.00e+0 v=2 v_exp=2 dv=0.00e+0
+  node 1 t_k=1 frame t=1.0000000000000007 offset=6.66e-16 v=2 v_exp=2 dv=0.00e+0
+  node 2 t_k=2 frame t=1.9999999999998905 offset=-1.09e-13 v=2 v_exp=2 dv=0.00e+0
+  node 3 t_k=3 frame t=2.9999999999997806 offset=-2.19e-13 v=2 v_exp=2 dv=0.00e+0
+  node 4 t_k=4 frame t=3.9999999999996705 offset=-3.30e-13 v=2 v_exp=2 dv=0.00e+0
+  node 5 t_k=5 frame t=5.000000000000004 offset=4.44e-15 v=-2 v_exp=-2 dv=0.00e+0
+  node 6 t_k=6 frame t=6.000000000000338 offset=3.38e-13 v=-2 v_exp=-2 dv=0.00e+0
+  node 7 t_k=7 frame t=7.000000000000672 offset=6.72e-13 v=-2 v_exp=-2 dv=0.00e+0
+  node 8 t_k=8 frame t=8.000000000001005 offset=1.01e-12 v=-2 v_exp=-2 dv=0.00e+0
+  node 9 t_k=9 frame t=9.000000000000451 offset=4.51e-13 v=-2 v_exp=-2 dv=0.00e+0
+  node 10 t_k=10 frame t=10 offset=0.00e+0 v=-2 v_exp=-2 dv=0.00e+0
+{"run":"random-2","T":13.316564376147728,"nodeDt":1.3316564376147728,"lastNode":13.316564376147728,"vEnd":0,"framesBeyond":0,"vBad":0,"aBad":0,"firstBad":null,"segABad":0,"segAFirst":null,"nodeVBad":0}
+  node 0 t_k=0 frame t=0 offset=0.00e+0 v=0 v_exp=0 dv=0.00e+0
+  node 1 t_k=1.3316564376147728 frame t=1.331999999999964 offset=3.44e-4 v=1.0002579962635156 v_exp=1.0002579962635156 dv=0.00e+0
+  node 2 t_k=2.6633128752295456 frame t=2.6629999999998177 offset=-3.13e-4 v=1.9997650480853093 v_exp=1.9997650480853093 dv=0.00e+0
+  node 3 t_k=3.9949693128443187 frame t=3.994999999999671 offset=3.07e-5 v=3 v_exp=3 dv=0.00e+0
+  node 4 t_k=5.326625750459091 frame t=5.327000000000114 offset=3.74e-4 v=3 v_exp=3 dv=0.00e+0
+  node 5 t_k=6.658282188073864 frame t=6.658000000000558 offset=-2.82e-4 v=3 v_exp=3 dv=0.00e+0
+  node 6 t_k=7.989938625688637 frame t=7.990000000001003 offset=6.14e-5 v=1.9999539113012696 v_exp=1.9999539113012696 dv=0.00e+0
+  node 7 t_k=9.321595063303409 frame t=9.322000000000273 offset=4.05e-4 v=0.9996959150382745 v_exp=0.9996959150382744 dv=1.11e-16
+  node 8 t_k=10.653251500918183 frame t=10.652999999999535 offset=-2.52e-4 v=0.00018886321692512809 v_exp=0.00018886321692548056 dv=-3.52e-16
+  node 9 t_k=11.984907938532956 frame t=11.984999999998797 offset=9.21e-5 v=0 v_exp=0 dv=0.00e+0
+  node 10 t_k=13.316564376147728 frame t=13.316564376147728 offset=0.00e+0 v=0 v_exp=0 dv=0.00e+0
 
 === 歸零規則 ===
 default (live): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 套規則後逐位相等:160678/480008
@@ -130,7 +163,7 @@ scenario-v-zero-a-not (live): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 �
 scenario-area-not-distance (draw): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 套規則後逐位相等:186074/480008
 random-0 (live): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 套規則後逐位相等:60115/480008
 random-1 (live): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 套規則後逐位相等:60126/480008
-random-2 (draw): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 套規則後逐位相等:168784/480008
+random-2 (draw): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 套規則後逐位相等:164779/480008
 random-3 (live): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 套規則後逐位相等:60181/480008
 random-4 (live): 主0但第二≥1e-9:0 主0<|x|<1e-9未歸零:0 第二<1e-9但主≠0:0 a被歸零:0 speed≠|v|:0 套規則後逐位相等:60047/480008
 

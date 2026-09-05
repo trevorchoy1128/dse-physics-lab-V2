@@ -129,4 +129,14 @@ describe("運動線圖與真實運動同步（S7）", () => {
     expect(model.observe(at(19), p).a).toBeCloseTo(-1, 9);           // 末段 2 → 0，斜率 −2 / 2 s
     expect(at(20).s).toBeCloseTo(2 + 2 * 16 + 2, 9);                 // 梯形：1 + 32 + 1 ... 精確 = 36 − 0：首尾段各 2，中間 16 s × 2
   });
+  it("0.6.1：節點不在幀格點上（T = 13.3）時，跨節點的步仍精確等於閉式梯形和", () => {
+    const vt = [0, 3, 3, -2, -2, 0, 4, 4, 1, 1, 0];
+    const p: P = { mode: "draw", u: 0, a: 0, T: 13.3, vt };   // nodeDt = 1.33
+    const dN = 1.33; const end = run(p, 13.4).at(-1)!;
+    let s = 0; for (let k = 0; k < 10; k++) s += 0.5 * (vt[k] + vt[k + 1]) * dN;   // 每段閉式積分（段內 v 線性，無變號問題影響 s）
+    expect(end.t).toBe(13.3); expect(end.s).toBeCloseTo(s, 10);
+    // 節點貼齊：t = 3·1.33 = 3.99 的左右兩側 a 不同，節點幀本身取右段
+    const at = (t: number) => r.find(x => Math.abs(x.t - t) < 5e-4)!; const r = run(p, 13.4);
+    expect(model.observe(at(3.989), p).a).toBeCloseTo(-5 / dN, 9); expect(model.observe(at(3.991), p).a).toBeCloseTo(0, 9);   // 段 2→3 是 3 → −2，段 3→4 是 −2 → −2
+  });
 });

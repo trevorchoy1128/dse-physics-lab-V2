@@ -29,8 +29,9 @@ export const SAMPLE_DT = 0.02;
 export const nodeDt = (p: P) => Math.max(1, p.T / (p.vt.length - 1));
 
 /** v–t 折線在「節點單位」時間 τ = t / nodeDt 的插值（第 k 點在 τ = k） */
+const snap = (tau: number) => { const r = Math.round(tau); return Math.abs(tau - r) < 1e-9 ? r : tau; };   // 節點單位時間貼齊整數（第二實作者第 9 輪：1 ulp 之差令 a 取錯段）
 export function vAt(vt: number[], t: number): number {
-  const n = vt.length - 1;
+  const n = vt.length - 1; t = snap(t);
   if (t <= 0) return vt[0];
   if (t >= n) return vt[n];
   const k = Math.floor(t);
@@ -39,9 +40,9 @@ export function vAt(vt: number[], t: number): number {
 }
 /** 折線在 τ 的斜率（節點右側），單位為每節點；真實加速度 = 此值 / nodeDt */
 export function aAt(vt: number[], t: number): number {
-  const n = vt.length - 1;
+  const n = vt.length - 1; t = snap(t);
   if (t < 0 || t >= n) return 0;
-  const k = Math.min(n - 1, Math.floor(t + 1e-12));   // 容差不可把 k 推過末節點（第 4 輪 F7：a = NaN）
+  const k = Math.min(n - 1, Math.floor(t));   // 容差不可把 k 推過末節點（第 4 輪 F7：a = NaN）
   return vt[k + 1] - vt[k];
 }
 
@@ -56,6 +57,13 @@ export const model: SimModel<S, P> = {
 
   step(s, p, dt) {
     if (s.done) return s;
+    if (p.mode === "draw") {
+      const dN = nodeDt(p); const k = Math.floor(snap(s.t / dN)) + 1; const tN = k * dN;
+      if (k <= p.vt.length - 1 && tN > s.t + 1e-12 && tN < Math.min(s.t + dt, p.T) - 1e-12) {
+        // 節點落在此步之內：先走到節點再走餘下（第二實作者第 9 輪 8）
+        return model.step(model.step(s, p, tN - s.t), p, s.t + dt - tN);
+      }
+    }
     // 凍結時把 t 截斷為 T：最後一步只走到 T，v、s、路程都在 T 精確計算（第二實作者第 4 輪建議）
     let t2 = s.t + dt, h = dt, done = false;
     if (t2 >= p.T - 1e-12) { t2 = p.T; h = p.T - s.t; done = true; }

@@ -29,6 +29,7 @@ export function trackExtent(p: P): number {
   return steps.find(x => x >= smax) ?? Math.ceil(smax / 1000) * 1000;
 }
 
+// 注意：meta.vmax / amax 有下限 1，是軸與箭嘴比例的顯示下限（核數員第 9 輪 §7-1），不是物理量
 export const plan: PlanFn<S, P> = (s, p, obs, layers) => {
   // 位置、標籤、箭嘴一律用 observe() 歸零後的值，畫面與讀數面板一致（核數員 F6）
   const pos: Vec3 = [obs.s, 0, 0];

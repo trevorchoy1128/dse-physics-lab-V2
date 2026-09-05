@@ -1,0 +1,256 @@
+
+=== idx-default T=10 nodeDt=1 u=0 a=1
+ handles: count=null/11 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=501 lenEnd=501 grow=0 lastFail={"st":9500,"vt":9500,"at":9500,"count":0}
+
+=== idx-scenario-below-axis T=10 nodeDt=1 vt=[2,1.6,1.2,0.8,0.4,0,-0.4,-0.8,-1.2,-1.6,-2]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=501 lenEnd=501 grow=0 lastFail={"st":59501,"vt":9501,"at":9500,"count":0}
+
+=== idx-scenario-st-not-path T=10 nodeDt=1 u=0 a=0
+ handles: count=null/11 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=501 lenEnd=501 grow=0 lastFail={"st":9500,"vt":9500,"at":9500,"count":0}
+
+=== idx-scenario-v-zero-a-not T=5 nodeDt=1 u=3 a=-9.81
+ handles: count=null/6 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=251 lenEnd=251 grow=0 lastFail={"st":4750,"vt":4750,"at":4750,"count":0}
+
+=== idx-scenario-area-not-distance T=10 nodeDt=1 vt=[2,2,2,2,2,-2,-2,-2,-2,-2,-2]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=501 lenEnd=501 grow=0 lastFail={"st":9501,"vt":9501,"at":9500,"count":0}
+
+=== idx-random-0 T=4.0809585089240965 nodeDt=1 u=3.339946273872604 a=8.954049953703791
+ handles: count=null/5 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=206 lenEnd=206 grow=0 lastFail={"st":3876,"vt":3876,"at":3876,"count":0}
+
+=== idx-random-1 T=35.92592488505222 nodeDt=3.592592488505222 u=-4.488447797246486 a=5.315743356624498
+ handles: count=null/11 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=1798 lenEnd=1798 grow=0 lastFail={"st":34129,"vt":34129,"at":34129,"count":0}
+
+=== idx-random-2 T=13.316564376147728 nodeDt=1.3316564376147728 vt=[0,1,2,3,3,3,2,1,0,0,0]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=667 lenEnd=667 grow=0 lastFail={"st":12651,"vt":12651,"at":12651,"count":0}
+
+=== idx-random-3 T=10.63542990974869 nodeDt=1.063542990974869 u=2.927044615115525 a=9.677692493273732
+ handles: count=null/11 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=533 lenEnd=533 grow=0 lastFail={"st":10104,"vt":10104,"at":10104,"count":0}
+
+=== idx-random-4 T=11.71048566499282 nodeDt=1.171048566499282 u=-4.658912233849481 a=-4.67582861644953
+ handles: count=null/11 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=587 lenEnd=587 grow=0 lastFail={"st":11125,"vt":11125,"at":11125,"count":0}
+
+=== d-T20-alt5 T=20 nodeDt=2 vt=[0,5,0,5,0,5,0,5,0,5,0]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=1001 lenEnd=1001 grow=0 lastFail={"st":19000,"vt":19004,"at":19000,"count":0}
+ notReached=false tAtT=20 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[50],"vmax":[5],"amax":[2.5]}
+  err: s=8.70e-12(rel 2.2e-13,fails 0) dist=8.70e-12(rel 2.2e-13,fails 0) v=8.57e-12(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=8.57e-12(rel 0.0e+0,fails 0) area=8.70e-12(rel 2.2e-13,fails 0) avgSpeed=5.50e-13(rel 2.2e-13,fails 0) avgVel=5.50e-13(rel 2.2e-13,fails 0)
+  trapMax=8.73e-12 reverse={"firstRev":-1,"revViaZero":false,"revAnalytic":null,"eqBefore":20001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+  nodeA={"f":9,"l":2,"r":7,"n":0} freezeA={"a":-2.5,"t":20,"expLeft":-2.5,"expRight":0,"equalsLeft":true} near=[{"i":19500,"t":19.50000000000085,"v":1.2499999999978773,"a":-2.5,"done":0},{"i":19999,"t":19.99900000000146,"v":0.002499999996352642,"a":-2.5,"done":0},{"i":20000,"t":20,"v":0,"a":-2.5,"done":1},{"i":20001,"t":20,"v":0,"a":-2.5,"done":1}]
+  |s|max=49.99999999999646 |v|max=4.999999999999742 |a|max=2.5 exact={"s":50,"sAt":20,"v":5,"a":2.5} meta={"smax":50,"vmax":5,"amax":2.5} in=true/true/true drawAmaxExp=2.5
+  atT exp s=50 d=50 v=0 a=-2.5 | got s=49.99999999999646 d=49.99999999999646 v=0 a=-2.5
+
+=== d-T45-ramp T=45 nodeDt=4.5 vt=[0,1,2,3,3,3,2,1,0,-1,-2]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=2252 lenEnd=2252 grow=0 lastFail={"st":42750,"vt":42751,"at":42750,"count":0}
+ notReached=false tAtT=45 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[100],"vmax":[3],"amax":[1]}
+  err: s=5.23e-11(rel 8.9e-13,fails 0) dist=3.56e-11(rel 5.4e-13,fails 0) v=1.51e-12(rel 3.6e-12,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=1.51e-12(rel 3.6e-12,fails 0) area=5.23e-11(rel 8.9e-13,fails 0) avgSpeed=1.11e-12(rel 5.4e-13,fails 0) avgVel=1.16e-12(rel 8.9e-13,fails 0)
+  trapMax=3.86e-11 reverse={"firstRev":36.0000000000068,"revViaZero":true,"revAnalytic":36,"eqBefore":36001,"neBefore":0,"eqAfter":0,"neAfter":9001,"minGapAfter":2.222222121872619e-7}
+  nodeA={"f":10,"l":8,"r":2,"n":0} freezeA={"a":-0.2222222222222222,"t":45,"expLeft":-0.2222222222222222,"expRight":0,"equalsLeft":true} near=[{"i":44501,"t":44.50099999998699,"v":-1.8891111111082193,"a":-0.2222222222222222,"done":0},{"i":45000,"t":44.999999999985825,"v":-1.9999999999968505,"a":-0.2222222222222222,"done":0},{"i":45001,"t":45,"v":-2,"a":-0.2222222222222222,"done":1},{"i":45002,"t":45,"v":-2,"a":-0.2222222222222222,"done":1}]
+  |s|max=67.4999999999686 |v|max=3 |a|max=0.2222222222222222 exact={"s":67.5,"sAt":36,"v":3,"a":0.2222222222222222} meta={"smax":100,"vmax":3,"amax":1} in=true/true/true drawAmaxExp=0.2222222222222222
+  atT exp s=58.5 d=76.5 v=-2 a=-0.2222222222222222 | got s=58.49999999994766 d=76.49999999998954 v=-2 a=-0.2222222222222222
+
+=== d-T45-alt4 T=45 nodeDt=4.5 vt=[4,-4,4,-4,4,-4,4,-4,4,-4,4]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=2252 lenEnd=2252 grow=0 lastFail={"st":57760,"vt":42750,"at":42750,"count":0}
+ notReached=false tAtT=45 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[5],"vmax":[4],"amax":[1.7777777777777777]}
+  err: s=6.21e-11(rel 1.2e-9,fails 0) dist=3.35e-11(rel 5.2e-13,fails 0) v=2.27e-11(rel 3.5e-12,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=2.27e-11(rel 3.5e-12,fails 0) area=6.21e-11(rel 1.2e-9,fails 0) avgSpeed=1.05e-12(rel 5.2e-13,fails 0) avgVel=1.97e-12(rel 1.2e-9,fails 0)
+  trapMax=6.20e-11 reverse={"firstRev":2.249999999999863,"revViaZero":true,"revAnalytic":2.25,"eqBefore":2251,"neBefore":0,"eqAfter":0,"neAfter":42751,"minGapAfter":0.000001777777777434153}
+  nodeA={"f":10,"l":1,"r":9,"n":0} freezeA={"a":1.7777777777777777,"t":45,"expLeft":1.7777777777777777,"expRight":0,"equalsLeft":true} near=[{"i":44501,"t":44.50099999998699,"v":3.112888888865754,"a":1.7777777777777777,"done":0},{"i":45000,"t":44.999999999985825,"v":3.999999999974804,"a":1.7777777777777777,"done":0},{"i":45001,"t":45,"v":4,"a":1.7777777777777777,"done":1},{"i":45002,"t":45,"v":4,"a":1.7777777777777777,"done":1}]
+  |s|max=4.500000000012114 |v|max=4 |a|max=1.7777777777777777 exact={"s":4.5,"sAt":2.25,"v":4,"a":1.7777777777777777} meta={"smax":5,"vmax":4,"amax":1.7777777777777777} in=true/true/true drawAmaxExp=1.7777777777777777
+  atT exp s=0 d=90 v=4 a=1.7777777777777777 | got s=0 d=90.00000000002527 v=4 a=1.7777777777777777
+
+=== d-T60-alt5 T=60 nodeDt=6 vt=[5,-5,5,-5,5,-5,5,-5,5,-5,5]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=-1 lenEnd=3000 grow=0 lastFail={"st":57008,"vt":57009,"at":57001,"count":0}
+ notReached=true tAtT=59.999999999950866 tEqT=false nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[10],"vmax":[5],"amax":[1.6666666666666667]}
+  err: s=2.46e-10(rel 8.8e-9,fails 0) dist=1.11e-10(rel 7.4e-13,fails 0) v=7.02e-11(rel 3.7e-12,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=7.02e-11(rel 3.7e-12,fails 0) area=2.46e-10(rel 8.8e-9,fails 0) avgSpeed=1.86e-12(rel 7.4e-13,fails 0) avgVel=4.09e-12(rel 8.8e-9,fails 0)
+  trapMax=2.46e-10 reverse={"firstRev":2.9999999999997806,"revViaZero":true,"revAnalytic":3,"eqBefore":3001,"neBefore":0,"eqAfter":0,"neAfter":57000,"minGapAfter":0.0000016666666660114515}
+  nodeA={"f":9,"l":3,"r":6,"n":0} freezeA={"a":1.6666666666666667,"t":59.999999999950866,"expLeft":1.6666666666666667,"expRight":0,"equalsLeft":true} near=[{"i":59500,"t":59.49999999995203,"v":4.166666666586725,"a":1.6666666666666667,"done":0},{"i":59999,"t":59.99899999995087,"v":4.998333333251441,"a":1.6666666666666667,"done":0},{"i":60000,"t":59.999999999950866,"v":4.99999999991811,"a":1.6666666666666667,"done":0}]
+  |s|max=7.500000000061544 |v|max=5 |a|max=1.6666666666666667 exact={"s":7.5,"sAt":3,"v":5,"a":1.6666666666666667} meta={"smax":10,"vmax":5,"amax":1.6666666666666667} in=true/true/true drawAmaxExp=1.6666666666666667
+  atT exp s=0 d=150 v=5 a=1.6666666666666667 | got s=0 d=149.9999999998657 v=4.99999999991811 a=1.6666666666666667
+
+=== d-T60-lastneg3 T=60 nodeDt=6 vt=[0,0,0,0,0,0,0,0,0,0,-3]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=-1 lenEnd=3000 grow=0 lastFail={"st":57001,"vt":57001,"at":57001,"count":0}
+ notReached=true tAtT=59.999999999950866 tEqT=false nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[10],"vmax":[3],"amax":[1]}
+  err: s=2.10e-11(rel 3.9e-9,fails 0) dist=2.10e-11(rel 3.9e-9,fails 0) v=1.78e-15(rel 3.6e-12,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=1.78e-15(rel 3.6e-12,fails 0) area=2.10e-11(rel 3.9e-9,fails 0) avgSpeed=3.50e-13(rel 1.6e-10,fails 0) avgVel=3.50e-13(rel 1.6e-10,fails 0)
+  trapMax=2.10e-11 reverse={"firstRev":-1,"revViaZero":false,"revAnalytic":null,"eqBefore":60001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+  nodeA={"f":9,"l":9,"r":0,"n":0} freezeA={"a":-0.5,"t":59.999999999950866,"expLeft":-0.5,"expRight":0,"equalsLeft":true} near=[{"i":59500,"t":59.49999999995203,"v":-2.7499999999760174,"a":-0.5,"done":0},{"i":59999,"t":59.99899999995087,"v":-2.9994999999754324,"a":-0.5,"done":0},{"i":60000,"t":59.999999999950866,"v":-2.999999999975433,"a":-0.5,"done":0}]
+  |s|max=8.999999999873591 |v|max=2.999999999975433 |a|max=0.5 exact={"s":9,"sAt":60,"v":3,"a":0.5} meta={"smax":10,"vmax":3,"amax":1} in=true/true/true drawAmaxExp=0.5
+  atT exp s=-9 d=9 v=-3 a=-0.5 | got s=-8.999999999873591 d=8.999999999873591 v=-2.999999999975433 a=-0.5
+
+=== d-T60-ramp T=60 nodeDt=6 vt=[0,1,2,3,3,3,2,1,0,-1,-2]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=-1 lenEnd=3000 grow=0 lastFail={"st":57001,"vt":57001,"at":57001,"count":0}
+ notReached=true tAtT=59.999999999950866 tEqT=false nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[100],"vmax":[3],"amax":[1]}
+  err: s=4.88e-11(rel 7.1e-13,fails 0) dist=4.88e-11(rel 7.1e-13,fails 0) v=3.53e-12(rel 3.6e-12,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=3.53e-12(rel 3.6e-12,fails 0) area=4.88e-11(rel 7.1e-13,fails 0) avgSpeed=1.53e-12(rel 7.1e-13,fails 0) avgVel=1.53e-12(rel 7.1e-13,fails 0)
+  trapMax=3.76e-11 reverse={"firstRev":47.99999999997883,"revViaZero":true,"revAnalytic":48,"eqBefore":48001,"neBefore":0,"eqAfter":0,"neAfter":12000,"minGapAfter":1.6666666624587378e-7}
+  nodeA={"f":9,"l":7,"r":2,"n":0} freezeA={"a":-0.16666666666666666,"t":59.999999999950866,"expLeft":-0.16666666666666666,"expRight":0,"equalsLeft":true} near=[{"i":59500,"t":59.49999999995203,"v":-1.9166666666586725,"a":-0.16666666666666666,"done":0},{"i":59999,"t":59.99899999995087,"v":-1.9998333333251441,"a":-0.16666666666666666,"done":0},{"i":60000,"t":59.999999999950866,"v":-1.999999999991811,"a":-0.16666666666666666,"done":0}]
+  |s|max=90.00000000000092 |v|max=3 |a|max=0.16666666666666666 exact={"s":90,"sAt":48,"v":3,"a":0.16666666666666666} meta={"smax":100,"vmax":3,"amax":1} in=true/true/true drawAmaxExp=0.16666666666666666
+  atT exp s=78 d=102 v=-2 a=-0.16666666666666666 | got s=78.00000000007124 d=101.99999999993061 v=-1.999999999991811 a=-0.16666666666666666
+
+=== d-T10-A T=10 nodeDt=1 vt=[0,1,3,2,0,-1,-3,-2,0,2,4]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=501 lenEnd=501 grow=0 lastFail={"st":9501,"vt":9502,"at":9500,"count":0}
+ notReached=false tAtT=10 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[10],"vmax":[4],"amax":[2]}
+  err: s=4.82e-12(rel 2.6e-6,fails 0) dist=1.40e-12(rel 1.2e-13,fails 0) v=2.01e-12(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=2.01e-12(rel 0.0e+0,fails 0) area=4.82e-12(rel 2.6e-6,fails 0) avgSpeed=1.78e-13(rel 1.2e-13,fails 0) avgVel=4.82e-13(rel 2.9e-7,fails 0)
+  trapMax=4.82e-12 reverse={"firstRev":3.9999999999996705,"revViaZero":true,"revAnalytic":4,"eqBefore":4001,"neBefore":0,"eqAfter":0,"neAfter":6000,"minGapAfter":9.999999992515995e-7}
+  nodeA={"f":9,"l":2,"r":7,"n":0} freezeA={"a":2,"t":10,"expLeft":2,"expRight":0,"equalsLeft":true} near=[{"i":9500,"t":9.500000000000174,"v":3.000000000000348,"a":2,"done":0},{"i":9999,"t":9.998999999999898,"v":3.997999999999795,"a":2,"done":0},{"i":10000,"t":10,"v":4,"a":2,"done":1},{"i":10001,"t":10,"v":4,"a":2,"done":1}]
+  |s|max=6.000000000000604 |v|max=4 |a|max=2 exact={"s":6,"sAt":4,"v":4,"a":2} meta={"smax":10,"vmax":4,"amax":2} in=true/true/true drawAmaxExp=2
+  atT exp s=4 d=16 v=4 a=2 | got s=4.000000000004824 d=16.000000000000814 v=4 a=2
+
+=== d-T10.5-A T=10.5 nodeDt=1.05 vt=[0,1,3,2,0,-1,-3,-2,0,2,4]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=526 lenEnd=526 grow=0 lastFail={"st":9976,"vt":9977,"at":9975,"count":0}
+ notReached=false tAtT=10.5 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[10],"vmax":[4],"amax":[1.9047619047619047]}
+  err: s=4.92e-12(rel 6.8e-7,fails 0) dist=1.43e-12(rel 1.2e-13,fails 0) v=1.49e-12(rel 3.5e-13,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=1.49e-12(rel 3.5e-13,fails 0) area=4.92e-12(rel 6.8e-7,fails 0) avgSpeed=1.79e-13(rel 1.2e-13,fails 0) avgVel=4.69e-13(rel 3.0e-7,fails 0)
+  trapMax=4.92e-12 reverse={"firstRev":4.199999999999737,"revViaZero":true,"revAnalytic":4.2,"eqBefore":4201,"neBefore":0,"eqAfter":0,"neAfter":6300,"minGapAfter":9.523809509914827e-7}
+  nodeA={"f":9,"l":2,"r":7,"n":0} freezeA={"a":1.9047619047619047,"t":10.5,"expLeft":1.9047619047619047,"expRight":0,"equalsLeft":true} near=[{"i":10000,"t":9.999999999999897,"v":3.047619047618852,"a":1.9047619047619047,"done":0},{"i":10499,"t":10.49899999999962,"v":3.998095238094514,"a":1.9047619047619047,"done":0},{"i":10500,"t":10.5,"v":4,"a":1.9047619047619047,"done":1},{"i":10501,"t":10.5,"v":4,"a":1.9047619047619047,"done":1}]
+  |s|max=6.300000000000625 |v|max=4 |a|max=1.9047619047619047 exact={"s":6.3,"sAt":4.2,"v":3.999999999999998,"a":1.9047619047619047} meta={"smax":10,"vmax":4,"amax":1.9047619047619047} in=true/true/true drawAmaxExp=1.9047619047619047
+  atT exp s=4.199999999999998 d=16.799999999999997 v=3.999999999999998 a=1.9047619047619047 | got s=4.200000000004917 d=16.800000000000978 v=4 a=1.9047619047619047
+
+=== d-T11-A T=11 nodeDt=1.1 vt=[0,1,3,2,0,-1,-3,-2,0,2,4]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=551 lenEnd=551 grow=0 lastFail={"st":10451,"vt":10452,"at":10450,"count":0}
+ notReached=false tAtT=11 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[10],"vmax":[4],"amax":[1.8181818181818181]}
+  err: s=4.73e-12(rel 6.3e-7,fails 0) dist=1.40e-12(rel 1.1e-13,fails 0) v=1.02e-12(rel 8.9e-13,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=1.02e-12(rel 8.9e-13,fails 0) area=4.73e-12(rel 6.3e-7,fails 0) avgSpeed=1.75e-13(rel 1.1e-13,fails 0) avgVel=4.30e-13(rel 1.6e-7,fails 0)
+  trapMax=4.73e-12 reverse={"firstRev":4.399999999999804,"revViaZero":true,"revAnalytic":4.4,"eqBefore":4401,"neBefore":0,"eqAfter":0,"neAfter":6600,"minGapAfter":9.0909090921798e-7}
+  nodeA={"f":9,"l":2,"r":7,"n":0} freezeA={"a":1.8181818181818181,"t":11,"expLeft":1.8181818181818181,"expRight":0,"equalsLeft":true} near=[{"i":10500,"t":10.49999999999962,"v":3.090909090908397,"a":1.8181818181818181,"done":0},{"i":10999,"t":10.998999999999343,"v":3.9981818181806226,"a":1.8181818181818181,"done":0},{"i":11000,"t":11,"v":4,"a":1.8181818181818181,"done":1},{"i":11001,"t":11,"v":4,"a":1.8181818181818181,"done":1}]
+  |s|max=6.600000000000608 |v|max=4 |a|max=1.8181818181818181 exact={"s":6.6,"sAt":4.4,"v":3.999999999999999,"a":1.8181818181818181} meta={"smax":10,"vmax":4,"amax":1.8181818181818181} in=true/true/true drawAmaxExp=1.8181818181818181
+  atT exp s=4.399999999999998 d=17.599999999999994 v=3.999999999999999 a=1.8181818181818181 | got s=4.400000000004732 d=17.60000000000134 v=4 a=1.8181818181818181
+
+=== d-T13.3-ramp T=13.316564376147728 nodeDt=1.3316564376147728 vt=[0,1,2,3,3,3,2,1,0,-1,-2]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=667 lenEnd=667 grow=0 lastFail={"st":12651,"vt":12651,"at":12651,"count":0}
+ notReached=false tAtT=13.316564376147728 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[20],"vmax":[3],"amax":[1]}
+  err: s=8.72e-8(rel 6.2e-9,fails 0) dist=8.72e-8(rel 6.2e-9,fails 0) v=1.33e-15(rel 1.3e-12,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=1.33e-15(rel 1.3e-12,fails 0) area=8.72e-8(rel 6.2e-9,fails 0) avgSpeed=1.31e-8(rel 6.2e-9,fails 0) avgVel=1.31e-8(rel 6.2e-9,fails 0)
+  trapMax=1.09e-12 reverse={"firstRev":10.653999999999535,"revViaZero":false,"revAnalytic":10.653251500918183,"eqBefore":10654,"neBefore":0,"eqAfter":0,"neAfter":2664,"minGapAfter":4.207172814574278e-7}
+  nodeA={"f":0,"l":0,"r":0,"n":0} freezeA={"a":-0.7509444416392963,"t":13.316564376147728,"expLeft":-0.7509444416392963,"expRight":0,"equalsLeft":true} near=[{"i":12817,"t":12.816999999998336,"v":-1.6248549084896116,"a":-0.7509444416392963,"done":0},{"i":13316,"t":13.31599999999806,"v":-1.9995761848674132,"a":-0.7509444416392963,"done":0},{"i":13317,"t":13.316564376147728,"v":-2,"a":-0.7509444416392963,"done":1},{"i":13318,"t":13.316564376147728,"v":-2,"a":-0.7509444416392963,"done":1}]
+  |s|max=19.974846453247075 |v|max=3 |a|max=0.7509444416392963 exact={"s":19.974846564221593,"sAt":10.653251500918183,"v":3,"a":0.7509444416392963} meta={"smax":20,"vmax":3,"amax":1} in=true/true/true drawAmaxExp=0.7509444416392963
+  atT exp s=17.31153368899205 d=22.638159439451137 v=-1.9999999999999991 a=-0.7509444416392963 | got s=17.3115336017657 d=22.638159352227728 v=-2 a=-0.7509444416392963
+
+=== d-T2-pm1 T=2 nodeDt=1 vt=[1,-1,1,-1,1,-1,1,-1,1,-1,1]
+ handles: count=3/3 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":3} lenAtT=101 lenEnd=101 grow=0 lastFail={"st":59902,"vt":1902,"at":1900,"count":0}
+ notReached=false tAtT=2 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[5],"vmax":[1],"amax":[2]}
+  err: s=2.77e-14(rel 2.5e-13,fails 0) dist=5.48e-14(rel 5.5e-14,fails 0) v=1.09e-13(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=1.09e-13(rel 0.0e+0,fails 0) area=2.77e-14(rel 2.5e-13,fails 0) avgSpeed=2.74e-14(rel 5.5e-14,fails 0) avgVel=1.90e-14(rel 2.5e-13,fails 0)
+  trapMax=2.77e-14 reverse={"firstRev":0.5000000000000003,"revViaZero":true,"revAnalytic":0.5,"eqBefore":501,"neBefore":0,"eqAfter":0,"neAfter":1500,"minGapAfter":0.000002000000000002}
+  nodeA={"f":1,"l":0,"r":1,"n":0} freezeA={"a":2,"t":2,"expLeft":2,"expRight":-2,"equalsLeft":true} near=[{"i":1500,"t":1.4999999999999456,"v":0,"a":2,"done":0},{"i":1999,"t":1.9989999999998906,"v":0.9979999999997813,"a":2,"done":0},{"i":2000,"t":2,"v":1,"a":2,"done":1},{"i":2001,"t":2,"v":1,"a":2,"done":1}]
+  |s|max=0.25000000000002764 |v|max=1 |a|max=2 exact={"s":0.25,"sAt":0.5,"v":1,"a":2} meta={"smax":5,"vmax":1,"amax":2} in=true/true/true drawAmaxExp=2
+  atT exp s=0 d=1 v=1 a=2 | got s=0 d=1.0000000000000548 v=1 a=2
+
+=== d-T2-L2-R0 T=2 nodeDt=1 vt=[0,1,3,3,3,3,3,3,3,3,3]
+ handles: count=3/3 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":3} lenAtT=101 lenEnd=101 grow=0 lastFail={"st":1900,"vt":1900,"at":1900,"count":0}
+ notReached=false tAtT=2 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[5],"vmax":[3],"amax":[2]}
+  err: s=2.20e-13(rel 8.8e-14,fails 0) dist=2.20e-13(rel 8.8e-14,fails 0) v=0.00e+0(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=0.00e+0(rel 0.0e+0,fails 0) area=2.20e-13(rel 8.8e-14,fails 0) avgSpeed=1.10e-13(rel 8.8e-14,fails 0) avgVel=1.10e-13(rel 8.8e-14,fails 0)
+  trapMax=2.21e-13 reverse={"firstRev":-1,"revViaZero":false,"revAnalytic":null,"eqBefore":2001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+  nodeA={"f":1,"l":0,"r":1,"n":0} freezeA={"a":2,"t":2,"expLeft":2,"expRight":0,"equalsLeft":true} near=[{"i":1500,"t":1.4999999999999456,"v":1.9999999999998912,"a":2,"done":0},{"i":1999,"t":1.9989999999998906,"v":2.9979999999997813,"a":2,"done":0},{"i":2000,"t":2,"v":3,"a":2,"done":1},{"i":2001,"t":2,"v":3,"a":2,"done":1}]
+  |s|max=2.50000000000022 |v|max=3 |a|max=2 exact={"s":2.5,"sAt":2,"v":3,"a":2} meta={"smax":5,"vmax":3,"amax":2} in=true/true/true drawAmaxExp=2
+  atT exp s=2.5 d=2.5 v=3 a=2 | got s=2.50000000000022 d=2.50000000000022 v=3 a=2
+
+=== d-T3-L0-R5 T=3 nodeDt=1 vt=[0,0,0,0,5,5,5,5,5,5,5]
+ handles: count=4/4 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":4} lenAtT=151 lenEnd=151 grow=0 lastFail={"st":2850,"vt":2850,"at":2850,"count":0}
+ notReached=false tAtT=3 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[5],"vmax":[5],"amax":[5]}
+  err: s=0.00e+0(rel 0.0e+0,fails 0) dist=0.00e+0(rel 0.0e+0,fails 0) v=0.00e+0(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=0.00e+0(rel 0.0e+0,fails 0) area=0.00e+0(rel 0.0e+0,fails 0) avgSpeed=0.00e+0(rel 0.0e+0,fails 0) avgVel=0.00e+0(rel 0.0e+0,fails 0)
+  trapMax=0.00e+0 reverse={"firstRev":-1,"revViaZero":false,"revAnalytic":null,"eqBefore":3001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+  nodeA={"f":2,"l":2,"r":0,"n":0} freezeA={"a":0,"t":3,"expLeft":0,"expRight":5,"equalsLeft":true} near=[{"i":2500,"t":2.4999999999998357,"v":0,"a":0,"done":0},{"i":2999,"t":2.9989999999997807,"v":0,"a":0,"done":0},{"i":3000,"t":3,"v":0,"a":0,"done":1},{"i":3001,"t":3,"v":0,"a":0,"done":1}]
+  |s|max=0 |v|max=0 |a|max=0 exact={"s":0,"sAt":0,"v":0,"a":0} meta={"smax":5,"vmax":5,"amax":5} in=true/true/true drawAmaxExp=0
+  atT exp s=0 d=0 v=0 a=0 | got s=0 d=0 v=0 a=0
+
+=== d-T5-default T=5 nodeDt=1 vt=[0,1,2,3,3,3,2,1,0,0,0]
+ handles: count=6/6 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":6} lenAtT=251 lenEnd=251 grow=0 lastFail={"st":4750,"vt":4750,"at":4750,"count":0}
+ notReached=false tAtT=5 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[20],"vmax":[3],"amax":[1]}
+  err: s=8.86e-13(rel 1.2e-13,fails 0) dist=8.86e-13(rel 1.2e-13,fails 0) v=0.00e+0(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=0.00e+0(rel 0.0e+0,fails 0) area=8.86e-13(rel 1.2e-13,fails 0) avgSpeed=2.21e-13(rel 1.2e-13,fails 0) avgVel=2.21e-13(rel 1.2e-13,fails 0)
+  trapMax=4.44e-13 reverse={"firstRev":-1,"revViaZero":false,"revAnalytic":null,"eqBefore":5001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+  nodeA={"f":4,"l":3,"r":1,"n":0} freezeA={"a":0,"t":5,"expLeft":0,"expRight":-1,"equalsLeft":true} near=[{"i":4500,"t":4.4999999999998375,"v":3,"a":0,"done":0},{"i":4999,"t":4.999000000000004,"v":3,"a":0,"done":0},{"i":5000,"t":5,"v":3,"a":0,"done":1},{"i":5001,"t":5,"v":3,"a":0,"done":1}]
+  |s|max=10.499999999999998 |v|max=3 |a|max=1 exact={"s":10.5,"sAt":5,"v":3,"a":1} meta={"smax":20,"vmax":3,"amax":1} in=true/true/true drawAmaxExp=1
+  atT exp s=10.5 d=10.5 v=3 a=0 | got s=10.499999999999998 d=10.499999999999998 v=3 a=0
+
+=== d-T9-LR T=9 nodeDt=1 vt=[0,0,0,0,0,0,0,0,2,-3,4]
+ handles: count=10/10 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":10} lenAtT=451 lenEnd=451 grow=0 lastFail={"st":8551,"vt":8552,"at":8550,"count":0}
+ notReached=false tAtT=9 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[5],"vmax":[4],"amax":[7]}
+  err: s=6.12e-13(rel 6.7e-10,fails 0) dist=3.84e-13(rel 6.7e-10,fails 0) v=3.92e-12(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=3.92e-12(rel 0.0e+0,fails 0) area=6.12e-13(rel 6.7e-10,fails 0) avgSpeed=4.27e-14(rel 7.4e-11,fails 0) avgVel=6.80e-14(rel 7.4e-11,fails 0)
+  trapMax=6.12e-13 reverse={"firstRev":8.400000000000784,"revViaZero":true,"revAnalytic":8.4,"eqBefore":8401,"neBefore":0,"eqAfter":0,"neAfter":600,"minGapAfter":0.000005000000007804317}
+  nodeA={"f":8,"l":6,"r":2,"n":0} freezeA={"a":-5,"t":9,"expLeft":-5,"expRight":7,"equalsLeft":true} near=[{"i":8500,"t":8.500000000000728,"v":-0.5000000000036415,"a":-5,"done":0},{"i":8999,"t":8.999000000000452,"v":-2.9950000000022587,"a":-5,"done":0},{"i":9000,"t":9,"v":-3,"a":-5,"done":1},{"i":9001,"t":9,"v":-3,"a":-5,"done":1}]
+  |s|max=1.3999999999998856 |v|max=3 |a|max=5 exact={"s":1.4,"sAt":8.4,"v":3,"a":5} meta={"smax":5,"vmax":4,"amax":7} in=true/true/true drawAmaxExp=5
+  atT exp s=0.5 d=2.3 v=-3 a=-5 | got s=0.49999999999938766 d=2.300000000000384 v=-3 a=-5
+
+=== d-T10-zero T=10 nodeDt=1 vt=[0,0,0,0,0,0,0,0,0,0,0]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=501 lenEnd=501 grow=0 lastFail={"st":9500,"vt":9500,"at":9500,"count":0}
+ notReached=false tAtT=10 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[5],"vmax":[1],"amax":[1]}
+  err: s=0.00e+0(rel 0.0e+0,fails 0) dist=0.00e+0(rel 0.0e+0,fails 0) v=0.00e+0(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=0.00e+0(rel 0.0e+0,fails 0) area=0.00e+0(rel 0.0e+0,fails 0) avgSpeed=0.00e+0(rel 0.0e+0,fails 0) avgVel=0.00e+0(rel 0.0e+0,fails 0)
+  trapMax=0.00e+0 reverse={"firstRev":-1,"revViaZero":false,"revAnalytic":null,"eqBefore":10001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+  nodeA={"f":9,"l":9,"r":0,"n":0} freezeA={"a":0,"t":10,"expLeft":0,"expRight":0,"equalsLeft":true} near=[{"i":9500,"t":9.500000000000174,"v":0,"a":0,"done":0},{"i":9999,"t":9.998999999999898,"v":0,"a":0,"done":0},{"i":10000,"t":10,"v":0,"a":0,"done":1},{"i":10001,"t":10,"v":0,"a":0,"done":1}]
+  |s|max=0 |v|max=0 |a|max=0 exact={"s":0,"sAt":0,"v":0,"a":0} meta={"smax":5,"vmax":1,"amax":1} in=true/true/true drawAmaxExp=0
+  atT exp s=0 d=0 v=0 a=0 | got s=0 d=0 v=0 a=0
+
+=== d-T60-zero T=60 nodeDt=6 vt=[0,0,0,0,0,0,0,0,0,0,0]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=-1 lenEnd=3000 grow=0 lastFail={"st":57001,"vt":57001,"at":57001,"count":0}
+ notReached=true tAtT=59.999999999950866 tEqT=false nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[5],"vmax":[1],"amax":[1]}
+  err: s=0.00e+0(rel 0.0e+0,fails 0) dist=0.00e+0(rel 0.0e+0,fails 0) v=0.00e+0(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=0.00e+0(rel 0.0e+0,fails 0) area=0.00e+0(rel 0.0e+0,fails 0) avgSpeed=0.00e+0(rel 0.0e+0,fails 0) avgVel=0.00e+0(rel 0.0e+0,fails 0)
+  trapMax=0.00e+0 reverse={"firstRev":-1,"revViaZero":false,"revAnalytic":null,"eqBefore":60001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+  nodeA={"f":9,"l":9,"r":0,"n":0} freezeA={"a":0,"t":59.999999999950866,"expLeft":0,"expRight":0,"equalsLeft":true} near=[{"i":59500,"t":59.49999999995203,"v":0,"a":0,"done":0},{"i":59999,"t":59.99899999995087,"v":0,"a":0,"done":0},{"i":60000,"t":59.999999999950866,"v":0,"a":0,"done":0}]
+  |s|max=0 |v|max=0 |a|max=0 exact={"s":0,"sAt":0,"v":0,"a":0} meta={"smax":5,"vmax":1,"amax":1} in=true/true/true drawAmaxExp=0
+  atT exp s=0 d=0 v=0 a=0 | got s=0 d=0 v=0 a=0
+
+=== d-T10-alt4 T=10 nodeDt=1 vt=[4,-4,4,-4,4,-4,4,-4,4,-4,4]
+ handles: count=11/11 match=true tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t","vt-handles"] lens0={"s-t":1,"v-t":1,"a-t":1,"vt-handles":11} lenAtT=501 lenEnd=501 grow=0 lastFail={"st":59510,"vt":9510,"at":9500,"count":0}
+ notReached=false tAtT=10 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[5],"vmax":[4],"amax":[8]}
+  err: s=4.02e-12(rel 1.6e-12,fails 0) dist=2.03e-12(rel 1.3e-13,fails 0) v=6.71e-12(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=6.71e-12(rel 0.0e+0,fails 0) area=4.02e-12(rel 1.6e-12,fails 0) avgSpeed=2.54e-13(rel 1.3e-13,fails 0) avgVel=5.03e-13(rel 1.6e-12,fails 0)
+  trapMax=4.01e-12 reverse={"firstRev":0.5000000000000003,"revViaZero":true,"revAnalytic":0.5,"eqBefore":501,"neBefore":0,"eqAfter":0,"neAfter":9500,"minGapAfter":0.000008000000000008}
+  nodeA={"f":9,"l":0,"r":9,"n":0} freezeA={"a":8,"t":10,"expLeft":8,"expRight":0,"equalsLeft":true} near=[{"i":9500,"t":9.500000000000174,"v":0,"a":8,"done":0},{"i":9999,"t":9.998999999999898,"v":3.99199999999918,"a":8,"done":0},{"i":10000,"t":10,"v":4,"a":8,"done":1},{"i":10001,"t":10,"v":4,"a":8,"done":1}]
+  |s|max=1.0000000000005547 |v|max=4 |a|max=8 exact={"s":1,"sAt":0.5,"v":4,"a":8} meta={"smax":5,"vmax":4,"amax":8} in=true/true/true drawAmaxExp=8
+  atT exp s=0 d=20 v=4 a=8 | got s=0 d=20.00000000000018 v=4 a=8
+
+=== l-T2-u5-a10 T=2 nodeDt=1 u=5 a=10
+ handles: count=null/3 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=101 lenEnd=101 grow=0 lastFail={"st":1900,"vt":1900,"at":1900,"count":0}
+ notReached=false tAtT=2 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[50],"vmax":[25],"amax":[10]}
+  err: s=3.03e-12(rel 1.0e-13,fails 0) dist=3.03e-12(rel 1.0e-13,fails 0) v=2.26e-12(rel 9.1e-14,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=2.26e-12(rel 9.1e-14,fails 0) area=3.03e-12(rel 1.0e-13,fails 0) avgSpeed=1.52e-12(rel 1.0e-13,fails 0) avgVel=1.52e-12(rel 1.0e-13,fails 0)
+  trapMax=2.20e-12 reverse={"firstRev":-1,"revViaZero":false,"revAnalytic":null,"eqBefore":2001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+  |s|max=30.000000000003034 |v|max=25.000000000002263 |a|max=10 exact={"s":30,"sAt":2,"v":25,"a":10} meta={"smax":50,"vmax":25,"amax":10} in=true/true/true drawAmaxExp=null
+  atT exp s=30 d=30 v=25 a=10 | got s=30.000000000003034 d=30.000000000003034 v=25.000000000002263 a=10
+
+=== l-T2-u-5-a-10 T=2 nodeDt=1 u=-5 a=-10
+ handles: count=null/3 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=101 lenEnd=101 grow=0 lastFail={"st":1900,"vt":1900,"at":1900,"count":0}
+ notReached=false tAtT=2 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[50],"vmax":[25],"amax":[10]}
+  err: s=3.03e-12(rel 1.0e-13,fails 0) dist=3.03e-12(rel 1.0e-13,fails 0) v=2.26e-12(rel 9.1e-14,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=2.26e-12(rel 9.1e-14,fails 0) area=3.03e-12(rel 1.0e-13,fails 0) avgSpeed=1.52e-12(rel 1.0e-13,fails 0) avgVel=1.52e-12(rel 1.0e-13,fails 0)
+  trapMax=2.20e-12 reverse={"firstRev":-1,"revViaZero":false,"revAnalytic":null,"eqBefore":2001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+  |s|max=30.000000000003034 |v|max=25.000000000002263 |a|max=10 exact={"s":30,"sAt":2,"v":25,"a":10} meta={"smax":50,"vmax":25,"amax":10} in=true/true/true drawAmaxExp=null
+  atT exp s=-30 d=30 v=-25 a=-10 | got s=-30.000000000003034 d=30.000000000003034 v=-25.000000000002263 a=-10
+
+=== l-T2-u5-a-10 T=2 nodeDt=1 u=5 a=-10
+ handles: count=null/3 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=101 lenEnd=101 grow=0 lastFail={"st":1901,"vt":1901,"at":1900,"count":0}
+ notReached=false tAtT=2 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[10],"vmax":[15],"amax":[10]}
+  err: s=1.35e-12(rel 1.3e-11,fails 0) dist=1.39e-12(rel 1.1e-13,fails 0) v=7.57e-13(rel 6.6e-12,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=7.57e-13(rel 6.6e-12,fails 0) area=1.35e-12(rel 1.3e-11,fails 0) avgSpeed=6.96e-13(rel 1.1e-13,fails 0) avgVel=6.73e-13(rel 1.3e-11,fails 0)
+  trapMax=1.10e-12 reverse={"firstRev":0.5000000000000003,"revViaZero":true,"revAnalytic":0.5,"eqBefore":501,"neBefore":0,"eqAfter":0,"neAfter":1500,"minGapAfter":0.000010000000000065512}
+  |s|max=10.000000000001346 |v|max=15.000000000000757 |a|max=10 exact={"s":10,"sAt":2,"v":15,"a":10} meta={"smax":10,"vmax":15,"amax":10} in=false/true/true drawAmaxExp=null
+  atT exp s=-10 d=12.5 v=-15 a=-10 | got s=-10.000000000001346 d=12.500000000001393 v=-15.000000000000757 a=-10
+
+=== l-T60-u-5-a10 T=60 nodeDt=6 u=-5 a=10
+ handles: count=null/11 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=-1 lenEnd=3000 grow=0 lastFail={"st":57002,"vt":57002,"at":57001,"count":0}
+ notReached=true tAtT=59.999999999950866 tEqT=false nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[18000],"vmax":[595],"amax":[10]}
+  err: s=2.07e-8(rel 1.3e-11,fails 0) dist=2.07e-8(rel 1.2e-12,fails 0) v=3.03e-10(rel 6.6e-12,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=3.03e-10(rel 6.6e-12,fails 0) area=2.07e-8(rel 1.3e-11,fails 0) avgSpeed=3.45e-10(rel 1.2e-12,fails 0) avgVel=3.45e-10(rel 1.3e-11,fails 0)
+  trapMax=2.56e-8 reverse={"firstRev":0.5000000000000003,"revViaZero":true,"revAnalytic":0.5,"eqBefore":501,"neBefore":0,"eqAfter":0,"neAfter":59500,"minGapAfter":0.000010000000000065512}
+  |s|max=17699.999999991487 |v|max=594.9999999996038 |a|max=10 exact={"s":17700,"sAt":60,"v":595,"a":10} meta={"smax":18000,"vmax":595,"amax":10} in=true/true/true drawAmaxExp=null
+  atT exp s=17700 d=17702.5 v=595 a=10 | got s=17699.999999991487 d=17702.499999991483 v=594.9999999996038 a=10
+
+=== l-T60-u5-a-10 T=60 nodeDt=6 u=5 a=-10
+ handles: count=null/11 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=-1 lenEnd=3000 grow=0 lastFail={"st":57002,"vt":57002,"at":57001,"count":0}
+ notReached=true tAtT=59.999999999950866 tEqT=false nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[18000],"vmax":[595],"amax":[10]}
+  err: s=2.07e-8(rel 1.3e-11,fails 0) dist=2.07e-8(rel 1.2e-12,fails 0) v=3.03e-10(rel 6.6e-12,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=3.03e-10(rel 6.6e-12,fails 0) area=2.07e-8(rel 1.3e-11,fails 0) avgSpeed=3.45e-10(rel 1.2e-12,fails 0) avgVel=3.45e-10(rel 1.3e-11,fails 0)
+  trapMax=2.56e-8 reverse={"firstRev":0.5000000000000003,"revViaZero":true,"revAnalytic":0.5,"eqBefore":501,"neBefore":0,"eqAfter":0,"neAfter":59500,"minGapAfter":0.000010000000000065512}
+  |s|max=17699.999999991487 |v|max=594.9999999996038 |a|max=10 exact={"s":17700,"sAt":60,"v":595,"a":10} meta={"smax":18000,"vmax":595,"amax":10} in=true/true/true drawAmaxExp=null
+  atT exp s=-17700 d=17702.5 v=-595 a=-10 | got s=-17699.999999991487 d=17702.499999991483 v=-594.9999999996038 a=-10
+
+=== l-T60-u0-a0 T=60 nodeDt=6 u=0 a=0
+ handles: count=null/11 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=-1 lenEnd=3000 grow=0 lastFail={"st":57001,"vt":57001,"at":57001,"count":0}
+ notReached=true tAtT=59.999999999950866 tEqT=false nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[5],"vmax":[1],"amax":[1]}
+  err: s=0.00e+0(rel 0.0e+0,fails 0) dist=0.00e+0(rel 0.0e+0,fails 0) v=0.00e+0(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=0.00e+0(rel 0.0e+0,fails 0) area=0.00e+0(rel 0.0e+0,fails 0) avgSpeed=0.00e+0(rel 0.0e+0,fails 0) avgVel=0.00e+0(rel 0.0e+0,fails 0)
+  trapMax=0.00e+0 reverse={"firstRev":-1,"revViaZero":false,"revAnalytic":null,"eqBefore":60001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+  |s|max=0 |v|max=0 |a|max=0 exact={"s":0,"sAt":0,"v":0,"a":0} meta={"smax":5,"vmax":1,"amax":1} in=true/true/true drawAmaxExp=null
+  atT exp s=0 d=0 v=0 a=0 | got s=0 d=0 v=0 a=0
+
+=== l-T60-u5-a0 T=60 nodeDt=6 u=5 a=0
+ handles: count=null/11 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=-1 lenEnd=3000 grow=0 lastFail={"st":57001,"vt":57001,"at":57001,"count":0}
+ notReached=true tAtT=59.999999999950866 tEqT=false nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[500],"vmax":[5],"amax":[1]}
+  err: s=1.54e-10(rel 9.6e-13,fails 0) dist=1.54e-10(rel 9.6e-13,fails 0) v=0.00e+0(rel 0.0e+0,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=0.00e+0(rel 0.0e+0,fails 0) area=1.54e-10(rel 9.6e-13,fails 0) avgSpeed=4.80e-12(rel 9.6e-13,fails 0) avgVel=4.80e-12(rel 9.6e-13,fails 0)
+  trapMax=1.07e-10 reverse={"firstRev":-1,"revViaZero":false,"revAnalytic":null,"eqBefore":60001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+  |s|max=299.9999999997997 |v|max=5 |a|max=0 exact={"s":300,"sAt":60,"v":5,"a":0} meta={"smax":500,"vmax":5,"amax":1} in=true/true/true drawAmaxExp=null
+  atT exp s=300 d=300 v=5 a=0 | got s=299.9999999997997 d=299.9999999997997 v=5 a=0
+
+=== l-T10-u5-a-1 T=10 nodeDt=1 u=5 a=-1
+ handles: count=null/11 match=false tErr=0 vErr=0 variants=1 keys=["s-t","v-t","a-t"] lens0={"s-t":1,"v-t":1,"a-t":1} lenAtT=501 lenEnd=501 grow=0 lastFail={"st":59501,"vt":9501,"at":9500,"count":0}
+ notReached=false tAtT=10 tEqT=true nan=0 frozenBad=0 bodyNe=0 vecNe=0 scales={"velocity":[0.25],"acceleration":[0.25]} uniq={"smax":[20],"vmax":[5],"amax":[1]}
+  err: s=2.55e-12(rel 1.1e-10,fails 0) dist=3.90e-12(rel 2.3e-13,fails 0) v=1.22e-12(rel 6.7e-13,fails 0) a=0.00e+0(rel 0.0e+0,fails 0) speed=1.22e-12(rel 6.7e-13,fails 0) area=2.55e-12(rel 1.1e-10,fails 0) avgSpeed=4.88e-13(rel 2.3e-13,fails 0) avgVel=3.19e-13(rel 1.1e-10,fails 0)
+  trapMax=2.28e-12 reverse={"firstRev":5.000000000000004,"revViaZero":true,"revAnalytic":5,"eqBefore":5001,"neBefore":0,"eqAfter":0,"neAfter":5000,"minGapAfter":0.0000010000000010279564}
+  |s|max=12.499999999999327 |v|max=5.00000000000011 |a|max=1 exact={"s":12.5,"sAt":5,"v":5,"a":1} meta={"smax":20,"vmax":5,"amax":1} in=true/true/true drawAmaxExp=null
+  atT exp s=0 d=25 v=-5 a=-1 | got s=0 d=24.999999999999208 v=-5.00000000000011 a=-1

@@ -1,0 +1,13 @@
+import { model } from "file:///C:/Users/trevor/dev/dse-physics-lab/src/sims/motion-graphs-synced-with-real-motion/model";
+import { plan } from "file:///C:/Users/trevor/dev/dse-physics-lab/src/sims/motion-graphs-synced-with-real-motion/plan";
+import { defaults } from "file:///C:/Users/trevor/dev/dse-physics-lab/src/sims/motion-graphs-synced-with-real-motion/controls";
+import { layers } from "file:///C:/Users/trevor/dev/dse-physics-lab/src/sims/motion-graphs-synced-with-real-motion/charts";
+import { manifest } from "file:///C:/Users/trevor/dev/dse-physics-lab/src/sims/motion-graphs-synced-with-real-motion/manifest";
+const allLayers = Object.fromEntries(layers.map((l: any) => [l.key, true]));
+console.log("layers", JSON.stringify(layers));
+console.log("manifest version", (manifest as any).version, JSON.stringify((manifest as any).beyondSpec ?? null));
+const params = { ...defaults, mode: "draw", T: 13.316564376147728 } as any;
+let s = model.init(params);
+const p = plan(s, params, model.observe(s, params), allLayers);
+console.log("plan keys", Object.keys(p));
+for (const k of Object.keys(p)) if (!["arrows","labels","scales","meta"].includes(k)) console.log(k, JSON.stringify((p as any)[k]).slice(0, 4000));

@@ -1,7 +1,7 @@
-// 第 7 輪比對：主實作 0.5.0（60001 幀、dt = 0.001、T 滑桿 2–60 s）對第二實作（閉式逐段積分）
+// 第 9 輪比對：主實作 0.6.0（60001 幀、dt = 0.001、T 滑桿 2–60 s、draw 節點間距 nodeDt = max(1, T/10)）對第二實作（閉式逐段積分）
 import fs from "node:fs";
 import path from "node:path";
-import { snapZero, SNAP_KEYS, SNAP_EPS } from "./model.mjs";
+import { snapZero, SNAP_KEYS, SNAP_EPS, nodeDtOf } from "./model.mjs";
 const root = "C:/Users/trevor/dev/dse-physics-lab/reports/motion-graphs-synced-with-real-motion";
 const index = JSON.parse(fs.readFileSync(path.join(root, "data/index.json"), "utf8"));
 const dt = index.dt;
@@ -14,7 +14,7 @@ for (const run of index.runs) {
   const B = JSON.parse(fs.readFileSync(path.join(root, "second-impl", run.name + ".json"), "utf8")).frames;
   const n = Math.min(A.length, B.length);
   if (A.length !== B.length) failures.push(`${run.name}: 幀數不同 ${A.length} vs ${B.length}`);
-  const T = run.params.T, mode = run.params.mode, vt = run.params.vt;
+  const T = run.params.T, mode = run.params.mode, vt = run.params.vt, h = nodeDtOf(T);
   // ---- 幀時刻 ----
   let maxTd = 0; for (let i = 0; i < n; i++) maxTd = Math.max(maxTd, Math.abs(A[i].t - B[i].t));
   rows.push({ run: run.name, key: "(t)", maxAbs: maxTd, maxRel: 0, firstT: null, nEvent: 0, pass: maxTd <= dt / 100 });
@@ -28,11 +28,11 @@ for (const run of index.runs) {
         let ok = false;
         if (k === "a" && mode === "draw") {
           // 節點兩側斜率皆可接受，限節點 ± 2 dt 內
-          const t = B[i].t, node = Math.round(t);
-          if (Math.abs(t - node) <= EVENT_DT) {
+          const t = B[i].t, node = Math.round(t / h);
+          if (Math.abs(t - node * h) <= EVENT_DT) {
             const cand = [];
-            if (node >= 1 && node < vt.length) cand.push(vt[node] - vt[node - 1]);
-            if (node + 1 < vt.length) cand.push(vt[node + 1] - vt[node]);
+            if (node >= 1 && node < vt.length) cand.push((vt[node] - vt[node - 1]) / h);
+            if (node + 1 < vt.length) cand.push((vt[node + 1] - vt[node]) / h);
             if (node >= vt.length - 1) cand.push(0);
             ok = cand.some(m => Math.abs(m - a) <= TOL);
           }
@@ -69,13 +69,37 @@ for (const run of index.runs) {
     }
     driftRep.push({ run: run.name, T, bins });
   }
-  // ---- D. draw 模式 T 超出控制點範圍：t ≥ 末節點後 v 恆為末值、a = 0（主實作） ----
+  // ---- D. draw 模式 nodeDt 專項：主實作各段 a 應為 Δv/nodeDt（節點 ± 2 dt 外）、各節點幀 v = vt[k]、末節點後 v 恆為末值、a = 0 ----
   if (mode === "draw") {
-    const last = vt.length - 1, vEnd = vt[last];
-    let vBad = 0, aBad = 0, cnt = 0, firstBad = null;
-    for (let i = 0; i < n; i++) { if (A[i].t > last) { cnt++; if (Math.abs(A[i].obs.v - vEnd) > 1e-12) { vBad++; firstBad ??= A[i].t; } if (A[i].obs.a !== 0) aBad++; } }
-    drawTail.push({ run: run.name, T, lastNode: last, vEnd, framesBeyond: cnt, vBad, aBad, firstBad });
+    const last = (vt.length - 1) * h, vEnd = vt[vt.length - 1];
+    let vBad = 0, aBad = 0, cnt = 0, firstBad = null, segABad = 0, segAFirst = null, nodeVBad = 0;
+    const nodeV = [];
+    for (let i = 0; i < n; i++) {
+      const t = A[i].t;
+      if (t > last + 1e-9) { cnt++; if (Math.abs(A[i].obs.v - vEnd) > 1e-12) { vBad++; firstBad ??= t; } if (A[i].obs.a !== 0) aBad++; }
+      if (t < T) {
+        const k = Math.floor(t / h + 1e-12);
+        if (k < vt.length - 1 && Math.abs(t - k * h) > EVENT_DT && Math.abs(t - (k + 1) * h) > EVENT_DT) {
+          const exp = (vt[k + 1] - vt[k]) / h;
+          if (Math.abs(A[i].obs.a - exp) > 1e-9) { segABad++; segAFirst ??= t; }
+        }
+      }
+    }
+    // 節點幀：主實作最接近 k·h 的幀
+    for (let k = 0; k <= vt.length - 1; k++) {
+      const tk = Math.min(k * h, T); const idx = Math.min(n - 1, Math.round(tk / dt));
+      let best = idx; for (const j of [idx - 1, idx, idx + 1]) if (j >= 0 && j < n && Math.abs(A[j].t - tk) < Math.abs(A[best].t - tk)) best = j;
+      // 節點不一定落在幀格點上：期望值 = vt[k] + （所在側斜率）×（幀時刻 − 節點時刻）
+      const off = A[best].t - tk;
+      const side = off >= 0 ? (k < vt.length - 1 ? (vt[k + 1] - vt[k]) / h : 0) : (k >= 1 ? (vt[k] - vt[k - 1]) / h : 0);
+      const vExp = (A[best].t >= T) ? A[best].obs.v : vt[k] + side * off;
+      const dv = A[best].obs.v - vExp; nodeV.push({ k, tk, tFrame: A[best].t, v: A[best].obs.v, off, vExp, dv });
+      if (Math.abs(dv) > 1e-6) nodeVBad++;
+    }
+    drawTail.push({ run: run.name, T, nodeDt: h, lastNode: last, vEnd, framesBeyond: cnt, vBad, aBad, firstBad, segABad, segAFirst, nodeVBad, nodeV });
     if (vBad || aBad) failures.push(`${run.name}: 超出末節點後 v/a 不保持（v ${vBad} 幀、a ${aBad} 幀）`);
+    if (segABad) failures.push(`${run.name}: 主實作段內 a ≠ Δv/nodeDt ${segABad} 幀（首次 t=${segAFirst}）`);
+    if (nodeVBad) failures.push(`${run.name}: 主實作節點幀 v ≠ vt[k] ${nodeVBad} 處`);
   }
   // ---- E. 歸零規則 ----
   const r = { run: run.name, mode, mainZeroMineBig: [], mainTinyNotZero: [], mineTinyMainNot: [], aSnapped: 0, speedNeAbsV: 0, exactAfterSnap: 0, total: 0 };
@@ -125,8 +149,8 @@ console.log("|---|---|---|---|---|---|---|---|---|---|---|---|");
 for (const f of freezeRep) console.log(`| ${f.run} | ${f.T} | ${f.iTA} | ${f.iTB} | ${f.tA} | ${f.exactA} | ${f.preA} | ${f.lastStepA.toExponential(6)} | ${f.afterNotT} | ${f.frozenChanged} | ${f.nonFiniteA}/${f.nonFiniteB} | ${f.lastT} |`);
 console.log("\n=== 累積誤差（各 5 s 時段內最大絕對誤差）===");
 for (const d of driftRep) console.log(d.run, "T=" + d.T, Object.entries(d.bins).map(([b, v]) => `[${b}–${+b + 5}) s:${fmt(v.s)} v:${fmt(v.v)} dist:${fmt(v.dist)} avgVel:${fmt(v.avgVel)}`).join(" | "));
-console.log("\n=== draw 模式超出末節點 ===");
-for (const d of drawTail) console.log(JSON.stringify(d));
+console.log("\n=== draw 模式 nodeDt 專項 ===");
+for (const d of drawTail) { const { nodeV, ...rest } = d; console.log(JSON.stringify(rest)); for (const nv of nodeV) console.log("  node", nv.k, "t_k=" + nv.tk, "frame t=" + nv.tFrame, "offset=" + nv.off.toExponential(2), "v=" + nv.v, "v_exp=" + nv.vExp, "dv=" + nv.dv.toExponential(2)); }
 console.log("\n=== 歸零規則 ===");
 for (const r of snapRep) console.log(`${r.run} (${r.mode}): 主0但第二≥1e-9:${r.mainZeroMineBig.length} 主0<|x|<1e-9未歸零:${r.mainTinyNotZero.length} 第二<1e-9但主≠0:${r.mineTinyMainNot.length} a被歸零:${r.aSnapped} speed≠|v|:${r.speedNeAbsV} 套規則後逐位相等:${r.exactAfterSnap}/${r.total}`);
 console.log("\n=== 主實作自洽（規格驗證條件）===");

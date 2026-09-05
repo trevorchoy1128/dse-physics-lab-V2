@@ -18,7 +18,7 @@ const nice = (m: number) => { const e = 10 ** Math.floor(Math.log10(m)); const f
 // 預測值（|u|、|u + aT|、½|a|T² 等）是上界，「至今出現過的值」只作保險。畫圖模式的 v、a 軸固定為拖動範圍 ±5、±10。
 interface Axes { s: number; v: number; a: number; t: number }
 function growAxes(prev: Axes, meta: Record<string, number>): Axes {
-  const fresh = meta.t < prev.t - 1e-9;   // 重置
+  const fresh = meta.t < prev.t - 1e-9 || meta.t === 0;   // 重置（t 已是 0 時按「還原預設」或改參數也要重算：學生試用者第 9 輪）
   const base = fresh ? { s: 0, v: 0, a: 0 } : prev;
   const grow = (cur: number, need: number, min: number) => Math.max(cur, nice(Math.max(min, need)));
   return {
@@ -67,7 +67,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
 
     // ---- 軌道：固定比例 + 鏡頭跟隨 ----（老師：比例重新映射令小車「瞬移」，改為鏡頭跟車、背景流動）
     const tr = L.track; const ty = tr.y + tr.h * 0.62; const pad = 40;
-    if (frozen.current.viewW === 0 || m.t < frozen.current.t - 1e-9) {   // 重置時才重算
+    if (frozen.current.viewW === 0 || m.t < frozen.current.t - 1e-9 || m.t === 0) {   // 重置時才重算
       frozen.current.viewW = Math.min(100, Math.max(10, nice(3 * m.vmax)));
       frozen.current.maxMag = Math.max(1, m.vmax * (plan.scales.velocity ?? 1), m.amax * (plan.scales.acceleration ?? 1));
     }
@@ -75,7 +75,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
     const viewW = frozen.current.viewW;      // 畫面橫跨的米數：重置時由參數預測定好，運行中（包括即時改 a）不變
     const pxPerM = (tr.w - 2 * pad) / viewW;
     const body = plan.bodies?.[0]; const carS = body?.position[0] ?? 0;
-    if (m.t < cam.current.t - 1e-9) cam.current.s = 0;                // 重置：鏡頭回到起點
+    if (m.t < cam.current.t - 1e-9 || m.t === 0) cam.current.s = 0;   // 重置：鏡頭回到起點
     { const dz = viewW * 0.2; if (carS > cam.current.s + dz) cam.current.s = carS - dz; else if (carS < cam.current.s - dz) cam.current.s = carS + dz; }
     cam.current.t = m.t;
     const sx = (s: number) => tr.x + tr.w / 2 + (s - cam.current.s) * pxPerM;
@@ -171,7 +171,10 @@ export default function Scene({ plan, onInput }: SceneProps) {
       ctx.textAlign = "center";
       // t 軸刻度與數字放在 y = 0 的軸線上（老師要求）；軸線貼近底部時放上方
       const below = y0 + 16 < p.y + p.h - 4;
-      for (let tv = 0; tv <= p.tMax; tv += p.tMax / 5) { ctx.strokeStyle = ink3; ctx.beginPath(); ctx.moveTo(px(p, tv), y0 - 3); ctx.lineTo(px(p, tv), y0 + 3); ctx.stroke(); ctx.fillText(String(tv), px(p, tv), below ? y0 + 13 : y0 - 6); }
+      const handlesT = k === "v" ? plan.trails?.find(t => t.key === "vt-handles")?.points.map(q => q[0]) : undefined;
+      const ticks = handlesT ?? Array.from({ length: 6 }, (_, i) => (i * p.tMax) / 5);   // 畫圖模式：刻度落在圓點的時間上（第 9 輪）
+      const tickGap = ticks.length > 1 ? px(p, ticks[1]) - px(p, ticks[0]) : p.w; const labelEvery = Math.max(1, Math.ceil(26 / tickGap));
+      ticks.forEach((tv, i) => { ctx.strokeStyle = ink3; ctx.beginPath(); ctx.moveTo(px(p, tv), y0 - 3); ctx.lineTo(px(p, tv), y0 + 3); ctx.stroke(); if (i % labelEvery === 0) ctx.fillText(tick(tv), px(p, tv), below ? y0 + 13 : y0 - 6); });
       ctx.font = `700 ${font(12)}`; ctx.fillStyle = ser.color; ctx.textAlign = "left"; ctx.fillText(ser.title, p.x + 6, p.y + 15);
       ctx.font = mono(10); ctx.fillStyle = ink3; ctx.textAlign = "right"; ctx.fillText(`${k} / ${ser.unit}`, p.x + p.w - 4, p.y + 12); ctx.fillText("t / s", p.x + p.w - 4, below ? y0 - 6 : y0 + 13);
       // 線下面積（只在 v–t，由 0 至 t）
@@ -200,7 +203,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
             ctx.fillText(`t = ${q[0]} s，v = ${sig(q[1]).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1")} m s⁻¹`, hx, hy - 18);
           }
         });
-        ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "在圖框內按住最近那個圓點的時間位置上下拖，就改變它的 v（−5 至 5，每格 0.5）" : "Press near a dot's time and drag up/down to set its v (−5 to 5, steps of 0.5)", x0 + 6, p.y + p.h - 44);
+        ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "在圖框內按住並左右掃過，經過的圓點就跟着你的高度（v 由 −5 至 5，每格 0.5）" : "Press and sweep across the graph: each dot you pass takes your height (v from −5 to 5, steps of 0.5)", x0 + 6, p.y + p.h - 44);
       }
       // 已走過的曲線
       if (pts.length > 1) {
@@ -246,9 +249,10 @@ export default function Scene({ plan, onInput }: SceneProps) {
   };
   const onMove = (e: React.PointerEvent) => {
     if (dragging.current === null || !lay.current) return;
-    const [, y] = local(e); const p = lay.current.panes.v;
+    const [x, y] = local(e); const p = lay.current.panes.v;
     const v = Math.max(-5, Math.min(5, Math.round(fromPy(p, y) * 2) / 2));     // 0.5 m s⁻¹ 步進（學生試用者：太細難拖準），範圍 ±5
-    const next = [...vtRef.current]; next[dragging.current] = v; vtRef.current = next;
+    const i = handleAt(x, y) ?? dragging.current; dragging.current = i;         // 掃掠：橫向掃過哪粒點就改哪粒點，一筆可畫整條折線（第 9 輪）
+    const next = [...vtRef.current]; next[i] = v; vtRef.current = next;
     onInput?.("vt", next);
   };
   const onUp = () => { dragging.current = null; };
