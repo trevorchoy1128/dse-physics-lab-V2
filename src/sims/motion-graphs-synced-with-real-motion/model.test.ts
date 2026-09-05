@@ -88,6 +88,14 @@ describe("運動線圖與真實運動同步（S7）", () => {
     expect(model.observe(run(q, 11).at(-1)!, q).a).toBeCloseTo(-0.4, 9);
   });
 
+  it("對稱往返後位移的捨入殘餘顯示為 0（核數員 F6）", () => {
+    const p = draw([2, 1.6, 1.2, 0.8, 0.4, 0, -0.4, -0.8, -1.2, -1.6, -2]);   // 奇對稱，s(10) 解析值 0
+    const end = run(p, 10.5).at(-1)!;
+    const o = model.observe(end, p);
+    expect(o.s).toBe(0); expect(o.area).toBe(0); expect(o.avgVel).toBe(0);
+    expect(o.dist).toBeCloseTo(10, 9);
+  });
+
   it("畫圖模式而時間窗落在節點上（T = 5）：凍結後 a 取 T⁻ 那一段的斜率（第二實作者建議）", () => {
     const vt = [0, 1, 3, 3, 0, -2, -2, 1, 1, 0, 0];
     const p: P = { mode: "draw", u: 0, a: 0, T: 5, vt };

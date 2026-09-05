@@ -121,6 +121,11 @@ ${scenarios.map(s => `<tr><td>「${esc(s.misconception.zh)}」</td><td class="me
 <h3>假設（畫面固定位置列明）</h3><ul>${manifest.assumptions.map(a => `<li>${esc(a.zh)}</li>`).join("")}</ul>
 </section>
 
+${existsSync(join(dir, "escalation.md")) ? `<section>
+<h2>升級報告（閘 2 三輪後）</h2>
+<div class="report">${mdToHtml(readFileSync(join(dir, "escalation.md"), "utf8").replace(/^# .*\n/, ""))}</div>
+</section>` : ""}
+
 <section>
 <h2>請老師決定</h2>
 <div class="decide">

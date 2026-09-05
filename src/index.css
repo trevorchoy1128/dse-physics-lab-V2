@@ -45,6 +45,8 @@ i { font-style: italic; font-family: "Noto Serif TC", "Times New Roman", serif; 
 .stage-canvas { flex: 1; min-height: 420px; position: relative; overflow: hidden; }
 .scrub { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; min-width: 160px; }
 .scrub input[type="range"] { flex: 1; min-height: 44px; accent-color: var(--accent); }
+.scrub .scrub-label { font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+.scrub input[type="number"] { width: 72px; min-height: 40px; padding: 0 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-family: "IBM Plex Mono", monospace; }
 .segment { display: flex; gap: 6px; flex-wrap: wrap; }
 .segment button { flex: 1 1 auto; min-height: 44px; padding: 6px 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; border-radius: 4px; font-size: 13.5px; text-align: left; }
 .segment button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }

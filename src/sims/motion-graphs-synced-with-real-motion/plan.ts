@@ -22,6 +22,9 @@ export const plan: PlanFn<S, P> = (s, p, obs, layers) => {
   const vmax = p.mode === "draw" ? Math.max(1, ...p.vt.map(Math.abs)) : Math.max(1, Math.abs(p.u), Math.abs(p.u + p.a * p.T));
   const amax = p.mode === "draw" ? Math.max(1, ...p.vt.slice(1).map((v, k) => Math.abs(v - p.vt[k]))) : Math.max(1, Math.abs(p.a));
   const smaxGraph = Math.max(1, ...s.hist.map(h => Math.abs(h.s)), Math.abs(s.s));
+  // 至今出現過的最大 |v|、|a|：畫面軸範圍只按實際數據放大，不因滑桿改動而跳動（學生試用者第 3 輪）
+  const vSeen = Math.max(1, ...s.hist.map(h => Math.abs(h.v)), Math.abs(s.v));
+  const aSeen = Math.max(1, ...s.hist.map(h => Math.abs(h.a)), Math.abs(obs.a));
   return {
     bodies: [{ key: "trolley", shape: "box", position: pos, size: [0.6, 0.3, 0.3], color: "#1c2530" }],
     arrows,
@@ -36,7 +39,7 @@ export const plan: PlanFn<S, P> = (s, p, obs, layers) => {
     scales: { velocity: 0.25, acceleration: 0.25 },
     meta: {
       t: s.t, T: p.T, s: s.s, v: s.v, a: obs.a,
-      smax: trackExtent(p), sGraph: smaxGraph, vmax, amax,
+      smax: trackExtent(p), sGraph: smaxGraph, vmax, amax, vSeen, aSeen,
       draw: p.mode === "draw" ? 1 : 0,
       tangent: layers.tangent ? 1 : 0, area: layers.area ? 1 : 0,
       done: s.done ? 1 : 0,

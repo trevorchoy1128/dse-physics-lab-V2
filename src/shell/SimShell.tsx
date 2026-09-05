@@ -103,8 +103,13 @@ export function SimShell({ sim }: SimShellProps) {
             </label>
             {sim.duration && (
               <label className="scrub" aria-label={t(UI.time)}>
+                <span className="scrub-label">{lang === "zh" ? "跳到" : "Jump to"} <i>t</i> =</span>
                 <input type="range" min={0} max={sim.duration(params)} step={0.01} value={Math.min(runner.current.t, sim.duration(params))}
                   onChange={e => { setPlaying(false); runner.current.seek(Number(e.target.value)); setFrame(f => f + 1); }} />
+                <input type="number" min={0} max={sim.duration(params)} step={0.1} value={Math.round(Math.min(runner.current.t, sim.duration(params)) * 100) / 100}
+                  aria-label={t(UI.time)}
+                  onChange={e => { const v = Number(e.target.value); if (Number.isFinite(v)) { setPlaying(false); runner.current.seek(Math.max(0, Math.min(sim.duration!(params), v))); setFrame(f => f + 1); } }} />
+                <span>s</span>
               </label>
             )}
             <span className="clock"><i>t</i> = {withUnit(runner.current.t, "s")}</span>

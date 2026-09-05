@@ -75,15 +75,17 @@ export const model: SimModel<S, P> = {
   observe(s, p) {
     // 到達時間窗末端後畫面凍結，a 保持最後一段的值（核數員 F1：不得歸零令 v 與 a 自相矛盾）
     const a = accel(p, Math.min(s.t, p.T - 1e-9));
+    // 累加捨入殘餘（如 −7 × 10⁻¹³ m）歸零：小於 1 nm 的位移在此模擬沒有物理意義（核數員 F6）
+    const z = (x: number) => (Math.abs(x) < 1e-9 ? 0 : x);
     return {
-      s: s.s,
-      dist: s.dist,
-      v: s.v,
+      s: z(s.s),
+      dist: z(s.dist),
+      v: z(s.v),
       a,
-      speed: Math.abs(s.v),
-      area: s.s,                                   // v–t 線下面積（由 0 至 t）＝ 位移
-      avgSpeed: s.t > 0 ? s.dist / s.t : 0,
-      avgVel: s.t > 0 ? s.s / s.t : 0,
+      speed: z(Math.abs(s.v)),
+      area: z(s.s),                                // v–t 線下面積（由 0 至 t）＝ 位移
+      avgSpeed: s.t > 0 ? z(s.dist / s.t) : 0,
+      avgVel: s.t > 0 ? z(s.s / s.t) : 0,
     };
   },
 

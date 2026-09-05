@@ -12,21 +12,30 @@ interface Layout { track: { x: number; y: number; w: number; h: number; smax: nu
 
 const nice = (m: number) => { const e = 10 ** Math.floor(Math.log10(m)); const f = m / e; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * e; };
 
-function layoutOf(w: number, h: number, meta: Record<string, number>): Layout {
+// 軸範圍「只放大、不縮小、不因滑桿跳動」：按至今出現過的最大值取好看刻度，重置（t 回到 0）時歸零重算。
+// 畫圖模式的 v、a 軸固定為拖動範圍 ±5、±10。（學生試用者第 2、3 輪）
+interface Axes { s: number; v: number; a: number; t: number }
+function growAxes(prev: Axes, meta: Record<string, number>): Axes {
+  const fresh = meta.t < prev.t - 1e-9;   // 重置
+  const base = fresh ? { s: 0, v: 0, a: 0 } : prev;
+  const grow = (cur: number, need: number, min: number) => Math.max(cur, nice(Math.max(min, need)));
+  return {
+    s: grow(base.s, meta.sGraph * 1.15, 5),
+    v: meta.draw ? 5 : grow(base.v, meta.vSeen * 1.2, 1),
+    a: meta.draw ? 10 : grow(base.a, meta.aSeen * 1.2, 1),
+    t: meta.t,
+  };
+}
+
+function layoutOf(w: number, h: number, meta: Record<string, number>, axes: Axes): Layout {
   const trackH = Math.max(120, Math.round(h * 0.34));
   const gap = 12, top = trackH + 8, gh = h - top - 8;
   const gw = (w - gap * 4) / 3;
   const T = meta.T;
   const mk = (i: number, yAbs: number): Pane => ({ x: gap + i * (gw + gap), y: top, w: gw, h: gh, yMin: -yAbs, yMax: yAbs, tMax: T });
   return {
-    track: { x: 0, y: 0, w, h: trackH, smax: meta.smax },
-    // 軸範圍固定：s 與軌道相同；畫圖模式 v ±5、a ±10（即拖動範圍，學生試用者：拖動時軸比例不可跳）；
-    // 由運動生成圖模式由 u、a、T 預先算出，運行中不變
-    panes: {
-      s: mk(0, meta.smax),
-      v: mk(1, meta.draw ? 5 : nice(Math.max(1, meta.vmax * 1.2))),
-      a: mk(2, meta.draw ? 10 : nice(Math.max(1, meta.amax * 1.2))),
-    },
+    track: { x: 0, y: 0, w, h: trackH, smax: axes.s },   // 軌道與 s 軸同一範圍
+    panes: { s: mk(0, axes.s), v: mk(1, axes.v), a: mk(2, axes.a) },
   };
 }
 const px = (p: Pane, t: number) => p.x + 44 + ((p.w - 56) * t) / p.tMax;
@@ -36,12 +45,14 @@ const fromPy = (p: Pane, yy: number) => p.yMax - ((yy - p.y - 22) * (p.yMax - p.
 export default function Scene({ plan, onInput }: SceneProps) {
   const lang = useLang(s => s.lang);
   const lay = useRef<Layout | null>(null);
+  const axes = useRef<Axes>({ s: 0, v: 0, a: 0, t: 0 });
   const dragging = useRef<number | null>(null);
   const vtRef = useRef<number[]>([]);
 
   const draw = useCallback((ctx: CanvasRenderingContext2D, w: number, h: number) => {
     const m = plan.meta!;
-    const L = layoutOf(w, h, m); lay.current = L;
+    axes.current = growAxes(axes.current, m);
+    const L = layoutOf(w, h, m, axes.current); lay.current = L;
     const css = getComputedStyle(document.documentElement);
     const ink = css.getPropertyValue("--ink").trim() || "#1b2530", ink3 = css.getPropertyValue("--ink-3").trim() || "#7b8591", line = css.getPropertyValue("--line").trim() || "#d8ddd7", accent = css.getPropertyValue("--accent").trim() || "#0e6f6a";
     // 窄畫面（iPad）字體不再縮小：最少 12 px（學生試用者：圖內文字太細）
@@ -64,13 +75,21 @@ export default function Scene({ plan, onInput }: SceneProps) {
     const bw = 44, bh = 22;
     ctx.fillStyle = ink; ctx.fillRect(cx - bw / 2, ty - bh - 8, bw, bh);
     ctx.beginPath(); ctx.arc(cx - bw / 3, ty - 6, 5, 0, Math.PI * 2); ctx.arc(cx + bw / 3, ty - 6, 5, 0, Math.PI * 2); ctx.fill();
-    // 箭嘴（顏色與線型由 ARROW_STYLE 決定）。像素比例按本次運動的最大 |v|、|a| 自動設定，兩支箭嘴共用，
-    // 最長不超過軌道闊度的 30%，箭頭永遠在畫布內（核數員 F3）
-    const maxMag = Math.max(1, m.vmax * (plan.scales.velocity ?? 1), m.amax * (plan.scales.acceleration ?? 1));
-    const pxPerUnit = Math.min(88, (0.3 * (tr.w - 2 * pad)) / maxMag);
+    // 箭嘴（顏色與線型由 ARROW_STYLE 決定）。像素比例按至今出現過的最大 |v|、|a| 設定，兩支箭嘴共用，
+    // 最長不超過軌道闊度的 30%；再按小車與邊緣的距離同步縮短，箭頭永遠在畫布內（核數員 F3、F5）
+    const maxMag = Math.max(1, m.vSeen * (plan.scales.velocity ?? 1), m.aSeen * (plan.scales.acceleration ?? 1));
+    let pxPerUnit = Math.min(88, (0.3 * (tr.w - 2 * pad)) / maxMag);
+    const room = (dir: number) => (dir > 0 ? tr.x + tr.w - 8 - cx : cx - tr.x - 8);
+    for (const a of plan.arrows) {
+      const need = Math.abs(a.vector[0] * (plan.scales[a.kind] ?? 1) * pxPerUnit);
+      const r = room(Math.sign(a.vector[0]) || 1);
+      if (need > r - 14) pxPerUnit *= Math.max(0.05, (r - 14) / need);
+    }
+    let shrunk = false;
     for (const a of plan.arrows) {
       const st = ARROW_STYLE[a.kind]; const len = a.vector[0] * (plan.scales[a.kind] ?? 1) * pxPerUnit;
       if (Math.abs(len) < 1) continue;
+      if (pxPerUnit < Math.min(88, (0.3 * (tr.w - 2 * pad)) / maxMag) - 1e-9) shrunk = true;
       const yA = ty - bh - 8 - (a.kind === "velocity" ? 16 : 40); const x0 = cx, x1 = cx + len;
       ctx.strokeStyle = st.color; ctx.lineWidth = st.dashed ? 2 : 3; ctx.setLineDash(st.dashed ? [6, 4] : []);
       ctx.beginPath(); ctx.moveTo(x0, yA); ctx.lineTo(x1, yA); ctx.stroke(); ctx.setLineDash([]);
@@ -82,6 +101,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
     // 位移標籤
     const lab = plan.labels[0];
     if (lab) { ctx.font = mono(12); ctx.fillStyle = ink; ctx.textAlign = "center"; ctx.fillText(`s = ${sig(lab.value)} ${lab.unit}`, cx, ty - bh - 56); }
+    if (shrunk) { ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "箭嘴已按邊緣空間同步縮短（比例不變）" : "Arrows shortened together to fit the edge (same ratio)", tr.x + pad, tr.y + 14); }
 
     // ---- 三張線圖 ----
     const series: Record<"s" | "v" | "a", { key: string; title: string; unit: string; color: string }> = {
@@ -116,7 +136,13 @@ export default function Scene({ plan, onInput }: SceneProps) {
       if (k === "v" && handles) {
         ctx.strokeStyle = ser.color; ctx.globalAlpha = 0.35; ctx.lineWidth = 2; ctx.beginPath();
         handles.forEach((q, i) => (i ? ctx.lineTo(px(p, q[0]), py(p, q[1])) : ctx.moveTo(px(p, q[0]), py(p, q[1])))); ctx.stroke(); ctx.globalAlpha = 1;
-        for (const q of handles) { ctx.fillStyle = "#fff"; ctx.strokeStyle = ser.color; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(px(p, q[0]), py(p, q[1]), 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
+        handles.forEach((q, i) => {
+          ctx.fillStyle = dragging.current === i ? ser.color : "#fff"; ctx.strokeStyle = ser.color; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(px(p, q[0]), py(p, q[1]), 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+          if (dragging.current === i) {   // 拖動中即時顯示數值（學生試用者第 3 輪）
+            ctx.font = mono(12); ctx.fillStyle = ink; ctx.textAlign = "center";
+            ctx.fillText(`t = ${q[0]} s，v = ${sig(q[1]).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1")} m s⁻¹`, px(p, q[0]), py(p, q[1]) - 16);
+          }
+        });
         ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "上下拖動圓點改變該秒的 v（每格 0.5）" : "Drag a dot up/down to set v at that second (steps of 0.5)", x0 + 6, py(p, p.yMin) - 6);
       }
       // 已走過的曲線
