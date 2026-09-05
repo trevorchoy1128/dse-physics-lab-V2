@@ -34,10 +34,10 @@ describe("運動線圖 畫面", () => {
     const vt = [0, 1, 3, 3, 0, -2, -2, 1, 1, 0, 0]; const p = draw(vt);
     const s = model.init(p); const pl = plan(s, p, model.observe(s, p), all);
     expect(pl.trails!.find(t => t.key === "vt-handles")!.points.map(q => q[1])).toEqual(vt);
-    // T 大於 vt 長度：補齊至 T + 1 個，以最後值延續
+    // 0.6.0：T > 10 s 時仍是 11 點，間距 T/10，橫跨整個時間窗
     const p20: P = { ...p, T: 20 }; const pl20 = plan(model.init(p20), p20, model.observe(model.init(p20), p20), all);
     const h20 = pl20.trails!.find(t => t.key === "vt-handles")!.points;
-    expect(h20).toHaveLength(21); expect(h20[20][1]).toBe(vt[10]); expect(h20[10][1]).toBe(vt[10]);
+    expect(h20).toHaveLength(11); expect(h20[10]).toEqual([20, vt[10], 0]); expect(h20[5][0]).toBe(10);
     expect(plan(model.init(live(0, 1)), live(0, 1), model.observe(model.init(live(0, 1)), live(0, 1)), all).trails!.some(t => t.key === "vt-handles")).toBe(false);
   });
   it("同一 kind 一個縮放係數；標籤 = observe；單位在允許清單", () => {
@@ -65,8 +65,19 @@ describe("運動線圖 畫面", () => {
     expect(trackExtent(live(5, 10, 20))).toBe(3000);       // 100 + 2000 = 2100 → 超出清單即向上取整至 1000 的倍數
     expect(trackExtent(draw([2, 2, 2, 2, 2, -2, -2, -2, -2, -2, -2]))).toBe(10);   // 精確極值：t = 4.5 s 時 s = 9（0.4.x 用 Σ|v| 上界得 50）
     // 控制點以外的保持段要計入（核數員第 7 輪 F9）：末值 −2 再走 50 s
-    expect(trackExtent({ ...draw([0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2]), T: 60 })).toBeGreaterThanOrEqual(87);
-    expect(trackExtent({ ...draw([5, -5, 5, -5, 5, -5, 5, -5, 5, -5, 5]), T: 60 })).toBeGreaterThanOrEqual(250);
+    // 0.6.0：T > 10 s 時控制點間距為 T/10，折線橫跨整個時間窗
+    expect(trackExtent({ ...draw([0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2]), T: 60 })).toBeGreaterThanOrEqual(90);    // 節點 8 時 s = 15 × 6 = 90
+    expect(trackExtent({ ...draw([5, -5, 5, -5, 5, -5, 5, -5, 5, -5, 5]), T: 60 })).toBeGreaterThanOrEqual(7.5);  // 段內峰值 5 × 3 / 2
+    for (const T of [2, 7, 10, 20, 45, 60]) {   // 任何 T 下 |s| 都不出軸
+      const p = { ...draw([0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2]), T };
+      let s: S = model.init(p); let m = 0; for (let i = 0; i < Math.round(T / 1e-3); i++) { s = model.step(s, p, 1e-3); m = Math.max(m, Math.abs(s.s)); }
+      expect(m).toBeLessThanOrEqual(trackExtent(p) + 1e-9);
+    }
+    // 控制點位置：T = 45 s 時 11 點在 0, 4.5, …, 45 s；T = 5 s 時 6 點在 0…5 s
+    const h45 = plan(model.init({ ...draw([0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2]), T: 45 }), { ...draw([0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2]), T: 45 }, {}, all).trails!.find(t => t.key === "vt-handles")!.points;
+    expect(h45.map(q => q[0])).toEqual([0, 4.5, 9, 13.5, 18, 22.5, 27, 31.5, 36, 40.5, 45]);
+    const h5 = plan(model.init({ ...draw([0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2]), T: 5 }), { ...draw([0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2]), T: 5 }, {}, all).trails!.find(t => t.key === "vt-handles")!.points;
+    expect(h5.map(q => q[0])).toEqual([0, 1, 2, 3, 4, 5]);
     const p = live(0, 1, 10);
     for (const T of [0, 5, 10]) expect(Math.abs(advance(p, T).s)).toBeLessThanOrEqual(trackExtent(p) + 1e-9);
   });

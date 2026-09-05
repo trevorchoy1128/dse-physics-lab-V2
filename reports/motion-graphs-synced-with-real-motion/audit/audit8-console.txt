@@ -1,0 +1,175 @@
+
+=== default (live) T=10 u=0 a=1
+ time {"iT":10000,"expectedIT":10000,"tAtT":10,"tEqualsT":true,"tDriftMax":1.0054179711005418e-12,"tDriftAt":7997,"frozenOK":50000,"frozenBad":0,"nan":0,"monoBad":0,"doneBad":0,"metaMismatch":0,"lastT":10}
+  s        maxAbs=7.180e-12 at t=7.999000000001006 exp=31.992000500008047 got=31.992000500000866 maxRel=2.24e-13 fails=0 
+  dist     maxAbs=7.180e-12 at t=7.999000000001006 exp=31.992000500008047 got=31.992000500000866 maxRel=2.24e-13 fails=0 
+  v        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  a        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  speed    maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  area     maxAbs=7.180e-12 at t=7.999000000001006 exp=31.992000500008047 got=31.992000500000866 maxRel=2.24e-13 fails=0 
+  avgSpeed maxAbs=8.975e-13 at t=7.999000000001006 exp=3.999500000000503 got=3.9994999999996055 maxRel=2.24e-13 fails=0 
+  avgVel   maxAbs=8.975e-13 at t=7.999000000001006 exp=3.999500000000503 got=3.9994999999996055 maxRel=2.24e-13 fails=0 
+ uniform {"maxAbs":1.4360068689711625e-11,"at":7.999000000001006,"fails":0} 
+ trap {"maxAbs":7.197797913249815e-12,"at":7.999000000001006,"final":50.000000000000014,"sFinal":50.00000000000279}
+ reverse {"firstRevData":-1,"revAnalytic":null,"eqBefore":10001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+ atT {"t":10,"exp":{"s":50,"dist":50,"v":10,"a":1,"speed":10,"area":50,"avgSpeed":5,"avgVel":5},"got":{"s":50.00000000000279,"dist":50.00000000000279,"v":10,"a":1,"speed":10,"area":50.00000000000279,"avgSpeed":5.000000000000279,"avgVel":5.000000000000279},"aLeftRight":null}
+ arrow {"vEq":60001,"vNe":0,"aEq":60001,"aNe":0,"origEq":120002,"origNe":0,"yz":["velocity:0.45,0","acceleration:0.75,0"],"labelEq":60001,"labelNe":0,"scales":{"velocity":[0.25],"acceleration":[0.25]},"kinds":{"velocity":60001,"acceleration":60001},"extra":0,"notTwo":0,"aLenMin":1,"aLenMax":1,"vLenMax":10}
+ meta {"smax":50,"vmax":10,"amax":1,"uniq":{"smax":[50],"vmax":[10],"amax":[1]},"dataAbsMax":{"s":50.00000000000279,"sAt":10,"v":10,"a":1},"exact":{"sMax":50,"sAt":10,"vMax":10,"vAt":10,"aMax":1,"candidates":[0,10]},"sIn":false,"vIn":true,"aIn":true,"sLevelStrict":50,"sLevelTol":50,"vLevel":10,"aLevel":1}
+
+=== scenario-below-axis (draw) T=10 u=0 a=1 vt=[2,1.6,1.2,0.8,0.4,0,-0.4,-0.8,-1.2,-1.6,-2]
+ time {"iT":10000,"expectedIT":10000,"tAtT":10,"tEqualsT":true,"tDriftMax":1.0054179711005418e-12,"tDriftAt":7997,"frozenOK":50000,"frozenBad":0,"nan":0,"monoBad":0,"doneBad":0,"metaMismatch":0,"lastT":10}
+  s        maxAbs=9.143e-13 at t=9.998999999999898 exp=0.0019998000002059424 got=0.001999799999291671 maxRel=4.57e-10 fails=0 
+  dist     maxAbs=1.446e-12 at t=9.998999999999898 exp=9.998000199999796 got=9.998000200001242 maxRel=1.45e-13 fails=0 
+  v        maxAbs=1.776e-15 at t=5.000000000000004 exp=-1.7763568394002505e-15 got=0 maxRel=0.00e+0 fails=0 
+  a        maxAbs=4.000e-1 at t=10 exp=0 got=-0.3999999999999999 maxRel=0.00e+0 fails=1 [[10000,10,0,-0.3999999999999999]]
+  speed    maxAbs=1.776e-15 at t=5.000000000000004 exp=1.7763568394002505e-15 got=0 maxRel=0.00e+0 fails=0 
+  area     maxAbs=9.143e-13 at t=9.998999999999898 exp=0.0019998000002059424 got=0.001999799999291671 maxRel=4.57e-10 fails=0 
+  avgSpeed maxAbs=1.446e-13 at t=9.998999999999898 exp=0.9999000100009899 got=0.9999000100011345 maxRel=1.45e-13 fails=0 
+  avgVel   maxAbs=1.075e-13 at t=7.999000000001006 exp=0.40019999999979894 got=0.40019999999990646 maxRel=4.57e-10 fails=0 
+ nodeA {"frames":9,"left":3,"right":6,"neither":0,"list":[{"i":1000,"t":1.0000000000000007,"a":-0.40000000000000013,"left":-0.3999999999999999,"right":-0.40000000000000013},{"i":2000,"t":1.9999999999998905,"a":-0.3999999999999999,"left":-0.40000000000000013,"right":-0.3999999999999999},{"i":3000,"t":2.9999999999997806,"a":-0.4,"left":-0.3999999999999999,"right":-0.4},{"i":4000,"t":3.9999999999996705,"a":-0.4,"left":-0.4,"right":-0.4},{"i":5000,"t":5.000000000000004,"a":-0.4,"left":-0.4,"right":-0.4},{"i":6000,"t":6.000000000000338,"a":-0.4,"left":-0.4,"right":-0.4},{"i":7000,"t":7.000000000000672,"a":-0.3999999999999999,"left":-0.4,"right":-0.3999999999999999},{"i":8000,"t":8.000000000001005,"a":-0.40000000000000013,"left":-0.3999999999999999,"right":-0.40000000000000013},{"i":9000,"t":9.000000000000451,"a":-0.3999999999999999,"left":-0.40000000000000013,"right":-0.3999999999999999}]}
+ uniform {"maxAbs":0,"at":0,"fails":0} 
+ trap {"maxAbs":9.11005645920504e-13,"at":9.998999999999898,"final":-2.231288070975168e-15,"sFinal":0}
+ reverse {"firstRevData":-1,"revAnalytic":null,"eqBefore":5001,"neBefore":5000,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+ atT {"t":10,"exp":{"s":1.1102230246251565e-15,"dist":10.000000000000002,"v":-2,"a":0,"speed":2,"area":1.1102230246251565e-15,"avgSpeed":1.0000000000000002,"avgVel":1.1102230246251565e-16},"got":{"s":0,"dist":10.000000000001446,"v":-2,"a":-0.3999999999999999,"speed":2,"area":0,"avgSpeed":1.0000000000001446,"avgVel":0},"aLeftRight":{"left":-0.3999999999999999,"right":0}}
+ arrow {"vEq":60001,"vNe":0,"aEq":60001,"aNe":0,"origEq":120002,"origNe":0,"yz":["velocity:0.45,0","acceleration:0.75,0"],"labelEq":60001,"labelNe":0,"scales":{"velocity":[0.25],"acceleration":[0.25]},"kinds":{"velocity":60001,"acceleration":60001},"extra":0,"notTwo":0,"aLenMin":0.3999999999999999,"aLenMax":0.40000000000000013,"vLenMax":2}
+ meta {"smax":10,"vmax":2,"amax":1,"uniq":{"smax":[10],"vmax":[2],"amax":[1]},"dataAbsMax":{"s":5.00000000000026,"sAt":5.000000000000004,"v":2,"a":0.40000000000000013},"exact":{"sMax":5.000000000000001,"sAt":5,"vMax":2,"vAt":0,"aMax":0.40000000000000013,"candidates":[0,1,2,3,4,5,6,7,8,9,10]},"sIn":true,"vIn":true,"aIn":true,"sLevelStrict":10,"sLevelTol":5,"vLevel":2,"aLevel":0.5}
+
+=== scenario-st-not-path (live) T=10 u=0 a=0
+ time {"iT":10000,"expectedIT":10000,"tAtT":10,"tEqualsT":true,"tDriftMax":1.0054179711005418e-12,"tDriftAt":7997,"frozenOK":50000,"frozenBad":0,"nan":0,"monoBad":0,"doneBad":0,"metaMismatch":0,"lastT":10}
+  s        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  dist     maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  v        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  a        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  speed    maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  area     maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  avgSpeed maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  avgVel   maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+ uniform {"maxAbs":0,"at":0,"fails":0} 
+ trap {"maxAbs":0,"at":0,"final":0,"sFinal":0}
+ reverse {"firstRevData":-1,"revAnalytic":null,"eqBefore":10001,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+ atT {"t":10,"exp":{"s":0,"dist":0,"v":0,"a":0,"speed":0,"area":0,"avgSpeed":0,"avgVel":0},"got":{"s":0,"dist":0,"v":0,"a":0,"speed":0,"area":0,"avgSpeed":0,"avgVel":0},"aLeftRight":null}
+ arrow {"vEq":60001,"vNe":0,"aEq":60001,"aNe":0,"origEq":120002,"origNe":0,"yz":["velocity:0.45,0","acceleration:0.75,0"],"labelEq":60001,"labelNe":0,"scales":{"velocity":[0.25],"acceleration":[0.25]},"kinds":{"velocity":60001,"acceleration":60001},"extra":0,"notTwo":0,"aLenMin":0,"aLenMax":0,"vLenMax":0}
+ meta {"smax":5,"vmax":1,"amax":1,"uniq":{"smax":[5],"vmax":[1],"amax":[1]},"dataAbsMax":{"s":0,"sAt":0,"v":0,"a":0},"exact":{"sMax":0,"sAt":0,"vMax":0,"vAt":0,"aMax":0,"candidates":[0,10]},"sIn":true,"vIn":true,"aIn":true,"sLevelStrict":null,"sLevelTol":null,"vLevel":null,"aLevel":null}
+
+=== scenario-v-zero-a-not (live) T=5 u=3 a=-9.81
+ time {"iT":5000,"expectedIT":5000,"tAtT":5,"tEqualsT":true,"tDriftMax":3.2951419370874646e-13,"tDriftAt":3998,"frozenOK":55000,"frozenBad":0,"nan":0,"monoBad":0,"doneBad":0,"metaMismatch":0,"lastT":5}
+  s        maxAbs=1.499e-11 at t=3.9999999999996705 exp=-66.47999999998805 got=-66.48000000000305 maxRel=3.55e-12 fails=0 
+  dist     maxAbs=1.498e-11 at t=3.9999999999996705 exp=67.39743119264861 got=67.39743119266359 maxRel=2.22e-13 fails=0 
+  v        maxAbs=6.459e-12 at t=3.9989999999996706 exp=-36.23018999999677 got=-36.230190000003226 maxRel=3.35e-12 fails=0 
+  a        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  speed    maxAbs=6.459e-12 at t=3.9989999999996706 exp=36.23018999999677 got=36.230190000003226 maxRel=3.35e-12 fails=0 
+  area     maxAbs=1.499e-11 at t=3.9999999999996705 exp=-66.47999999998805 got=-66.48000000000305 maxRel=3.55e-12 fails=0 
+  avgSpeed maxAbs=3.745e-12 at t=3.9999999999996705 exp=16.849357798163542 got=16.849357798167286 maxRel=2.22e-13 fails=0 
+  avgVel   maxAbs=3.748e-12 at t=3.9999999999996705 exp=-16.61999999999838 got=-16.62000000000213 maxRel=3.55e-12 fails=0 
+ uniform {"maxAbs":3.1013769330456853e-10,"at":5,"fails":0} 
+ trap {"maxAbs":7.133849067031406e-12,"at":3.9999999999996705,"final":-107.62500000001351,"sFinal":-107.6250000000069}
+ reverse {"firstRevData":0.3060000000000002,"revAnalytic":0.3058103975535168,"eqBefore":306,"neBefore":0,"eqAfter":0,"neAfter":4694,"minGapAfter":0.000013882660550523784}
+ atT {"t":5,"exp":{"s":-107.62500000000001,"dist":108.54243119266057,"v":-46.050000000000004,"a":-9.81,"speed":46.050000000000004,"area":-107.62500000000001,"avgSpeed":21.708486238532114,"avgVel":-21.525000000000002},"got":{"s":-107.6250000000069,"dist":108.54243119266744,"v":-46.050000000004836,"a":-9.81,"speed":46.050000000004836,"area":-107.6250000000069,"avgSpeed":21.70848623853349,"avgVel":-21.52500000000138},"aLeftRight":null}
+ arrow {"vEq":60001,"vNe":0,"aEq":60001,"aNe":0,"origEq":120002,"origNe":0,"yz":["velocity:0.45,0","acceleration:0.75,0"],"labelEq":60001,"labelNe":0,"scales":{"velocity":[0.25],"acceleration":[0.25]},"kinds":{"velocity":60001,"acceleration":60001},"extra":0,"notTwo":0,"aLenMin":9.81,"aLenMax":9.81,"vLenMax":46.050000000004836}
+ meta {"smax":200,"vmax":46.050000000000004,"amax":9.81,"uniq":{"smax":[200],"vmax":[46.050000000000004],"amax":[9.81]},"dataAbsMax":{"s":107.6250000000069,"sAt":5,"v":46.050000000004836,"a":9.81},"exact":{"sMax":107.62500000000001,"sAt":5,"vMax":46.050000000000004,"vAt":5,"aMax":9.81,"candidates":[0,0.3058103975535168,5]},"sIn":true,"vIn":true,"aIn":true,"sLevelStrict":200,"sLevelTol":200,"vLevel":50,"aLevel":10}
+
+=== scenario-area-not-distance (draw) T=10 u=0 a=1 vt=[2,2,2,2,2,-2,-2,-2,-2,-2,-2]
+ time {"iT":10000,"expectedIT":10000,"tAtT":10,"tEqualsT":true,"tDriftMax":1.0054179711005418e-12,"tDriftAt":7997,"frozenOK":50000,"frozenBad":0,"nan":0,"monoBad":0,"doneBad":0,"metaMismatch":0,"lastT":10}
+  s        maxAbs=2.662e-12 at t=7.999000000001006 exp=2.001999999997988 got=2.00200000000065 maxRel=7.76e-10 fails=0 
+  dist     maxAbs=5.542e-13 at t=8.500000000000728 exp=16.000000000001457 got=16.00000000000201 maxRel=3.73e-14 fails=0 
+  v        maxAbs=6.501e-13 at t=4.4999999999998375 exp=6.501466032204917e-13 got=0 maxRel=0.00e+0 fails=0 
+  a        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  speed    maxAbs=6.501e-13 at t=4.4999999999998375 exp=6.501466032204917e-13 got=0 maxRel=0.00e+0 fails=0 
+  area     maxAbs=2.662e-12 at t=7.999000000001006 exp=2.001999999997988 got=2.00200000000065 maxRel=7.76e-10 fails=0 
+  avgSpeed maxAbs=6.728e-14 at t=4.999000000000004 exp=1.799960392078416 got=1.7999603920783487 maxRel=3.74e-14 fails=0 
+  avgVel   maxAbs=3.328e-13 at t=7.999000000001006 exp=0.2502812851603621 got=0.25028128516069487 maxRel=7.76e-10 fails=0 
+ nodeA {"frames":9,"left":7,"right":2,"neither":0,"list":[{"i":1000,"t":1.0000000000000007,"a":0,"left":0,"right":0},{"i":2000,"t":1.9999999999998905,"a":0,"left":0,"right":0},{"i":3000,"t":2.9999999999997806,"a":0,"left":0,"right":0},{"i":4000,"t":3.9999999999996705,"a":-4,"left":0,"right":-4},{"i":5000,"t":5.000000000000004,"a":0,"left":-4,"right":0},{"i":6000,"t":6.000000000000338,"a":0,"left":0,"right":0},{"i":7000,"t":7.000000000000672,"a":0,"left":0,"right":0},{"i":8000,"t":8.000000000001005,"a":0,"left":0,"right":0},{"i":9000,"t":9.000000000000451,"a":0,"left":0,"right":0}]}
+ uniform {"maxAbs":0,"at":0,"fails":0} 
+ trap {"maxAbs":2.667199794359476e-12,"at":7.999000000001006,"final":-2.0000000000000053,"sFinal":-1.9999999999995581}
+ reverse {"firstRevData":-1,"revAnalytic":4.5,"eqBefore":4501,"neBefore":5500,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+ atT {"t":10,"exp":{"s":-2,"dist":19,"v":-2,"a":0,"speed":2,"area":-2,"avgSpeed":1.9,"avgVel":-0.2},"got":{"s":-1.9999999999995581,"dist":19.000000000000554,"v":-2,"a":0,"speed":2,"area":-1.9999999999995581,"avgSpeed":1.9000000000000554,"avgVel":-0.19999999999995582},"aLeftRight":{"left":0,"right":0}}
+ arrow {"vEq":60001,"vNe":0,"aEq":60001,"aNe":0,"origEq":120002,"origNe":0,"yz":["velocity:0.45,0","acceleration:0.75,0"],"labelEq":60001,"labelNe":0,"scales":{"velocity":[0.25],"acceleration":[0.25]},"kinds":{"velocity":60001,"acceleration":60001},"extra":0,"notTwo":0,"aLenMin":0,"aLenMax":4,"vLenMax":2}
+ meta {"smax":10,"vmax":2,"amax":4,"uniq":{"smax":[10],"vmax":[2],"amax":[4]},"dataAbsMax":{"s":8.499999999999831,"sAt":4.4999999999998375,"v":2,"a":4},"exact":{"sMax":8.5,"sAt":4.5,"vMax":2,"vAt":0,"aMax":4,"candidates":[0,1,2,3,4,4.5,5,6,7,8,9,10]},"sIn":true,"vIn":true,"aIn":true,"sLevelStrict":10,"sLevelTol":10,"vLevel":2,"aLevel":5}
+
+=== random-0 (live) T=4.0809585089240965 u=3.339946273872604 a=8.954049953703791
+ time {"iT":4081,"expectedIT":4081,"tAtT":4.0809585089240965,"tEqualsT":true,"tDriftMax":3.2951419370874646e-13,"tDriftAt":3998,"frozenOK":55919,"frozenBad":0,"nan":0,"monoBad":0,"doneBad":0,"metaMismatch":0,"lastT":4.0809585089240965}
+  s        maxAbs=1.511e-11 at t=3.9989999999996706 exp=84.95303305604413 got=84.95303305605924 maxRel=1.79e-13 fails=0 
+  dist     maxAbs=1.511e-11 at t=3.9989999999996706 exp=84.95303305604413 got=84.95303305605924 maxRel=1.79e-13 fails=0 
+  v        maxAbs=3.720e-12 at t=3.1989999999997587 exp=31.98395207576887 got=31.98395207577259 maxRel=1.16e-13 fails=0 
+  a        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  speed    maxAbs=3.720e-12 at t=3.1989999999997587 exp=31.98395207576887 got=31.98395207577259 maxRel=1.16e-13 fails=0 
+  area     maxAbs=1.511e-11 at t=3.9989999999996706 exp=84.95303305604413 got=84.95303305605924 maxRel=1.79e-13 fails=0 
+  avgSpeed maxAbs=3.777e-12 at t=3.994999999999671 exp=21.22566105639445 got=21.225661056398227 maxRel=1.79e-13 fails=0 
+  avgVel   maxAbs=3.777e-12 at t=3.994999999999671 exp=21.22566105639445 got=21.225661056398227 maxRel=1.79e-13 fails=0 
+ uniform {"maxAbs":1.198259269585833e-10,"at":4.079999999999697,"fails":0} 
+ trap {"maxAbs":8.483880264975596e-12,"at":3.9999999999996705,"final":88.19155160369567,"sFinal":88.19155160370312}
+ reverse {"firstRevData":-1,"revAnalytic":null,"eqBefore":4082,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+ atT {"t":4.0809585089240965,"exp":{"s":88.19155160368888,"dist":88.19155160368888,"v":39.8810526217715,"a":8.954049953703791,"speed":39.8810526217715,"area":88.19155160368888,"avgSpeed":21.61049944782205,"avgVel":21.61049944782205},"got":{"s":88.19155160370312,"dist":88.19155160370312,"v":39.88105262177319,"a":8.954049953703791,"speed":39.88105262177319,"area":88.19155160370312,"avgSpeed":21.61049944782554,"avgVel":21.61049944782554},"aLeftRight":null}
+ arrow {"vEq":60001,"vNe":0,"aEq":60001,"aNe":0,"origEq":120002,"origNe":0,"yz":["velocity:0.45,0","acceleration:0.75,0"],"labelEq":60001,"labelNe":0,"scales":{"velocity":[0.25],"acceleration":[0.25]},"kinds":{"velocity":60001,"acceleration":60001},"extra":0,"notTwo":0,"aLenMin":8.954049953703791,"aLenMax":8.954049953703791,"vLenMax":39.88105262177319}
+ meta {"smax":100,"vmax":39.8810526217715,"amax":8.954049953703791,"uniq":{"smax":[100],"vmax":[39.8810526217715],"amax":[8.954049953703791]},"dataAbsMax":{"s":88.19155160370312,"sAt":4.0809585089240965,"v":39.88105262177319,"a":8.954049953703791},"exact":{"sMax":88.19155160368888,"sAt":4.0809585089240965,"vMax":39.8810526217715,"vAt":4.0809585089240965,"aMax":8.954049953703791,"candidates":[0,4.0809585089240965]},"sIn":true,"vIn":true,"aIn":true,"sLevelStrict":100,"sLevelTol":100,"vLevel":50,"aLevel":10}
+
+=== random-1 (live) T=35.92592488505222 u=-4.488447797246486 a=5.315743356624498
+ time {"iT":35926,"expectedIT":35926,"tAtT":35.92592488505222,"tEqualsT":true,"tDriftMax":1.6122214674396673e-11,"tDriftAt":31997,"frozenOK":24074,"frozenBad":0,"nan":0,"monoBad":0,"doneBad":0,"metaMismatch":0,"lastT":35.92592488505222}
+  s        maxAbs=3.577e-9 at t=31.999000000016125 exp=2577.864656400783 got=2577.864656397206 maxRel=3.82e-10 fails=0 
+  dist     maxAbs=3.577e-9 at t=31.999000000016125 exp=2581.6545616458325 got=2581.654561642255 maxRel=1.39e-12 fails=0 
+  v        maxAbs=1.929e-10 at t=31.999000000016125 exp=165.61002387146655 got=165.61002387127365 maxRel=3.25e-11 fails=0 
+  a        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  speed    maxAbs=1.929e-10 at t=31.999000000016125 exp=165.61002387146655 got=165.61002387127365 maxRel=3.25e-11 fails=0 
+  area     maxAbs=3.577e-9 at t=31.999000000016125 exp=2577.864656400783 got=2577.864656397206 maxRel=3.82e-10 fails=0 
+  avgSpeed maxAbs=1.118e-10 at t=31.999000000016125 exp=80.67922627721278 got=80.67922627710098 maxRel=1.39e-12 fails=0 
+  avgVel   maxAbs=1.118e-10 at t=31.999000000016125 exp=80.56078803711004 got=80.56078803699825 maxRel=3.82e-10 fails=0 
+ uniform {"maxAbs":3.42406565323472e-8,"at":35.92592488505222,"fails":0} 
+ trap {"maxAbs":2.1764208213426173e-9,"at":31.997000000016122,"final":3269.189125937814,"sFinal":3269.1891259372483}
+ reverse {"firstRevData":0.8450000000000006,"revAnalytic":0.8443687921187855,"eqBefore":845,"neBefore":0,"eqAfter":0,"neAfter":35081,"minGapAfter":0.000014144338043919902}
+ atT {"t":35.92592488505222,"exp":{"s":3269.1891259399226,"dist":3272.979031184972,"v":186.48454874106056,"a":5.315743356624498,"speed":186.48454874106056,"area":3269.1891259399226,"avgSpeed":91.10354268281533,"avgVel":90.99805047190704},"got":{"s":3269.1891259372483,"dist":3272.9790311822976,"v":186.48454874089254,"a":5.315743356624498,"speed":186.48454874089254,"area":3269.1891259372483,"avgSpeed":91.10354268274088,"avgVel":90.99805047183258},"aLeftRight":null}
+ arrow {"vEq":60001,"vNe":0,"aEq":60001,"aNe":0,"origEq":120002,"origNe":0,"yz":["velocity:0.45,0","acceleration:0.75,0"],"labelEq":60001,"labelNe":0,"scales":{"velocity":[0.25],"acceleration":[0.25]},"kinds":{"velocity":60001,"acceleration":60001},"extra":0,"notTwo":0,"aLenMin":5.315743356624498,"aLenMax":5.315743356624498,"vLenMax":186.48454874089254}
+ meta {"smax":4000,"vmax":186.48454874106056,"amax":5.315743356624498,"uniq":{"smax":[4000],"vmax":[186.48454874106056],"amax":[5.315743356624498]},"dataAbsMax":{"s":3269.1891259372483,"sAt":35.92592488505222,"v":186.48454874089254,"a":5.315743356624498},"exact":{"sMax":3269.1891259399226,"sAt":35.92592488505222,"vMax":186.48454874106056,"vAt":35.92592488505222,"aMax":5.315743356624498,"candidates":[0,0.8443687921187855,35.92592488505222]},"sIn":true,"vIn":true,"aIn":true,"sLevelStrict":5000,"sLevelTol":5000,"vLevel":200,"aLevel":10}
+
+=== random-2 (draw) T=13.316564376147728 u=2.838003895170057 a=-3.3370677536991744 vt=[0,1,2,3,3,3,2,1,0,0,0]
+ time {"iT":13317,"expectedIT":13317,"tAtT":13.316564376147728,"tEqualsT":true,"tDriftMax":1.9415580254644738e-12,"tDriftAt":13316,"frozenOK":46683,"frozenBad":0,"nan":0,"monoBad":0,"doneBad":0,"metaMismatch":0,"lastT":13.316564376147728}
+  s        maxAbs=1.506e-12 at t=7.966000000000995 exp=14.999422000000035 got=14.999421999998528 maxRel=1.18e-13 fails=0 
+  dist     maxAbs=1.506e-12 at t=7.966000000000995 exp=14.999422000000035 got=14.999421999998528 maxRel=1.18e-13 fails=0 
+  v        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  a        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  speed    maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  area     maxAbs=1.506e-12 at t=7.966000000000995 exp=14.999422000000035 got=14.999421999998528 maxRel=1.18e-13 fails=0 
+  avgSpeed maxAbs=2.214e-13 at t=3.996999999999671 exp=1.8741556167124416 got=1.874155616712663 maxRel=1.18e-13 fails=0 
+  avgVel   maxAbs=2.214e-13 at t=3.996999999999671 exp=1.8741556167124416 got=1.874155616712663 maxRel=1.18e-13 fails=0 
+ nodeA {"frames":10,"left":7,"right":3,"neither":0,"list":[{"i":1000,"t":1.0000000000000007,"a":1,"left":1,"right":1},{"i":2000,"t":1.9999999999998905,"a":1,"left":1,"right":1},{"i":3000,"t":2.9999999999997806,"a":0,"left":1,"right":0},{"i":4000,"t":3.9999999999996705,"a":0,"left":0,"right":0},{"i":5000,"t":5.000000000000004,"a":-1,"left":0,"right":-1},{"i":6000,"t":6.000000000000338,"a":-1,"left":-1,"right":-1},{"i":7000,"t":7.000000000000672,"a":-1,"left":-1,"right":-1},{"i":8000,"t":8.000000000001005,"a":0,"left":-1,"right":0},{"i":9000,"t":9.000000000000451,"a":0,"left":0,"right":0},{"i":10000,"t":9.999999999999897,"a":0,"left":0,"right":0}]}
+ uniform {"maxAbs":0,"at":0,"fails":0} 
+ trap {"maxAbs":1.199040866595169e-12,"at":7.928000000000982,"final":14.999999999999694,"sFinal":14.999999999998495}
+ reverse {"firstRevData":-1,"revAnalytic":null,"eqBefore":13318,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+ atT {"t":13.316564376147728,"exp":{"s":15,"dist":15,"v":0,"a":0,"speed":0,"area":15,"avgSpeed":1.1264166624589445,"avgVel":1.1264166624589445},"got":{"s":14.999999999998495,"dist":14.999999999998495,"v":0,"a":0,"speed":0,"area":14.999999999998495,"avgSpeed":1.1264166624588314,"avgVel":1.1264166624588314},"aLeftRight":null}
+ arrow {"vEq":60001,"vNe":0,"aEq":60001,"aNe":0,"origEq":120002,"origNe":0,"yz":["velocity:0.45,0","acceleration:0.75,0"],"labelEq":60001,"labelNe":0,"scales":{"velocity":[0.25],"acceleration":[0.25]},"kinds":{"velocity":60001,"acceleration":60001},"extra":0,"notTwo":0,"aLenMin":0,"aLenMax":1,"vLenMax":3}
+ meta {"smax":20,"vmax":3,"amax":1,"uniq":{"smax":[20],"vmax":[3],"amax":[1]},"dataAbsMax":{"s":14.999999999998495,"sAt":8.000000000001005,"v":3,"a":1},"exact":{"sMax":15,"sAt":13.316564376147728,"vMax":3,"vAt":3,"aMax":1,"candidates":[0,1,2,3,4,5,6,7,8,9,10,13.316564376147728]},"sIn":true,"vIn":true,"aIn":true,"sLevelStrict":20,"sLevelTol":20,"vLevel":5,"aLevel":1}
+
+=== random-3 (live) T=10.63542990974869 u=2.927044615115525 a=9.677692493273732
+ time {"iT":10636,"expectedIT":10636,"tAtT":10.63542990974869,"tEqualsT":true,"tDriftMax":1.0054179711005418e-12,"tDriftAt":7997,"frozenOK":49364,"frozenBad":0,"nan":0,"monoBad":0,"doneBad":0,"metaMismatch":0,"lastT":10.63542990974869}
+  s        maxAbs=6.298e-11 at t=10.634999999999545 exp=578.4182352554803 got=578.4182352555433 maxRel=1.78e-13 fails=0 
+  dist     maxAbs=6.298e-11 at t=10.634999999999545 exp=578.4182352554803 got=578.4182352555433 maxRel=1.78e-13 fails=0 
+  v        maxAbs=7.176e-12 at t=7.999000000001006 exp=80.33890686882184 got=80.33890686881466 maxRel=1.24e-13 fails=0 
+  a        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  speed    maxAbs=7.176e-12 at t=7.999000000001006 exp=80.33890686882184 got=80.33890686881466 maxRel=1.24e-13 fails=0 
+  area     maxAbs=6.298e-11 at t=10.634999999999545 exp=578.4182352554803 got=578.4182352555433 maxRel=1.78e-13 fails=0 
+  avgSpeed maxAbs=7.411e-12 at t=7.999000000001006 exp=41.632975741968686 got=41.632975741961275 maxRel=1.78e-13 fails=0 
+  avgVel   maxAbs=7.411e-12 at t=7.999000000001006 exp=41.632975741968686 got=41.632975741961275 maxRel=1.78e-13 fails=0 
+ uniform {"maxAbs":1.95359461940825e-9,"at":10.634999999999545,"fails":0} 
+ trap {"maxAbs":7.253220246639103e-11,"at":7.997000000001005,"final":578.4637417976575,"sFinal":578.4637417977212}
+ reverse {"firstRevData":-1,"revAnalytic":null,"eqBefore":10637,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+ atT {"t":10.63542990974869,"exp":{"s":578.4637417976583,"dist":578.4637417976583,"v":105.85346481542935,"a":9.677692493273732,"speed":105.85346481542935,"area":578.4637417976583,"avgSpeed":54.39025471527244,"avgVel":54.39025471527244},"got":{"s":578.4637417977212,"dist":578.4637417977212,"v":105.85346481542588,"a":9.677692493273732,"speed":105.85346481542588,"area":578.4637417977212,"avgSpeed":54.39025471527836,"avgVel":54.39025471527836},"aLeftRight":null}
+ arrow {"vEq":60001,"vNe":0,"aEq":60001,"aNe":0,"origEq":120002,"origNe":0,"yz":["velocity:0.45,0","acceleration:0.75,0"],"labelEq":60001,"labelNe":0,"scales":{"velocity":[0.25],"acceleration":[0.25]},"kinds":{"velocity":60001,"acceleration":60001},"extra":0,"notTwo":0,"aLenMin":9.677692493273732,"aLenMax":9.677692493273732,"vLenMax":105.85346481542588}
+ meta {"smax":1000,"vmax":105.85346481542935,"amax":9.677692493273732,"uniq":{"smax":[1000],"vmax":[105.85346481542935],"amax":[9.677692493273732]},"dataAbsMax":{"s":578.4637417977212,"sAt":10.63542990974869,"v":105.85346481542588,"a":9.677692493273732},"exact":{"sMax":578.4637417976583,"sAt":10.63542990974869,"vMax":105.85346481542935,"vAt":10.63542990974869,"aMax":9.677692493273732,"candidates":[0,10.63542990974869]},"sIn":true,"vIn":true,"aIn":true,"sLevelStrict":1000,"sLevelTol":1000,"vLevel":200,"aLevel":10}
+
+=== random-4 (live) T=11.71048566499282 u=-4.658912233849481 a=-4.67582861644953
+ time {"iT":11711,"expectedIT":11711,"tAtT":11.71048566499282,"tEqualsT":true,"tDriftMax":1.0516032489249483e-12,"tDriftAt":11710,"frozenOK":48289,"frozenBad":0,"nan":0,"monoBad":0,"doneBad":0,"metaMismatch":0,"lastT":11.71048566499282}
+  s        maxAbs=5.457e-11 at t=7.999000000001006 exp=-186.855750393972 got=-186.85575039391742 maxRel=2.92e-13 fails=0 
+  dist     maxAbs=5.457e-11 at t=7.999000000001006 exp=186.855750393972 got=186.85575039391742 maxRel=2.92e-13 fails=0 
+  v        maxAbs=8.342e-12 at t=7.998000000001006 exp=-42.05618950821753 got=-42.05618950820919 maxRel=1.98e-13 fails=0 
+  a        maxAbs=0.000e+0 at t=0 exp=0 got=0 maxRel=0.00e+0 fails=0 
+  speed    maxAbs=8.342e-12 at t=7.998000000001006 exp=42.05618950821753 got=42.05618950820919 maxRel=1.98e-13 fails=0 
+  area     maxAbs=5.457e-11 at t=7.999000000001006 exp=-186.855750393972 got=-186.85575039391742 maxRel=2.92e-13 fails=0 
+  avgSpeed maxAbs=6.821e-12 at t=7.999000000001006 exp=23.359888785341727 got=23.359888785334906 maxRel=2.92e-13 fails=0 
+  avgVel   maxAbs=6.821e-12 at t=7.999000000001006 exp=-23.359888785341727 got=-23.359888785334906 maxRel=2.92e-13 fails=0 
+ uniform {"maxAbs":3.915374691132456e-10,"at":11.704999999998952,"fails":0} 
+ trap {"maxAbs":6.571099220309407e-11,"at":11.703999999998953,"final":-375.16911295104813,"sFinal":-375.16911295111385}
+ reverse {"firstRevData":-1,"revAnalytic":null,"eqBefore":11712,"neBefore":0,"eqAfter":0,"neAfter":0,"minGapAfter":null}
+ atT {"t":11.71048566499282,"exp":{"s":-375.169112951081,"dist":375.169112951081,"v":-59.415136218744905,"a":-4.67582861644953,"speed":59.415136218744905,"area":-375.169112951081,"avgSpeed":32.03702422629719,"avgVel":-32.03702422629719},"got":{"s":-375.16911295111385,"dist":375.16911295111385,"v":-59.41513621874421,"a":-4.67582861644953,"speed":59.41513621874421,"area":-375.16911295111385,"avgSpeed":32.0370242263,"avgVel":-32.0370242263},"aLeftRight":null}
+ arrow {"vEq":60001,"vNe":0,"aEq":60001,"aNe":0,"origEq":120002,"origNe":0,"yz":["velocity:0.45,0","acceleration:0.75,0"],"labelEq":60001,"labelNe":0,"scales":{"velocity":[0.25],"acceleration":[0.25]},"kinds":{"velocity":60001,"acceleration":60001},"extra":0,"notTwo":0,"aLenMin":4.67582861644953,"aLenMax":4.67582861644953,"vLenMax":59.41513621874421}
+ meta {"smax":500,"vmax":59.415136218744905,"amax":4.67582861644953,"uniq":{"smax":[500],"vmax":[59.415136218744905],"amax":[4.67582861644953]},"dataAbsMax":{"s":375.16911295111385,"sAt":11.71048566499282,"v":59.41513621874421,"a":4.67582861644953},"exact":{"sMax":375.169112951081,"sAt":11.71048566499282,"vMax":59.415136218744905,"vAt":11.71048566499282,"aMax":4.67582861644953,"candidates":[0,11.71048566499282]},"sIn":true,"vIn":true,"aIn":true,"sLevelStrict":500,"sLevelTol":500,"vLevel":100,"aLevel":5}
+
+totalFrames 600010

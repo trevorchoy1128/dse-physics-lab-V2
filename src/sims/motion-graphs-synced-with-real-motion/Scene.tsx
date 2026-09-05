@@ -108,7 +108,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
     }
     ctx.font = mono(11); ctx.fillStyle = ink3; ctx.textAlign = "center"; ctx.fillText(zh ? "位移 s / m（向右為正 →）" : "displacement s / m (right = + →)", tr.x + tr.w / 2, ty + 46);
     // 鏡頭偏離起點時說明「鏡頭跟着小車移動，比例不變」（學生試用者第 7 輪：地面刻度範圍變了，以為是縮放）
-    if (Math.abs(cam.current.s) > 1e-9) { ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "right"; ctx.fillText(zh ? "鏡頭跟着小車移動（比例不變）" : "Camera follows the trolley (same scale)", tr.x + tr.w - 8, tr.y + 14); }
+    if (Math.abs(cam.current.s) > 1e-9) { ctx.font = `700 ${font(12)}`; ctx.fillStyle = ink; ctx.textAlign = "right"; ctx.fillText(zh ? "鏡頭跟着小車移動（比例不變）" : "Camera follows the trolley (same scale)", tr.x + tr.w - 8, tr.y + 14); }
     // 起點旗（原點，在畫面內才畫）
     const x0 = sx(0);
     if (x0 > tr.x - 20 && x0 < tr.x + tr.w + 20) {
@@ -189,19 +189,18 @@ export default function Scene({ plan, onInput }: SceneProps) {
         ctx.strokeStyle = ser.color; ctx.globalAlpha = 0.35; ctx.lineWidth = 2; ctx.beginPath();
         handles.forEach((q, i) => (i ? ctx.lineTo(px(p, q[0]), py(p, q[1])) : ctx.moveTo(px(p, q[0]), py(p, q[1])))); ctx.stroke(); ctx.globalAlpha = 1;
         // 時間窗長（最多 60 s）時控制點密：半徑隨間距縮小（最少 4 px），秒數標籤只在相隔 ≥ 22 px 時標
-        const spacing = px(p, 1) - px(p, 0); const rad = Math.max(4, Math.min(8, spacing * 0.35)); const every = Math.max(1, Math.ceil(22 / spacing));
+        const spacing = handles.length > 1 ? px(p, handles[1][0]) - px(p, handles[0][0]) : p.w; const rad = Math.max(4, Math.min(8, spacing * 0.35));
         handles.forEach((q, i) => {
           const on = dragging.current === i; const hx = px(p, q[0]), hy = py(p, q[1]);
           ctx.fillStyle = on ? "#f5a623" : "#fff"; ctx.strokeStyle = on ? "#8a5a00" : ser.color; ctx.lineWidth = 2.5;
           ctx.beginPath(); ctx.arc(hx, hy, on ? rad + 2 : rad, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-          // 每粒圓點下方標明它是第幾秒（學生試用者第 6 輪：唔知邊粒對應邊個 t）
-          if (i % every === 0) { ctx.font = mono(10); ctx.fillStyle = ser.color; ctx.textAlign = "center"; ctx.fillText(`${q[0]}s`, hx, py(p, p.yMin) - 6); }
+          // 圓點的時間由 y = 0 軸線上的刻度讀出（第 8 輪：底部另一行秒數與軸刻度重複，學生以為刻度在底部）
           if (on) {   // 拖動中即時顯示數值（第 3 輪）
             ctx.font = `700 ${mono(12)}`; ctx.fillStyle = ink; ctx.textAlign = "center";
             ctx.fillText(`t = ${q[0]} s，v = ${sig(q[1]).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1")} m s⁻¹`, hx, hy - 18);
           }
         });
-        ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "在圖框內按住任何一秒的位置上下拖，就改變該秒的 v（每格 0.5）" : "Press anywhere in the graph and drag up/down to set v at that second (steps of 0.5)", x0 + 6, p.y + p.h - 44);
+        ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "在圖框內按住最近那個圓點的時間位置上下拖，就改變它的 v（−5 至 5，每格 0.5）" : "Press near a dot's time and drag up/down to set its v (−5 to 5, steps of 0.5)", x0 + 6, p.y + p.h - 44);
       }
       // 已走過的曲線
       if (pts.length > 1) {

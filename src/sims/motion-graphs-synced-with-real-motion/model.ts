@@ -2,7 +2,8 @@ import type { SimModel } from "@/shell/types";
 
 // Book 2 規格 模擬器 7。方程：v = Δs/Δt（斜率）、a = Δv/Δt（斜率）、s = ∫v dt（線下面積）；
 // 勻加速：v = u + at、s = ut + ½at²、v² = u² + 2as。
-// 兩種模式：live = 由運動生成圖（學生即時控制 a）；draw = 由圖生成運動（v–t 折線，每秒一個控制點）。
+// 兩種模式：live = 由運動生成圖（學生即時控制 a）；draw = 由圖生成運動（v–t 折線，11 個控制點）。
+// 控制點間距 nodeDt：T ≤ 10 s 時每秒一個（與 0.5.x 相同）；T > 10 s 時 11 點平均分佈於 0 至 T（間距 T/10），令畫出的圖橫跨整個時間窗（老師 2026-09-06 把 T 放寬至 60 s 後的必然結果）。
 // v 在兩種模式下都是分段線性，故本模型的積分（梯形）是精確的，不需要 RK4。
 
 export interface P {
@@ -10,7 +11,7 @@ export interface P {
   u: number;        // 初速 / m s⁻¹（live）
   a: number;        // 加速度 / m s⁻²（live，可即時改）
   T: number;        // 時間窗 / s
-  vt: number[];     // draw：t = 0, 1, …, T 的 v 值（長度 T + 1）
+  vt: number[];     // draw：控制點的 v 值（固定 11 個，第 k 點在 t = k·nodeDt）
 }
 export interface Sample { t: number; s: number; v: number; a: number }
 export interface S {
@@ -24,7 +25,10 @@ export interface S {
 
 export const SAMPLE_DT = 0.02;
 
-/** v–t 折線在 t 的插值（控制點在整數秒） */
+/** 控制點間距 / s：max(1, T / 10) */
+export const nodeDt = (p: P) => Math.max(1, p.T / (p.vt.length - 1));
+
+/** v–t 折線在「節點單位」時間 τ = t / nodeDt 的插值（第 k 點在 τ = k） */
 export function vAt(vt: number[], t: number): number {
   const n = vt.length - 1;
   if (t <= 0) return vt[0];
@@ -33,7 +37,7 @@ export function vAt(vt: number[], t: number): number {
   const f = t - k;
   return vt[k] + (vt[k + 1] - vt[k]) * f;
 }
-/** 折線在 t 的斜率（節點右側） */
+/** 折線在 τ 的斜率（節點右側），單位為每節點；真實加速度 = 此值 / nodeDt */
 export function aAt(vt: number[], t: number): number {
   const n = vt.length - 1;
   if (t < 0 || t >= n) return 0;
@@ -41,8 +45,8 @@ export function aAt(vt: number[], t: number): number {
   return vt[k + 1] - vt[k];
 }
 
-const accel = (p: P, t: number) => (p.mode === "draw" ? aAt(p.vt, t) : p.a);
-const vel = (p: P, t: number, v: number) => (p.mode === "draw" ? vAt(p.vt, t) : v);
+const accel = (p: P, t: number) => (p.mode === "draw" ? aAt(p.vt, t / nodeDt(p)) / nodeDt(p) : p.a);
+const vel = (p: P, t: number, v: number) => (p.mode === "draw" ? vAt(p.vt, t / nodeDt(p)) : v);
 
 export const model: SimModel<S, P> = {
   init(p) {

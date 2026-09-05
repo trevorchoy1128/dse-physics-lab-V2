@@ -118,4 +118,15 @@ describe("運動線圖與真實運動同步（S7）", () => {
     expect(end.v).toBeCloseTo(vt[5], 9);                       // 末節點值 −2
     expect(model.observe(end, p).a).toBeCloseTo(vt[5] - vt[4], 9);   // 段 4→5 的斜率 −2，而非段 5→6 的 0
   });
+  it("0.6.0：T > 10 s 時控制點平均分佈於整個時間窗，v 線性插值、a = Δv / nodeDt", () => {
+    const vt = [0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0];
+    const p: P = { mode: "draw", u: 0, a: 0, T: 20, vt };   // nodeDt = 2 s
+    const r = run(p, 20.5);
+    const at = (t: number) => r.find(x => Math.abs(x.t - t) < 5e-4)!;
+    expect(at(1).v).toBeCloseTo(1, 9);                              // 0 → 2 之間的一半
+    expect(model.observe(at(1), p).a).toBeCloseTo(1, 9);             // (2 − 0) / 2 s
+    expect(at(2).v).toBeCloseTo(2, 9); expect(at(10).v).toBeCloseTo(2, 9);
+    expect(model.observe(at(19), p).a).toBeCloseTo(-1, 9);           // 末段 2 → 0，斜率 −2 / 2 s
+    expect(at(20).s).toBeCloseTo(2 + 2 * 16 + 2, 9);                 // 梯形：1 + 32 + 1 ... 精確 = 36 − 0：首尾段各 2，中間 16 s × 2
+  });
 });

@@ -19,7 +19,7 @@ const sim: SimModule<S, P> & { readouts: ReadoutDef[] } = {
   hints: [
     { zh: "小車已經在動：拖右邊的「加速度」滑桿可以隨時改變它，三張圖即時跟着變", en: "The trolley is already moving: drag the acceleration slider any time and watch the three graphs follow" },
     { zh: "想看某一刻？在「跳到 t =」輸入秒數，讀數面板就是那一刻的數值", en: "Want a specific instant? Type it in “Jump to t =” and read the panel" },
-    { zh: "想自己畫 v–t 圖？按「由圖生成運動」，在圖框內按住哪一秒就拖哪一秒", en: "Want to draw your own v–t graph? Choose Graph → motion, then press and drag at any second" },
+    { zh: "想自己畫 v–t 圖？按「由圖生成運動」，在圖框內按住哪個圓點的時間位置就拖哪個圓點", en: "Want to draw your own v–t graph? Choose Graph → motion, then press near a dot's time and drag" },
   ],
 };
 export default sim;
