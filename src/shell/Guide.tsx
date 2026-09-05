@@ -28,7 +28,7 @@ function inline(s: string, onScenario?: (k: string) => void): ReactNode[] {
   while ((m = re.exec(s))) {
     if (m.index > last) nodes.push(s.slice(last, m.index));
     if (m[1]) nodes.push(<i key={i++}>{m[1]}</i>);
-    else nodes.push(<button key={i++} type="button" className="try-link" onClick={() => onScenario?.(m![2])}>▶ {m[2]}</button>);
+    else { const key = m[2]; nodes.push(<button key={i++} type="button" className="try-link" onClick={() => onScenario?.(key)}>▶ {key}</button>); }   // 先取值：閉包不可捕獲迴圈變數 m（點擊時已是 null）
     last = m.index + m[0].length;
   }
   if (last < s.length) nodes.push(s.slice(last));
