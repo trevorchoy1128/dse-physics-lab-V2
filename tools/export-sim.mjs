@@ -4,6 +4,7 @@
 // 需要正式項目已建立（src/sims/<simId>/{model,plan,controls,scenarios}.ts）並安裝 tsx：npm i -D tsx
 import { spawnSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import { join } from "node:path";
 import { ROOT } from "./glossary.mjs";
 
@@ -12,24 +13,25 @@ if (!simId) { console.error("用法：node tools/export-sim.mjs <simId>"); proce
 const opt = (k, d) => { const i = rest.indexOf(k); return i >= 0 ? Number(rest[i + 1]) : d; };
 const FRAMES = opt("--frames", 2000), DT = opt("--dt", 0.001), RANDOM = opt("--random", 5);
 const out = join(ROOT, "reports", simId, "data");
+const SRC = pathToFileURL(join(ROOT, "src")).href;
 mkdirSync(out, { recursive: true });
 
 // 在 tsx 內執行：讀 model / plan / controls / scenarios，跑各個運行
 const script = `
-import { model } from "./src/sims/${simId}/model";
-import { plan } from "./src/sims/${simId}/plan";
-import { controls, defaults } from "./src/sims/${simId}/controls";
-import { scenarios } from "./src/sims/${simId}/scenarios";
-import { layers } from "./src/sims/${simId}/charts";
+import { model } from "${SRC}/sims/${simId}/model";
+import { plan } from "${SRC}/sims/${simId}/plan";
+import { controls, defaults } from "${SRC}/sims/${simId}/controls";
+import { scenarios } from "${SRC}/sims/${simId}/scenarios";
+import { layers } from "${SRC}/sims/${simId}/charts";
 const allLayers = Object.fromEntries(layers.map(l => [l.key, true]));
 let seed = 12345; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const runs = [
   { name: "default", params: { ...defaults } },
   ...scenarios.map(s => ({ name: "scenario-" + s.key, params: { ...defaults, ...s.params } })),
-  ...Array.from({ length: ${RANDOM} }, (_, k) => ({ name: "random-" + k, params: Object.fromEntries(controls.map(c =>
+  ...Array.from({ length: ${RANDOM} }, (_, k) => ({ name: "random-" + k, params: { ...defaults, ...Object.fromEntries(controls.map(c =>
       [c.key, c.kind === "select" ? c.options[Math.floor(rnd() * c.options.length)].value
             : c.kind === "toggle" ? rnd() < 0.5
-            : c.min + rnd() * (c.max - c.min)])) })),
+            : c.min + rnd() * (c.max - c.min)])) } })),
 ];
 const result = [];
 for (const r of runs) {
@@ -44,7 +46,9 @@ for (const r of runs) {
 }
 process.stdout.write(JSON.stringify(result));
 `;
-const r = spawnSync("npx", ["tsx", "-e", script], { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 30, shell: true });
+const scriptPath = join(out, "_export.mts");
+writeFileSync(scriptPath, script);
+const r = spawnSync("npx", ["tsx", "--tsconfig", "tsconfig.app.json", scriptPath], { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 30, shell: true });
 if (r.status !== 0) { console.error(r.stderr); process.exit(r.status ?? 1); }
 const runs = JSON.parse(r.stdout);
 for (const run of runs) writeFileSync(join(out, run.name + ".json"), JSON.stringify(run));

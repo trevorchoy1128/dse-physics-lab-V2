@@ -93,7 +93,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
       ctx.textAlign = "center";
       for (let tv = 0; tv <= p.tMax; tv += p.tMax / 5) ctx.fillText(String(tv), px(p, tv), py(p, p.yMin) + 12);
       ctx.font = font(12); ctx.fillStyle = ink; ctx.textAlign = "left"; ctx.fillText(ser.title, p.x + 6, p.y + 12);
-      ctx.font = mono(10); ctx.fillStyle = ink3; ctx.textAlign = "right"; ctx.fillText(`${k} / ${ser.unit}`, p.x + p.w - 4, p.y + 12); ctx.fillText("t / s", p.x + p.w - 4, py(p, p.yMin) + 12);
+      ctx.font = mono(10); ctx.fillStyle = ink3; ctx.textAlign = "right"; ctx.fillText(`${k} / ${ser.unit}`, p.x + p.w - 4, p.y + 12); ctx.fillText("t / s", p.x + p.w - 4, py(p, p.yMin) + 22);
       // 線下面積（只在 v–t，由 0 至 t）
       if (k === "v" && m.area && pts.length > 1) {
         for (let i = 1; i < pts.length; i++) {
@@ -123,8 +123,10 @@ export default function Scene({ plan, onInput }: SceneProps) {
         if (m.tangent && k !== "a") {
           const slope = k === "s" ? m.v : m.a;    // s–t 切線斜率 = v；v–t 切線斜率 = a
           const dt = p.tMax * 0.12; const dy = slope * dt;
+          ctx.save(); ctx.beginPath(); ctx.rect(p.x, p.y, p.w, p.h); ctx.clip();   // 切線只在本圖框內
           ctx.strokeStyle = ink; ctx.setLineDash([4, 3]); ctx.lineWidth = 1.5; ctx.beginPath();
           ctx.moveTo(px(p, cur[0] - dt), py(p, cur[1] - dy)); ctx.lineTo(px(p, cur[0] + dt), py(p, cur[1] + dy)); ctx.stroke(); ctx.setLineDash([]);
+          ctx.restore();
           ctx.font = mono(11); ctx.fillStyle = ink; ctx.textAlign = "left";
           ctx.fillText(`${zh ? "斜率" : "slope"} = ${sig(slope)} ${k === "s" ? "m s⁻¹" : "m s⁻²"}`, x0 + 6, py(p, p.yMax) + (k === "v" && m.area ? 26 : 12));
         }
