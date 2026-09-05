@@ -101,6 +101,12 @@ export function SimShell({ sim }: SimShellProps) {
             <label className="speed">{t(UI.speed)}
               <select value={speed} onChange={e => setSpeed(Number(e.target.value))}>{SPEEDS.map(s => <option key={s} value={s}>{s}×</option>)}</select>
             </label>
+            {sim.duration && (
+              <label className="scrub" aria-label={t(UI.time)}>
+                <input type="range" min={0} max={sim.duration(params)} step={0.01} value={Math.min(runner.current.t, sim.duration(params))}
+                  onChange={e => { const target = Number(e.target.value); setPlaying(false); runner.current.reset(); runner.current.advance(target); setFrame(f => f + 1); }} />
+              </label>
+            )}
             <span className="clock"><i>t</i> = {withUnit(runner.current.t, "s")}</span>
           </div>
         </div>
@@ -165,6 +171,11 @@ function Control({ def, value, onChange }: { def: ControlDef; value: unknown; on
         </select>
       )}
       {kind === "toggle" && <input id={id} type="checkbox" checked={Boolean(value)} onChange={e => onChange(e.target.checked)} />}
+      {kind === "segment" && (
+        <div className="segment" role="group" aria-label={t(def.label)}>
+          {def.options?.map(o => <button key={String(o.value)} type="button" aria-pressed={String(o.value) === String(value)} onClick={() => onChange(o.value)}>{t(o.label)}</button>)}
+        </div>
+      )}
     </div>
   );
 }

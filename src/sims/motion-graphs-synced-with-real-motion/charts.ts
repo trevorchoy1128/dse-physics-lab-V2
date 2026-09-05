@@ -21,6 +21,6 @@ export const readouts: ReadoutDef[] = [
   { key: "v", symbol: "v", label: { zh: "速度", en: "Velocity" }, unit: "m s⁻¹" },
   { key: "a", symbol: "a", label: { zh: "加速度", en: "Acceleration" }, unit: "m s⁻²" },
   { key: "area", symbol: "A", label: { zh: "v–t 線下面積", en: "Area under v–t" }, unit: "m" },
-  { key: "avgSpeed", symbol: "v̄", label: { zh: "平均速率", en: "Average speed" }, unit: "m s⁻¹" },
-  { key: "avgVel", symbol: "v̄", label: { zh: "平均速度", en: "Average velocity" }, unit: "m s⁻¹" },
+  { key: "avgSpeed", symbol: "", label: { zh: "平均速率（路程 ÷ 時間）", en: "Average speed (distance ÷ time)" }, unit: "m s⁻¹" },
+  { key: "avgVel", symbol: "", label: { zh: "平均速度（位移 ÷ 時間）", en: "Average velocity (displacement ÷ time)" }, unit: "m s⁻¹" },
 ];

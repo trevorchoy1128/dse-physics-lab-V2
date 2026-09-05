@@ -4,7 +4,7 @@ import type { P } from "./model";
 // 規格無參數表；範圍由開發端定（見 manifest.beyondSpec），待老師定奪。
 export const controls: ControlDef[] = [
   {
-    key: "mode", label: { zh: "模式", en: "Mode" }, kind: "select", default: "live",
+    key: "mode", label: { zh: "模式", en: "Mode" }, kind: "segment", default: "live",
     options: [
       { value: "live", label: { zh: "由運動生成圖：我控制小車", en: "Motion → graphs: I drive the trolley" } },
       { value: "draw", label: { zh: "由圖生成運動：我畫 v–t 圖", en: "Graph → motion: I draw the v–t graph" } },

@@ -1,0 +1,815 @@
+{
+ "rows": [
+  {
+   "run": "default",
+   "key": "s",
+   "maxAbs": 1.7976731214730535e-12,
+   "maxRel": 6.274318430779572e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "default",
+   "key": "dist",
+   "maxAbs": 1.7976731214730535e-12,
+   "maxRel": 6.274318430779572e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "default",
+   "key": "v",
+   "maxAbs": 1.0063061495202419e-12,
+   "maxRel": 1.2580399418928807e-13,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "default",
+   "key": "a",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "default",
+   "key": "speed",
+   "maxAbs": 1.0063061495202419e-12,
+   "maxRel": 1.2580399418928807e-13,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "default",
+   "key": "area",
+   "maxAbs": 1.7976731214730535e-12,
+   "maxRel": 6.274318430779572e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "default",
+   "key": "avgSpeed",
+   "maxAbs": 3.9479530755670567e-13,
+   "maxRel": 9.874841007081327e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "default",
+   "key": "avgVel",
+   "maxAbs": 3.9479530755670567e-13,
+   "maxRel": 9.874841007081327e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "default",
+   "key": "(t)",
+   "maxAbs": 1.0063061495202419e-12,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-below-axis",
+   "key": "s",
+   "maxAbs": 7.149281167073696e-13,
+   "maxRel": 0.7093978182659555,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-below-axis",
+   "key": "dist",
+   "maxAbs": 1.2541079286165768e-12,
+   "maxRel": 1.4122930645102581e-13,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-below-axis",
+   "key": "v",
+   "maxAbs": 4.0256686872908176e-13,
+   "maxRel": 0.0017763568394002505,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-below-axis",
+   "key": "a",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-below-axis",
+   "key": "speed",
+   "maxAbs": 4.0256686872908176e-13,
+   "maxRel": 0.0017763568394002505,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-below-axis",
+   "key": "area",
+   "maxAbs": 7.149281167073696e-13,
+   "maxRel": 0.7093978182659555,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-below-axis",
+   "key": "avgSpeed",
+   "maxAbs": 1.4788170688007085e-13,
+   "maxRel": 1.3436385337467157e-13,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-below-axis",
+   "key": "avgVel",
+   "maxAbs": 1.4788170688007085e-13,
+   "maxRel": 0.07093978182659628,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-below-axis",
+   "key": "(t)",
+   "maxAbs": 1.0063061495202419e-12,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-st-not-path",
+   "key": "s",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-st-not-path",
+   "key": "dist",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-st-not-path",
+   "key": "v",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-st-not-path",
+   "key": "a",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-st-not-path",
+   "key": "speed",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-st-not-path",
+   "key": "area",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-st-not-path",
+   "key": "avgSpeed",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-st-not-path",
+   "key": "avgVel",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-st-not-path",
+   "key": "(t)",
+   "maxAbs": 1.0063061495202419e-12,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-v-zero-a-not",
+   "key": "s",
+   "maxAbs": 7.0912165028858e-12,
+   "maxRel": 2.183796068833426e-12,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-v-zero-a-not",
+   "key": "dist",
+   "maxAbs": 7.062794793455396e-12,
+   "maxRel": 6.515233383405656e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-v-zero-a-not",
+   "key": "v",
+   "maxAbs": 4.874323167314287e-12,
+   "maxRel": 2.1544146395193573e-12,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-v-zero-a-not",
+   "key": "a",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-v-zero-a-not",
+   "key": "speed",
+   "maxAbs": 4.874323167314287e-12,
+   "maxRel": 2.1544146395193573e-12,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-v-zero-a-not",
+   "key": "area",
+   "maxAbs": 7.0912165028858e-12,
+   "maxRel": 2.183796068833426e-12,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-v-zero-a-not",
+   "key": "avgSpeed",
+   "maxAbs": 2.1458390619955026e-12,
+   "maxRel": 1.2735435306791969e-13,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-v-zero-a-not",
+   "key": "avgVel",
+   "maxAbs": 2.1316282072803006e-12,
+   "maxRel": 2.1844925062398858e-12,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-v-zero-a-not",
+   "key": "(t)",
+   "maxAbs": 3.2951419370874646e-13,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-area-not-distance",
+   "key": "s",
+   "maxAbs": 6.590283874174929e-13,
+   "maxRel": 0.6483841241688992,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-area-not-distance",
+   "key": "dist",
+   "maxAbs": 2.0108359422010835e-12,
+   "maxRel": 1.257086735559409e-13,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-area-not-distance",
+   "key": "v",
+   "maxAbs": 1.3180567748349858e-12,
+   "maxRel": 0.6501466032204917,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-area-not-distance",
+   "key": "a",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-area-not-distance",
+   "key": "speed",
+   "maxAbs": 1.3180567748349858e-12,
+   "maxRel": 0.6501466032204917,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-area-not-distance",
+   "key": "area",
+   "maxAbs": 6.590283874174929e-13,
+   "maxRel": 0.6483841241688992,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-area-not-distance",
+   "key": "avgSpeed",
+   "maxAbs": 7.527312106958561e-14,
+   "maxRel": 3.998884556821576e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-area-not-distance",
+   "key": "avgVel",
+   "maxAbs": 7.237613286470435e-14,
+   "maxRel": 0.07204268046320741,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "scenario-area-not-distance",
+   "key": "(t)",
+   "maxAbs": 1.0063061495202419e-12,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-0",
+   "key": "s",
+   "maxAbs": 2.3447910280083306e-12,
+   "maxRel": 3.468288383462206e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-0",
+   "key": "dist",
+   "maxAbs": 2.3447910280083306e-12,
+   "maxRel": 3.468288383462206e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-0",
+   "key": "v",
+   "maxAbs": 3.716138508025324e-12,
+   "maxRel": 7.727098599404608e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-0",
+   "key": "a",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-0",
+   "key": "speed",
+   "maxAbs": 3.716138508025324e-12,
+   "maxRel": 7.727098599404608e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-0",
+   "key": "area",
+   "maxAbs": 2.3447910280083306e-12,
+   "maxRel": 3.468288383462206e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-0",
+   "key": "avgSpeed",
+   "maxAbs": 2.305711177541525e-12,
+   "maxRel": 1.1239370656018288e-13,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-0",
+   "key": "avgVel",
+   "maxAbs": 2.305711177541525e-12,
+   "maxRel": 1.1239370656018288e-13,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-0",
+   "key": "(t)",
+   "maxAbs": 3.2951419370874646e-13,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-1",
+   "key": "s",
+   "maxAbs": 1.4296119843493216e-11,
+   "maxRel": 9.5132599648024e-11,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-1",
+   "key": "dist",
+   "maxAbs": 1.4239276424632408e-11,
+   "maxRel": 6.344094354552056e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-1",
+   "key": "v",
+   "maxAbs": 5.5848659030743875e-12,
+   "maxRel": 3.430504679384831e-11,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-1",
+   "key": "a",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-1",
+   "key": "speed",
+   "maxAbs": 5.5848659030743875e-12,
+   "maxRel": 3.430504679384831e-11,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-1",
+   "key": "area",
+   "maxAbs": 1.4296119843493216e-11,
+   "maxRel": 9.5132599648024e-11,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-1",
+   "key": "avgSpeed",
+   "maxAbs": 1.652011860642233e-12,
+   "maxRel": 8.871633664073617e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-1",
+   "key": "avgVel",
+   "maxAbs": 1.6555645743210334e-12,
+   "maxRel": 9.517718868240523e-11,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-1",
+   "key": "(t)",
+   "maxAbs": 1.0063061495202419e-12,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-2",
+   "key": "s",
+   "maxAbs": 2.1671553440683056e-13,
+   "maxRel": 4.819112971119984e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-2",
+   "key": "dist",
+   "maxAbs": 2.1671553440683056e-13,
+   "maxRel": 4.819112971119984e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-2",
+   "key": "v",
+   "maxAbs": 2.1938006966593093e-13,
+   "maxRel": 7.317547353766875e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-2",
+   "key": "a",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-2",
+   "key": "speed",
+   "maxAbs": 2.1938006966593093e-13,
+   "maxRel": 7.317547353766875e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-2",
+   "key": "area",
+   "maxAbs": 2.1671553440683056e-13,
+   "maxRel": 4.819112971119984e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-2",
+   "key": "avgSpeed",
+   "maxAbs": 1.2878587085651816e-13,
+   "maxRel": 6.869610478260381e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-2",
+   "key": "avgVel",
+   "maxAbs": 1.2878587085651816e-13,
+   "maxRel": 6.869610478260381e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-2",
+   "key": "(t)",
+   "maxAbs": 3.2951419370874646e-13,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-3",
+   "key": "s",
+   "maxAbs": 2.3590018827235326e-12,
+   "maxRel": 3.209944422846646e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-3",
+   "key": "dist",
+   "maxAbs": 2.3590018827235326e-12,
+   "maxRel": 3.209944422846646e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-3",
+   "key": "v",
+   "maxAbs": 5.115907697472721e-12,
+   "maxRel": 9.971396541871266e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-3",
+   "key": "a",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-3",
+   "key": "speed",
+   "maxAbs": 5.115907697472721e-12,
+   "maxRel": 9.971396541871266e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-3",
+   "key": "area",
+   "maxAbs": 2.3590018827235326e-12,
+   "maxRel": 3.209944422846646e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-3",
+   "key": "avgSpeed",
+   "maxAbs": 1.5347723092418164e-12,
+   "maxRel": 6.884823803284142e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-3",
+   "key": "avgVel",
+   "maxAbs": 1.5347723092418164e-12,
+   "maxRel": 6.884823803284142e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-3",
+   "key": "(t)",
+   "maxAbs": 3.2951419370874646e-13,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-4",
+   "key": "s",
+   "maxAbs": 3.723243935382925e-12,
+   "maxRel": 4.57365583134435e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-4",
+   "key": "dist",
+   "maxAbs": 3.723243935382925e-12,
+   "maxRel": 4.57365583134435e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-4",
+   "key": "v",
+   "maxAbs": 2.0321522242738865e-12,
+   "maxRel": 7.256306646718902e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-4",
+   "key": "a",
+   "maxAbs": 0,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-4",
+   "key": "speed",
+   "maxAbs": 2.0321522242738865e-12,
+   "maxRel": 7.256306646718902e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-4",
+   "key": "area",
+   "maxAbs": 3.723243935382925e-12,
+   "maxRel": 4.57365583134435e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-4",
+   "key": "avgSpeed",
+   "maxAbs": 7.602807272633072e-13,
+   "maxRel": 5.4326145016602727e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-4",
+   "key": "avgVel",
+   "maxAbs": 7.602807272633072e-13,
+   "maxRel": 5.4326145016602727e-14,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  },
+  {
+   "run": "random-4",
+   "key": "(t)",
+   "maxAbs": 3.2951419370874646e-13,
+   "maxRel": 0,
+   "firstT": null,
+   "nEventTolerated": 0,
+   "pass": true
+  }
+ ],
+ "failures": []
+}

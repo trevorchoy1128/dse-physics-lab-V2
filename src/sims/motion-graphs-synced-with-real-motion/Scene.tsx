@@ -58,10 +58,12 @@ export default function Scene({ plan, onInput }: SceneProps) {
     const bw = 44, bh = 22;
     ctx.fillStyle = ink; ctx.fillRect(cx - bw / 2, ty - bh - 8, bw, bh);
     ctx.beginPath(); ctx.arc(cx - bw / 3, ty - 6, 5, 0, Math.PI * 2); ctx.arc(cx + bw / 3, ty - 6, 5, 0, Math.PI * 2); ctx.fill();
-    // 箭嘴（顏色與線型由 ARROW_STYLE 決定；px 每 m s⁻¹ 由 scales 統一）
-    const pxPerUnit = 22;
+    // 箭嘴（顏色與線型由 ARROW_STYLE 決定）。像素比例按本次運動的最大 |v|、|a| 自動設定，兩支箭嘴共用，
+    // 最長不超過軌道闊度的 30%，箭頭永遠在畫布內（核數員 F3）
+    const maxMag = Math.max(1, m.vmax * (plan.scales.velocity ?? 1), m.amax * (plan.scales.acceleration ?? 1));
+    const pxPerUnit = Math.min(88, (0.3 * (tr.w - 2 * pad)) / maxMag);
     for (const a of plan.arrows) {
-      const st = ARROW_STYLE[a.kind]; const len = a.vector[0] * (plan.scales[a.kind] ?? 1) * pxPerUnit * 4;
+      const st = ARROW_STYLE[a.kind]; const len = a.vector[0] * (plan.scales[a.kind] ?? 1) * pxPerUnit;
       if (Math.abs(len) < 1) continue;
       const yA = ty - bh - 8 - (a.kind === "velocity" ? 16 : 40); const x0 = cx, x1 = cx + len;
       ctx.strokeStyle = st.color; ctx.lineWidth = st.dashed ? 2 : 3; ctx.setLineDash(st.dashed ? [6, 4] : []);
@@ -108,8 +110,8 @@ export default function Scene({ plan, onInput }: SceneProps) {
       if (k === "v" && handles) {
         ctx.strokeStyle = ser.color; ctx.globalAlpha = 0.35; ctx.lineWidth = 2; ctx.beginPath();
         handles.forEach((q, i) => (i ? ctx.lineTo(px(p, q[0]), py(p, q[1])) : ctx.moveTo(px(p, q[0]), py(p, q[1])))); ctx.stroke(); ctx.globalAlpha = 1;
-        for (const q of handles) { ctx.fillStyle = "#fff"; ctx.strokeStyle = ser.color; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(px(p, q[0]), py(p, q[1]), 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
-        ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "拖動圓點改變 v" : "Drag the dots to set v", x0 + 6, py(p, p.yMin) - 6);
+        for (const q of handles) { ctx.fillStyle = "#fff"; ctx.strokeStyle = ser.color; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(px(p, q[0]), py(p, q[1]), 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
+        ctx.font = font(11); ctx.fillStyle = ink3; ctx.textAlign = "left"; ctx.fillText(zh ? "上下拖動圓點改變該秒的 v（每格 0.5）" : "Drag a dot up/down to set v at that second (steps of 0.5)", x0 + 6, py(p, p.yMin) - 6);
       }
       // 已走過的曲線
       if (pts.length > 1) {
@@ -139,7 +141,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
   // ---- 拖動 v–t 控制點（只在 draw 模式；抓取半徑 24 px ≥ 44 px 直徑）----
   const handleAt = (x: number, y: number): number | null => {
     const L = lay.current; const handles = plan.trails?.find(t => t.key === "vt-handles")?.points; if (!L || !handles) return null;
-    const p = L.panes.v; let best: number | null = null, bd = 24;
+    const p = L.panes.v; let best: number | null = null, bd = 30;   // 抓取半徑 30 px（直徑 60 px ≥ 44 px）
     handles.forEach((q, i) => { const d = Math.hypot(px(p, q[0]) - x, py(p, q[1]) - y); if (d < bd) { bd = d; best = i; } });
     return best;
   };
@@ -153,7 +155,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
   const onMove = (e: React.PointerEvent) => {
     if (dragging.current === null || !lay.current) return;
     const [, y] = local(e); const p = lay.current.panes.v;
-    const v = Math.max(-5, Math.min(5, Math.round(fromPy(p, y) * 10) / 10));   // 0.1 m s⁻¹ 步進，範圍 ±5
+    const v = Math.max(-5, Math.min(5, Math.round(fromPy(p, y) * 2) / 2));     // 0.5 m s⁻¹ 步進（學生試用者：太細難拖準），範圍 ±5
     const next = [...vtRef.current]; next[dragging.current] = v; vtRef.current = next;
     onInput?.("vt", next);
   };

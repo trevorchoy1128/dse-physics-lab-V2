@@ -89,6 +89,13 @@ export type PlanFn<S, P> = (state: S, params: P, obs: Record<string, number>, la
 // 讀數面板（charts.ts 匯出 readouts）；obs 內自動有 t
 export interface ReadoutDef { key: string; symbol: string; label: Text; unit: string; transform?: (v: number) => number }
 
+// 2D 模擬與互動（#023 起）：
+// - RenderPlan.meta?: Record<string, number> 放非物理的畫面資料（軸範圍、當前 t、模式旗標）；不可放物理判斷。
+// - 線圖以 trails 傳遞：點 = [t, y, 0]；Scene 只負責把它畫在圖框內。
+// - SceneProps.onInput?(key, value)：場景的輸入（如在圖上拖控制點）交回 shell 更新參數；場景本身不算物理。
+// - SimModule.liveParams?: string[]：這些參數改變時不重置運行（即時控制，如加速度滑桿）。
+// - ControlDef.visible?(params)：只在某模式顯示的控制項。
+
 // index.ts 匯出 default: SimModule，另含 readouts、mode: "3d" | "2d"、
 // camera?: { position: Vec3; target: Vec3; fov?: number }（打開時一眼看到規格「學生應該看見的現象」第 1 項）
 ```

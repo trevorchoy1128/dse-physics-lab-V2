@@ -73,7 +73,8 @@ export const model: SimModel<S, P> = {
   },
 
   observe(s, p) {
-    const a = s.done ? 0 : accel(p, s.t);
+    // 到達時間窗末端後畫面凍結，a 保持最後一段的值（核數員 F1：不得歸零令 v 與 a 自相矛盾）
+    const a = accel(p, Math.min(s.t, p.T - 1e-9));
     return {
       s: s.s,
       dist: s.dist,

@@ -34,7 +34,7 @@ export interface SimModel<S, P> {
   events?(prev: S, next: S, params: P): SimEvent[];
 }
 
-export type ControlKind = "slider" | "select" | "toggle";
+export type ControlKind = "slider" | "select" | "toggle" | "segment";   // segment = 幾個大按鈕的分段選擇（觸控友善，用於模式切換）
 export interface ControlOption { value: number | string; label: Text }
 export interface ControlDef {
   key: string;
@@ -113,4 +113,6 @@ export interface SimModule<S = unknown, P = Record<string, unknown>> {
   camera?: { position: Vec3; target: Vec3; fov?: number };
   /** 這些參數改變時不重置運行（即時控制，如運動線圖的加速度滑桿） */
   liveParams?: string[];
+  /** 運行的總時長（秒）；提供則播放列顯示時間拉桿，可跳到任何時刻（重置後快進） */
+  duration?: (params: P) => number;
 }

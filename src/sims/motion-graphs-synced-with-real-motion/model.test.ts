@@ -77,4 +77,14 @@ describe("運動線圖與真實運動同步（S7）", () => {
     expect(end.t).toBeLessThanOrEqual(5 + 2 * DT);
     expect(end.s).toBeCloseTo(5, 6);
   });
+
+  it("時間窗末端凍結後，a 讀數保持最後一段的值，與 v = u + aT 一致（核數員 F1）", () => {
+    const p = live(3, -9.81, 5);
+    const end = run(p, 6).at(-1)!;
+    expect(end.done).toBe(true);
+    expect(model.observe(end, p).a).toBeCloseTo(-9.81, 12);
+    expect(end.v).toBeCloseTo(3 - 9.81 * 5, 6);
+    const q = draw([2, 1.6, 1.2, 0.8, 0.4, 0, -0.4, -0.8, -1.2, -1.6, -2]);
+    expect(model.observe(run(q, 11).at(-1)!, q).a).toBeCloseTo(-0.4, 9);
+  });
 });

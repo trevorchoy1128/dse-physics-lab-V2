@@ -35,21 +35,27 @@ allErrors.push(...await shot("desktop", { width: 1440, height: 900 }));
 allErrors.push(...await shot("ipad-portrait", { width: 768, height: 1024 }));
 allErrors.push(...await shot("ipad-landscape", { width: 1024, height: 768 }));
 
-// 每個試試看：按下後等待半個時間窗再截圖
+// 每個試試看兩張：early（0.1× 慢速播 3 s 實時 ≈ 0.3 s 模擬時間，捕捉起始瞬間）與 end（快進到時間窗末端，反差在此）
 const scenarioCount = await (async () => {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await ctx.newPage(); await page.goto(url, { waitUntil: "networkidle" }); await page.waitForTimeout(WAIT);
   const n = await page.locator(".scenarios > button").count(); await ctx.close(); return n;
 })();
-for (let i = 0; i < scenarioCount; i++) {
-  allErrors.push(...await shot(`scenario-${i + 1}`, { width: 1440, height: 900 }, async page => {
-    const btn = page.locator(".scenarios > button").nth(i);
-    const label = (await btn.textContent())?.trim();
-    await btn.click();
-    await page.waitForTimeout(4000);
-    console.log(`  scenario-${i + 1}: ${label}`);
-  }));
-}
+const scenarioShot = async (i, phase) => shot(`scenario-${i + 1}-${phase}`, { width: 1440, height: 900 }, async page => {
+  const btn = page.locator(".scenarios > button").nth(i);
+  const label = (await btn.textContent())?.trim();
+  const speed = page.locator(".transport .speed select");
+  if (phase === "early") { await speed.selectOption("0.1"); await btn.click(); await page.waitForTimeout(3000); }
+  else {
+    await btn.click(); await speed.selectOption("2");
+    // 有時間拉桿就直接跳到末端；否則等 12 s 實時（2× → 24 s 模擬時間）
+    const scrub = page.locator(".scrub input");
+    if (await scrub.count()) { const max = await scrub.getAttribute("max"); await scrub.fill(String(max)); await page.waitForTimeout(500); }
+    else await page.waitForTimeout(12000);
+  }
+  if (phase === "early") console.log(`  scenario-${i + 1}: ${label}`);
+});
+for (let i = 0; i < scenarioCount; i++) { allErrors.push(...await scenarioShot(i, "early")); allErrors.push(...await scenarioShot(i, "end")); }
 await browser.close();
 if (allErrors.length) { console.error("console 錯誤：", [...new Set(allErrors)].join("\n")); process.exit(2); }
 console.log(`完成 → reports/${simId}/shots/`);

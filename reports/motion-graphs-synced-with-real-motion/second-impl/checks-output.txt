@@ -1,0 +1,23 @@
+量綱(live) 單位縮放一致: true
+量綱(draw) 長度縮放一致: true
+對稱(live) 反號: true
+對稱(draw) 反號: true
+對稱(draw) 奇對稱 v–t 的 s 鏡像、s(10)=0、dist(10)=10: true
+極限 a=0：s = u t, dist = |u| t: true
+極限 u=0：s = ½at², v² = 2as: true
+極限/一致：v=u+at, s=ut+½at², v²=u²+2as 互相一致: true
+極限(draw)：每段 s 為二次、二階差分 = 段斜率、a = 段斜率: true
+極限(draw)：超出末節點 v 恆為末值、a=0、s 線性: true
+極限 t=0：s=dist=area=avg=0, v=u, a=a: true
+極限 a 極大：s = ½·1e6·4 = 2e6: true
+極限 靜止：s=dist=v=0: true
+規格驗證[default] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:false) 運動方程一致:true
+規格驗證[scenario-below-axis] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:true) 運動方程一致:true
+規格驗證[scenario-st-not-path] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:false) 運動方程一致:true
+規格驗證[scenario-v-zero-a-not] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:true) 運動方程一致:true
+規格驗證[scenario-area-not-distance] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:true) 運動方程一致:true
+規格驗證[random-0] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:false) 運動方程一致:true
+規格驗證[random-1] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:true) 運動方程一致:true
+規格驗證[random-2] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:false) 運動方程一致:true
+規格驗證[random-3] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:false) 運動方程一致:true
+規格驗證[random-4] 面積=位移:true speed=|v|:true 平均量一致:true 未反向 dist=|s|:true 反向後 dist>|s|:true(曾反向:false) 運動方程一致:true
