@@ -49,6 +49,8 @@ export default function Scene({ plan, onInput }: SceneProps) {
   const lay = useRef<Layout | null>(null);
   const axes = useRef<Axes>({ s: 0, v: 0, a: 0, t: 0 });
   const cam = useRef({ s: 0, t: 0 });   // 鏡頭中心（米）；小車離開中央 40% 區域時跟隨
+  // 軌道米數與箭嘴像素比例在重置時凍結；即時改加速度不得令畫面比例跳動（老師 2026-09-06：改 a 時畫面抖動）
+  const frozen = useRef({ t: 0, viewW: 0, maxMag: 0 });
   const dragging = useRef<number | null>(null);
   const vtRef = useRef<number[]>([]);
 
@@ -65,7 +67,12 @@ export default function Scene({ plan, onInput }: SceneProps) {
 
     // ---- 軌道：固定比例 + 鏡頭跟隨 ----（老師：比例重新映射令小車「瞬移」，改為鏡頭跟車、背景流動）
     const tr = L.track; const ty = tr.y + tr.h * 0.62; const pad = 40;
-    const viewW = Math.min(100, Math.max(10, nice(3 * m.vmax)));      // 畫面橫跨的米數，由參數預測的最大速率決定，運行中不變
+    if (frozen.current.viewW === 0 || m.t < frozen.current.t - 1e-9) {   // 重置時才重算
+      frozen.current.viewW = Math.min(100, Math.max(10, nice(3 * m.vmax)));
+      frozen.current.maxMag = Math.max(1, m.vmax * (plan.scales.velocity ?? 1), m.amax * (plan.scales.acceleration ?? 1));
+    }
+    frozen.current.t = m.t;
+    const viewW = frozen.current.viewW;      // 畫面橫跨的米數：重置時由參數預測定好，運行中（包括即時改 a）不變
     const pxPerM = (tr.w - 2 * pad) / viewW;
     const body = plan.bodies?.[0]; const carS = body?.position[0] ?? 0;
     if (m.t < cam.current.t - 1e-9) cam.current.s = 0;                // 重置：鏡頭回到起點
@@ -116,7 +123,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
     ctx.fillStyle = "#c8cdd4"; ctx.beginPath(); ctx.arc(cx - bw / 3, ty - 7, 2, 0, Math.PI * 2); ctx.arc(cx + bw / 3, ty - 7, 2, 0, Math.PI * 2); ctx.fill();
     // 箭嘴（顏色與線型由 ARROW_STYLE 決定）。像素比例由參數預測的最大 |v|、|a| 決定，運行中不變（核數員 F8），
     // 兩支箭嘴共用，最長不超過軌道闊度的 30%；再按小車與邊緣的距離同步縮短，箭頭永遠在畫布內（F3、F5）
-    const maxMag = Math.max(1, m.vmax * (plan.scales.velocity ?? 1), m.amax * (plan.scales.acceleration ?? 1));
+    const maxMag = frozen.current.maxMag;
     let pxPerUnit = Math.min(88, (0.3 * (tr.w - 2 * pad)) / maxMag);
     const room = (dir: number) => (dir > 0 ? tr.x + tr.w - 8 - cx : cx - tr.x - 8);
     for (const a of plan.arrows) {
