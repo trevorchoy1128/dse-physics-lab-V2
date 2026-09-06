@@ -35,7 +35,10 @@ export function createRunner<S, P>(model: SimModel<S, P>, params: P, dt = 1e-3, 
       acc += Math.max(0, elapsed);
       let steps = 0; const events: SimEvent[] = [];
       // 浮點累積誤差：0.016 + 0.033 + … 可能差 1e-17 而少走一步，故用 dt 的 1e-9 作容差
-      while (acc >= dt * (1 - 1e-9) && steps < maxStepsPerAdvance) { events.push(...doStep()); acc -= dt; steps++; }
+      while (acc >= dt * (1 - 1e-9) && steps < maxStepsPerAdvance) {
+        if (model.done?.(state, params)) { acc = 0; break; }   // 運行已結束：時鐘停住（學生試用者：「球停了時鐘仍在走」）
+        events.push(...doStep()); acc -= dt; steps++;
+      }
       if (acc < 0) acc = 0;
       if (steps === maxStepsPerAdvance) acc = 0; // 分頁切走後回來，不追趕
       return { steps, events };

@@ -129,6 +129,7 @@ export function SimShell({ sim }: SimShellProps) {
               <Scene plan={plan} onInput={setParam} />
             )}
           </div>
+          {sim.Views && <div className="stage-views"><sim.Views plan={plan} /></div>}
           {sim.manifest.assumptions.length > 0 && (
             <div className="assumptions"><b>{t(UI.assumptions)}：</b>{sim.manifest.assumptions.map(a => t(a)).join("；")}</div>
           )}

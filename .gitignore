@@ -27,3 +27,7 @@ dist-ssr
 reference/E-book/
 reference/*.pdf
 reports/**/data/
+
+# 核數員的補跑數據（每輪可達 1 GB，可重生成）
+reports/**/audit/extra-data*/
+reports/**/second-impl/*.json

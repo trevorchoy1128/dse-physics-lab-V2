@@ -32,6 +32,8 @@ export interface SimModel<S, P> {
   step(state: S, params: P, dt: number): S;
   observe(state: S, params: P): Record<string, number>;
   events?(prev: S, next: S, params: P): SimEvent[];
+  /** 運行已結束（如全部落地）：runner 不再步進，時鐘停在該刻；seek 不受影響 */
+  done?(state: S, params: P): boolean;
 }
 
 export type ControlKind = "slider" | "select" | "toggle" | "segment";   // segment = 幾個大按鈕的分段選擇（觸控友善，用於模式切換）
@@ -107,6 +109,8 @@ export interface SimModule<S = unknown, P = Record<string, unknown>> {
   layers: LayerDef[];
   plan: PlanFn<S, P>;
   Scene: ComponentType<SceneProps>;
+  /** 與主場景同步的附加平面視窗（如拋體的側視、俯視、動能圖），畫在主場景下方；同樣只畫 plan，不算物理 */
+  Views?: ComponentType<SceneProps>;
   guideZh: string;
   mode: "3d" | "2d";
   /** 3D 相機預設：打開時一眼看到規格「學生應該看見的現象」第 1 項 */
