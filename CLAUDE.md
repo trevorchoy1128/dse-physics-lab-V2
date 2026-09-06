@@ -73,6 +73,7 @@ HKDSE 物理 3D 實驗模擬器網站。中文為主（繁體、香港用語）�
 - 自訂 agent（`.claude/agents/`：physics-auditor、second-implementer、student-tester、apparatus-reviewer、sim-fixer）與 hook 在 session 開始時載入；新增或修改後要開新 session。
 
 ## 工作方式
+- **Session 命名**（老師 2026-09-07 喜歡這做法）：每個 session 開始做某個模擬時，立即用 set_session_title 把自己改名為「#編號 名稱 · 階段」，例如「#031 拋體 · 閘 2」；階段改變（閘 2 → 閘 3 簽收）時再改。一個 session 一個模擬，簽收後歸檔；狀態以 repo（catalogue.json、reports/）為準，不靠 session。
 - 新模擬一律用 `/new-sim`。
 - 改動 `content/catalogue.json` 後必跑 `node tools/build-catalogue.mjs`。
 - 完成一個模擬前必在瀏覽器面板實機看過桌面與 iPad 兩種尺寸，並讀 console 有無錯誤。
