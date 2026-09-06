@@ -1,4 +1,5 @@
 import { VectorArrow, Label, Trail } from "@/components";
+import { SCENE } from "@/components/design";   // 顏色、字體、圖框只可從 design.ts 取用（全站設計語言）
 import type { RenderPlan } from "@/shell/types";
 
 // 只畫 plan() 的結果。這裏沒有物理、沒有 if 判斷方向。
@@ -8,13 +9,13 @@ export default function Scene({ plan }: { plan: RenderPlan }) {
       {/* 地面：儀器與物件一律程式幾何 */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[10, 10]} />
-        <meshStandardMaterial color="#d9ded8" />
+        <meshStandardMaterial color={SCENE.ground} />
       </mesh>
 
       {/* 主體：球，位置取第一支箭嘴的起點（範本簡化；真正的模擬把物體位置也放入 plan） */}
       <mesh position={plan.arrows[0]?.origin ?? [0, 0, 0]} castShadow>
         <sphereGeometry args={[0.25, 32, 32]} />
-        <meshStandardMaterial color="#1c2530" />
+        <meshStandardMaterial color={SCENE.objectA} />
       </mesh>
 
       {plan.arrows.map((a, i) => (

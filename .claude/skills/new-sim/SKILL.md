@@ -87,6 +87,7 @@ g 用共用控制 `gControl`（預設 9.81，可選 9.8 / 10），不要自己�
 - 每支向量都在 `layers` 登記，shell 會自動生成開關。
 - 場景打開時已在播放預設情境，畫面中央是主體，相機預設角度要一眼看到規格「學生應該看見的現象」第 1 項。
 - `needs3D` 為 low 的模擬（如運動線圖）用 2D `<Canvas2D>`，不要為 3D 而 3D。
+- 顏色、字體、刻度、箭嘴、圖框只可從 `src/components/design.ts` 取用（`references/design-language.md`）；`node tools/designlint.mjs` 零錯誤才算完成。
 - 觸控：物件可拖的話要有 ≥ 44 px 的抓取區；不做只靠 hover 的互動。
 
 ### 1.7 寫 charts.ts

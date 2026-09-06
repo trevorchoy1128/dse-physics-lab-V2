@@ -62,3 +62,9 @@
 - [ ] **線圖的 t 軸放在 y = 0 的軸線上**，不放在圖框底部；負值在軸線以下，與課本一致。刻度數字去尾零（10 而非 10.0）。
 - [ ] 只有學生自己的操作（拖滑桿、改參數）才可以令畫面比例或軸改變；程式自動改的一律不准。
 - [ ] 背景／地標必須在世界座標裏（跟物體同一比例移動），不可只是裝飾圖片。
+
+## G. 設計語言（全站同一套，老師 2026-09-06）
+- [ ] Scene / Views 的顏色、字體、刻度、箭嘴、圖框全部來自 `src/components/design.ts`（`theme` / `SCENE` / `SERIES` / `uiFont` / `monoFont` / `nice` / `tick` / `drawArrow2D` / `drawPane`）；`node tools/designlint.mjs` 零錯誤。
+- [ ] 主物體琥珀 `SCENE.objectA`、第二物體鋼藍 `SCENE.objectB`；物體不用向量顏色編碼的紅、藍、橙、紫、綠。
+- [ ] 線圖用 `drawPane`：底色、頂部色條、標題、y = 0 的 t 軸。
+- [ ] 逐條對照 `references/design-language.md` 第 2、4、5 節。
