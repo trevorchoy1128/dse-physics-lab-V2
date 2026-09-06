@@ -3,6 +3,8 @@ import type { P } from "./model";
 
 // 規格無參數表；範圍由開發端定（見 manifest.beyondSpec），待老師定奪。
 export const controls: ControlDef[] = [
+  // 最長時間放最頂（老師 2026-09-06：「時間只可以去到 10 s」——其實是沒找到這個滑桿）；可即時改、不重置；亦可在數字框直接輸入
+  { key: "T", symbol: "T", label: { zh: "最長時間（模擬跑到這裏停）", en: "Max time (simulation stops here)" }, unit: "s", min: 2, max: 60, step: 1, default: 10 },
   {
     key: "mode", label: { zh: "模式", en: "Mode" }, kind: "segment", default: "live",
     options: [
@@ -12,8 +14,6 @@ export const controls: ControlDef[] = [
   },
   { key: "u", symbol: "u", label: { zh: "初速", en: "Initial velocity" }, unit: "m s⁻¹", min: -5, max: 5, step: 0.5, default: 0, visible: p => p.mode === "live" },
   { key: "a", symbol: "a", label: { zh: "加速度（可隨時改）", en: "Acceleration (change any time)" }, unit: "m s⁻²", min: -10, max: 10, step: 0.5, default: 1, visible: p => p.mode === "live" },
-  // 時間窗改為滑桿（老師 2026-09-06：要有方法改最長時間），可即時改、不重置；亦可在數字框直接輸入
-  { key: "T", symbol: "T", label: { zh: "時間窗（最長時間）", en: "Time window (max time)" }, unit: "s", min: 2, max: 60, step: 1, default: 10 },
 ];
 
 export const defaults: P = { mode: "live", u: 0, a: 1, T: 10, vt: [0, 1, 2, 3, 3, 3, 2, 1, 0, 0, 0] };

@@ -85,7 +85,8 @@ export default function Scene({ plan, onInput }: SceneProps) {
     const sMin = cam.current.s - viewW * 0.6, sMax = cam.current.s + viewW * 0.6;
     ctx.fillStyle = SCENE.road; ctx.fillRect(tr.x, ty - 7, tr.w, 14);
     ctx.strokeStyle = SCENE.roadDash; ctx.lineWidth = 2; ctx.beginPath();
-    for (let s0 = Math.floor(sMin / (step / 2)) * (step / 2); s0 < sMax; s0 += step / 2) { ctx.moveTo(sx(s0), ty); ctx.lineTo(sx(s0 + step / 4), ty); }
+    // 路面虛線：短線長 step/12、週期 step/4（線：空 ≈ 1：2，像真實路面；老師：黃線太長）
+    for (let s0 = Math.floor(sMin / (step / 4)) * (step / 4); s0 < sMax; s0 += step / 4) { ctx.moveTo(sx(s0), ty); ctx.lineTo(sx(s0 + step / 12), ty); }
     ctx.stroke();
     for (let s0 = Math.floor(sMin / step) * step; s0 <= sMax; s0 += step) {
       const x = sx(s0);
