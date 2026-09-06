@@ -1,0 +1,46 @@
+# 閘 4：每次推上 master 就自動測試、建置並部署到 GitHub Pages。
+# 測試或建置失敗即不部署，線上永遠是最後一個通過的版本。
+# 首次要在 repo Settings → Pages → Source 選「GitHub Actions」。
+name: 測試並部署到 GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: 單元測試（物理模型、畫面數學、共用層）
+        run: npm test
+      - name: 型別檢查 + 建置
+        run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
