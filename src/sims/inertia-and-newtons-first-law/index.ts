@@ -13,7 +13,7 @@ import type { S, P } from "./model";
 const sim: SimModule<S, P> & { readouts: ReadoutDef[] } = {
   manifest, model, controls, defaults, scenarios, charts, layers, readouts, plan, Scene, guideZh,
   mode: "2d",
-  liveParams: ["push", "engine", "dir"],   // 「放手」與引擎開關是本模擬的核心操作：即時生效，不重置運行
+  liveParams: ["push", "engine", "dir", "F", "Fe"],   // 「放手」、引擎開關與方向、推力大小：即時生效，不重置運行（老師 2026-09-08：拖推力滑桿時飛船閃動）
   duration,                                // 時間拉桿：可跳到放手後、煞車後、抽布後的任何一刻
   stepSize: 0.05,
   hints: [

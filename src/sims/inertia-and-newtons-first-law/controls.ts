@@ -27,7 +27,7 @@ export const controls: ControlDef[] = [
       { value: "off", label: { zh: "已放手", en: "Released" } },
     ],
   },
-  { key: "F", symbol: "F", label: { zh: "外加水平力", en: "Applied horizontal force" }, unit: "N", min: 0, max: 10, step: 0.05, default: 0.3, visible: table },
+  { key: "F", symbol: "F", label: { zh: "外加水平力（可隨時改）", en: "Applied horizontal force (change any time)" }, unit: "N", min: 0, max: 10, step: 0.05, default: 0.3, visible: table },
   { key: "m", symbol: "m", label: { zh: "方塊質量", en: "Mass of block" }, unit: "kg", min: 0.1, max: 5, step: 0.1, default: 0.2, visible: table },
   { key: "mu1", symbol: "μ₁", label: { zh: "前段桌面（A 至 B）的摩擦係數", en: "Friction coefficient, section A to B" }, min: 0, max: 0.6, step: 0.01, default: 0, visible: table },
   { key: "mu2", symbol: "μ₂", label: { zh: "後段桌面（B 之後）的摩擦係數", en: "Friction coefficient beyond B" }, min: 0, max: 0.6, step: 0.01, default: 0.2, visible: table },
@@ -51,7 +51,7 @@ export const controls: ControlDef[] = [
       { value: "off", label: { zh: "關", en: "Off" } },
     ],
   },
-  { key: "Fe", symbol: "F引擎", label: { zh: "引擎推力", en: "Engine thrust" }, unit: "N", min: 0, max: 5, step: 0.1, default: 0, visible: space },
+  { key: "Fe", symbol: "F引擎", label: { zh: "引擎推力（可隨時改）", en: "Engine thrust (change any time)" }, unit: "N", min: 0, max: 5, step: 0.1, default: 0, visible: space },
   {
     key: "dir", label: { zh: "引擎方向", en: "Engine direction" }, kind: "segment", default: "forward", visible: space,
     options: [

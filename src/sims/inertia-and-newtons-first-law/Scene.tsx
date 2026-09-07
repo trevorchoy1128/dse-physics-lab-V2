@@ -61,7 +61,8 @@ export default function Scene({ plan }: SceneProps) {
     const reset = frozen.current.viewW === 0 || m.t < frozen.current.t - 1e-9 || m.t === 0;
     if (reset) {
       const f = frozen.current;
-      f.viewW = scene === 1 ? Math.min(30, Math.max(3, nice(m.smax * 0.8))) : scene === 2 ? Math.max(3, nice(2 * (m.L + 1.2))) : scene === 3 ? 26 : Math.min(60, Math.max(12, nice(m.smax * 0.8)));
+      // 視野闊度固定（老師 2026-09-08：推力一改飛船大小就變）：不隨參數預測改變，物體走遠由鏡頭跟隨處理；桌布按布長
+      f.viewW = scene === 1 ? 6 : scene === 2 ? Math.max(3, nice(2 * (m.L + 1.2))) : scene === 3 ? 26 : 24;
       const maxLen = Math.min(120, 0.22 * (tr.w - 2 * pad), 0.3 * tr.h, lanesN > 1 ? laneGap * 0.4 : Infinity);
       // 垂直力另設上限：室內時重量箭頭不落到地板刻度（標籤在箭頭旁），泳道疊排時上下箭頭相隔 ≥ 0.2 倍間距
       const maxLenV = Math.min(maxLen, isIndoor(scene) ? Math.max(30, floorY - ty - 22) : Infinity);
