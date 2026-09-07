@@ -1,0 +1,25 @@
+// 放手互動檢查：開頁 → 等 0.8 s → 按「已放手」→ 讀數應為 2 支力、水平 0、v 不變；再測太空關引擎
+import { chromium } from "playwright";
+const url = "http://localhost:5175/#/sim/inertia-and-newtons-first-law";
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const errors = []; page.on("pageerror", e => errors.push(String(e))); page.on("console", m => { if (m.type() === "error") errors.push(m.text()); });
+await page.goto(url, { waitUntil: "networkidle" });
+const read = async () => page.evaluate(() => Object.fromEntries([...document.querySelectorAll(".readouts tr")].map(r => [r.querySelector("th")?.innerText.split("\n")[0], r.querySelector("td")?.innerText])));
+await page.waitForTimeout(700);
+const before = await read();
+await page.getByRole("button", { name: "已放手" }).click();
+await page.waitForTimeout(300);
+const r1 = await read();
+await page.waitForTimeout(1500);
+const r2 = await read();
+console.log(JSON.stringify({ before, r1, r2, errors }, null, 1));
+await page.getByRole("button", { name: "太空中的飛船" }).click();
+const fe = page.locator("input[type=number]").nth(1);
+await fe.fill("2"); await fe.dispatchEvent("input"); await fe.dispatchEvent("change");
+await page.waitForTimeout(1200);
+const s1 = await read();
+await page.getByRole("button", { name: "關", exact: true }).click();
+await page.waitForTimeout(300); const s2 = await read(); await page.waitForTimeout(1000); const s3 = await read();
+console.log(JSON.stringify({ s1, s2, s3, errors }, null, 1));
+await browser.close();

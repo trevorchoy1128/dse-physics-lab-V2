@@ -1,0 +1,1356 @@
+{
+ "c1": {
+  "smooth": {
+   "window": [
+    0.5000000000000003,
+    11.995000000000475
+   ],
+   "frames": 2300,
+   "v0": 0.7499999999999987,
+   "vUnique": [
+    0.7499999999999987
+   ],
+   "drift": 0
+  },
+  "twoBlocks": {
+   "frames": 2300,
+   "vA": [
+    2.499999999999995
+   ],
+   "vB": [
+    0.5000000000000003
+   ]
+  },
+  "longTable": [
+   [
+    0,
+    0
+   ],
+   [
+    4.999999999999916,
+    1.1999999999999986
+   ],
+   [
+    10.000000000000163,
+    1.1999999999999986
+   ]
+  ],
+  "longSpace": [
+   [
+    0,
+    0,
+    2,
+    -2
+   ],
+   [
+    4.999999999999916,
+    0,
+    2,
+    -2
+   ],
+   [
+    10.000000000000163,
+    0,
+    2,
+    -2
+   ]
+  ]
+ },
+ "c2": {
+  "extra-release-smooth": {
+   "frames": 2300,
+   "tRange": [
+    0.5000000000000003,
+    11.995000000000475
+   ],
+   "maxFnet": 0,
+   "maxA": 0,
+   "maxAB": 0,
+   "netArrows": [
+    0
+   ],
+   "accArrows": [
+    0
+   ]
+  },
+  "extra-release-two-blocks": {
+   "frames": 2300,
+   "tRange": [
+    0.5000000000000003,
+    11.995000000000475
+   ],
+   "maxFnet": 0,
+   "maxA": 0,
+   "maxAB": 0,
+   "netArrows": [
+    0
+   ],
+   "accArrows": [
+    0
+   ]
+  }
+ },
+ "c3": {
+  "extra-release-smooth": {
+   "before": {
+    "frames": 100,
+    "applied": [
+     1
+    ],
+    "appliedLayer": [
+     "applied"
+    ],
+    "nForces": [
+     3
+    ],
+    "nHoriz": [
+     1
+    ]
+   },
+   "after": {
+    "frames": 2300,
+    "applied": [
+     0
+    ],
+    "weight": [
+     1
+    ],
+    "normal": [
+     1
+    ],
+    "nForces": [
+     2
+    ],
+    "nHoriz": [
+     0
+    ],
+    "Fapp": [
+     0
+    ]
+   },
+   "vAtRelease": {
+    "tBefore": 0.49500000000000033,
+    "vBefore": 0.7424999999999987,
+    "tAfter": 0.5000000000000003,
+    "vAfter": 0.7499999999999987,
+    "metaTRelease": -1
+   }
+  },
+  "extra-release-1s": {
+   "before": {
+    "frames": 200,
+    "applied": [
+     1
+    ],
+    "appliedLayer": [
+     "applied"
+    ],
+    "nForces": [
+     3
+    ],
+    "nHoriz": [
+     1
+    ]
+   },
+   "after": {
+    "frames": 2200,
+    "applied": [
+     0
+    ],
+    "weight": [
+     1
+    ],
+    "normal": [
+     1
+    ],
+    "nForces": [
+     3,
+     2
+    ],
+    "nHoriz": [
+     1,
+     0
+    ],
+    "Fapp": [
+     0
+    ]
+   },
+   "vAtRelease": {
+    "tBefore": 0.9950000000000008,
+    "vBefore": 1.492500000000001,
+    "tAfter": 1.0000000000000007,
+    "vAfter": 1.500000000000001,
+    "metaTRelease": -1
+   }
+  },
+  "twoBlocks": {
+   "applied0": [
+    0
+   ],
+   "applied1": [
+    0
+   ],
+   "weight0": [
+    1
+   ],
+   "weight1": [
+    1
+   ],
+   "normal0": [
+    1
+   ],
+   "normal1": [
+    1
+   ]
+  }
+ },
+ "c4": {
+  "frames": 2400,
+  "weightArrows": [
+   1
+  ],
+  "normalArrows": [
+   1
+  ],
+  "magRelErr": 0,
+  "dotPlus1": 0,
+  "maxFnet": 0,
+  "W": 1.9620000000000002,
+  "N": 1.9620000000000002,
+  "nForces": [
+   2
+  ],
+  "v": [
+   0
+  ],
+  "kinds": [
+   "weight",
+   "normal"
+  ]
+ },
+ "c5": {
+  "F=0.3": {
+   "mumg": 0.3924000000000001,
+   "a": [
+    0
+   ],
+   "f": [
+    -0.3
+   ],
+   "vEnd": 0,
+   "sEnd": 0,
+   "aExpected": 0
+  },
+  "F=0.39": {
+   "mumg": 0.3924000000000001,
+   "a": [
+    0
+   ],
+   "f": [
+    -0.39
+   ],
+   "vEnd": 0,
+   "sEnd": 0,
+   "aExpected": 0
+  },
+  "F=0.3924": {
+   "mumg": 0.3924000000000001,
+   "a": [
+    0
+   ],
+   "f": [
+    -0.3924
+   ],
+   "vEnd": 0,
+   "sEnd": 0,
+   "aExpected": 0
+  },
+  "F=0.3925": {
+   "mumg": 0.3924000000000001,
+   "a": [
+    "5.00e-4"
+   ],
+   "f": [
+    -0.3924
+   ],
+   "vEnd": 0.0009974999999993437,
+   "sEnd": 0.000995006249999338,
+   "aExpected": 0.0004999999999999449
+  },
+  "F=0.4": {
+   "mumg": 0.3924000000000001,
+   "a": [
+    0.038
+   ],
+   "f": [
+    -0.3924
+   ],
+   "vEnd": 0.07580999999999884,
+   "sEnd": 0.07562047499999908,
+   "aExpected": 0.03799999999999998
+  }
+ },
+ "c6": {
+  "F": 1,
+  "mumg": 1,
+  "roughFrames": 2226,
+  "tRange": [
+   0.8700000000000007,
+   11.995000000000475
+  ],
+  "maxFnet": 0,
+  "vMin": 1.7320508075688767,
+  "vMax": 1.7320508075688767,
+  "vExpected": 1.7320508075688772,
+  "f": [
+   -1
+  ],
+  "Fapp": [
+   1
+  ],
+  "netArrows": [
+   0
+  ],
+  "arrowsEqualOpposite": [
+   0
+  ]
+ },
+ "c7": {
+  "extra-release-1s": {
+   "mu": 0.2,
+   "v0": 1.500000000000001,
+   "s0": 0.7499999999999986,
+   "aErr": 1.13172581511229e-16,
+   "tStop": 1.7649999999999844,
+   "tStopExpected": 1.7645259938837925,
+   "slide": 0.5733944954128466,
+   "slideExpected": 0.5733944954128449,
+   "slideRelErr": 2.904343432419405e-15,
+   "vMinAfter": 0,
+   "frictionAfterStop": [
+    0
+   ],
+   "frictionArrowsAfterStop": [
+    0
+   ],
+   "nForcesAfterStop": [
+    2
+   ]
+  },
+  "release-1.5": {
+   "mu": 0.2,
+   "v0": 1.2689999999999977,
+   "s0": 1.4422499999999998,
+   "aErr": 1.13172581511229e-16,
+   "tStop": 2.1499999999999764,
+   "tStopExpected": 2.1467889908256867,
+   "slide": 0.41038761467890383,
+   "slideExpected": 0.41038761467889756,
+   "slideRelErr": 1.528496442086873e-14,
+   "vMinAfter": 0,
+   "frictionAfterStop": [
+    0
+   ],
+   "frictionArrowsAfterStop": [
+    0
+   ],
+   "nForcesAfterStop": [
+    2
+   ]
+  },
+  "release-1.5-mu0.05": {
+   "mu": 0.05,
+   "v0": 2.0047500000000102,
+   "s0": 1.6261875000000041,
+   "aErr": 1.13172581511229e-16,
+   "tStop": 5.589999999999903,
+   "tStopExpected": 5.587155963302773,
+   "slide": 4.096862958715571,
+   "slideExpected": 4.096862958715637,
+   "slideRelErr": 1.6259606959953725e-14,
+   "vMinAfter": 0,
+   "frictionAfterStop": [
+    0
+   ],
+   "frictionArrowsAfterStop": [
+    0
+   ],
+   "nForcesAfterStop": [
+    2
+   ]
+  }
+ },
+ "c8": {
+  "masses": [
+   0.1,
+   5
+  ],
+  "aTimesM": {
+   "min": 0.9999999999999999,
+   "max": 1,
+   "relStd": 2.482534153247273e-17
+  },
+  "maxDvAfterRelease": 0,
+  "twoBlocks": {
+   "t": 0.49500000000000033,
+   "vA": 2.474999999999995,
+   "vB": 0.49500000000000033,
+   "ratio": 4.999999999999987,
+   "expected": 5,
+   "aA": [
+    5
+   ],
+   "aB": [
+    1
+   ],
+   "afterVA": [
+    2.499999999999995
+   ],
+   "afterVB": [
+    0.5000000000000003
+   ]
+  }
+ },
+ "c9": {
+  "rows": [
+   {
+    "v": 1.5,
+    "dv": 0.46423940990207585,
+    "exact": 0.4642394099020759,
+    "relErr": 1.1957440503159145e-16,
+    "stuck": 0
+   },
+   {
+    "v": 1.9474,
+    "dv": 0.3302587255424538,
+    "exact": 0.33025872554245383,
+    "relErr": 1.680838292465403e-16,
+    "stuck": 0
+   },
+   {
+    "v": 2.3947,
+    "dv": 0.25989152149388706,
+    "exact": 0.2598915214938873,
+    "relErr": 8.543741775364297e-16,
+    "stuck": 0
+   },
+   {
+    "v": 2.8421,
+    "dv": 0.21525118900954057,
+    "exact": 0.21525118900954077,
+    "relErr": 9.026153593083787e-16,
+    "stuck": 0
+   },
+   {
+    "v": 3.2895,
+    "dv": 0.1840852835247805,
+    "exact": 0.1840852835247806,
+    "relErr": 4.523269065974946e-16,
+    "stuck": 0
+   },
+   {
+    "v": 3.7368,
+    "dv": 0.16098012251444024,
+    "exact": 0.16098012251444027,
+    "relErr": 1.7241616655583782e-16,
+    "stuck": 0
+   },
+   {
+    "v": 4.1842,
+    "dv": 0.1431193706337185,
+    "exact": 0.14311937063371882,
+    "relErr": 2.3271965626508746e-15,
+    "stuck": 0
+   },
+   {
+    "v": 4.6316,
+    "dv": 0.12887714226225003,
+    "exact": 0.1288771422622501,
+    "relErr": 6.460938331286751e-16,
+    "stuck": 0
+   },
+   {
+    "v": 5.0789,
+    "dv": 0.11724338982749535,
+    "exact": 0.11724338982749494,
+    "relErr": 3.551020103112019e-15,
+    "stuck": 0
+   },
+   {
+    "v": 5.5263,
+    "dv": 0.10755521116925529,
+    "exact": 0.10755521116925504,
+    "relErr": 2.3225297763356195e-15,
+    "stuck": 0
+   },
+   {
+    "v": 5.9737,
+    "dv": 0.09935845797467403,
+    "exact": 0.0993584579746738,
+    "relErr": 2.374457067288441e-15,
+    "stuck": 0
+   },
+   {
+    "v": 6.4211,
+    "dv": 0.09233104681106277,
+    "exact": 0.0923310468110623,
+    "relErr": 5.110358885362049e-15,
+    "stuck": 0
+   },
+   {
+    "v": 6.8684,
+    "dv": 0.08623794125566399,
+    "exact": 0.08623794125566331,
+    "relErr": 7.885294948854678e-15,
+    "stuck": 0
+   },
+   {
+    "v": 7.3158,
+    "dv": 0.08090346053454255,
+    "exact": 0.08090346053454223,
+    "relErr": 3.945308611903601e-15,
+    "stuck": 0
+   },
+   {
+    "v": 7.7632,
+    "dv": 0.07619357202693648,
+    "exact": 0.07619357202693688,
+    "relErr": 5.28201836087089e-15,
+    "stuck": 0
+   },
+   {
+    "v": 8.2105,
+    "dv": 0.0720041905955225,
+    "exact": 0.0720041905955231,
+    "relErr": 8.287640910904491e-15,
+    "stuck": 0
+   },
+   {
+    "v": 8.6579,
+    "dv": 0.06825322661374027,
+    "exact": 0.06825322661373967,
+    "relErr": 8.743101320515364e-15,
+    "stuck": 0
+   },
+   {
+    "v": 9.1053,
+    "dv": 0.06487504816652478,
+    "exact": 0.06487504816652567,
+    "relErr": 1.369060131439577e-14,
+    "stuck": 0
+   },
+   {
+    "v": 9.5526,
+    "dv": 0.061816541075094475,
+    "exact": 0.06181654107509438,
+    "relErr": 1.571497093903889e-15,
+    "stuck": 0
+   },
+   {
+    "v": 10,
+    "dv": 0.059034252146323796,
+    "exact": 0.05903425214632385,
+    "relErr": 9.403210714631639e-16,
+    "stuck": 0
+   }
+  ],
+  "strictlyDecreasing": true,
+  "maxRelErr": 1.369060131439577e-14,
+  "dv5": 0.11913942014320597,
+  "dv10": 0.059034252146323796,
+  "J5": 0.11913942014320597,
+  "J10": 0.059034252146323796,
+  "dt5": 0.08096460764064284
+ },
+ "c10": {
+  "vCrit": 1.0849884792015074,
+  "rows": [
+   {
+    "tag": "data/extra-cloth-stuck",
+    "vCloth": 1,
+    "stuck": 1,
+    "phase": 1,
+    "vFinal": 1,
+    "relErrVsCloth": 0,
+    "dtPull": 0.6795786612300369,
+    "dtPullExpected": 0.6795786612300374,
+    "dv": 1,
+    "dvExpected": 1,
+    "J": 1,
+    "JExpected": 1,
+    "T": 4.679578661230037,
+    "tFirstStuck": 0.6800000000000005,
+    "vMax": 1,
+    "fAfterStuck": [
+     0
+    ],
+    "dtPullUnique": [
+     0.6795786612300369
+    ],
+    "sMinusSCloth": 7.993605777301127e-15
+   },
+   {
+    "tag": "data/extra-cloth-critical-above",
+    "vCloth": 1.2,
+    "stuck": 0,
+    "phase": 3,
+    "vFinal": 0,
+    "relErrVsCloth": 1,
+    "dtPull": 0.467115035868806,
+    "dtPullExpected": 0.4671150358688061,
+    "dv": 0.6873597752809484,
+    "dvExpected": 0.6873597752809482,
+    "J": 0.6873597752809484,
+    "JExpected": 0.6873597752809482,
+    "T": 3,
+    "tFirstStuck": null,
+    "vMax": 0.6842475000000008,
+    "fAfterStuck": null,
+    "dtPullUnique": null,
+    "sMinusSCloth": null
+   },
+   {
+    "tag": "r2/cloth-crit--5",
+    "vCloth": 0.9849884792015074,
+    "stuck": 1,
+    "phase": 1,
+    "vFinal": 0.9849884792015074,
+    "relErrVsCloth": 0,
+    "dtPull": 0.6693771520227705,
+    "dtPullExpected": 0.6693771520227709,
+    "dv": 0.9849884792015074,
+    "dvExpected": 0.9849884792015074,
+    "J": 0.9849884792015074,
+    "JExpected": 0.9849884792015074,
+    "T": 4.669377152022771,
+    "tFirstStuck": 0.6700000000000005,
+    "vMax": 0.9849884792015074,
+    "fAfterStuck": [
+     0
+    ],
+    "dtPullUnique": [
+     0.6693771520227705
+    ],
+    "sMinusSCloth": 3.758104938356155e-14
+   },
+   {
+    "tag": "r2/cloth-crit--4",
+    "vCloth": 1.0049884792015074,
+    "stuck": 1,
+    "phase": 1,
+    "vFinal": 1.0049884792015074,
+    "relErrVsCloth": 0,
+    "dtPull": 0.6829687252473712,
+    "dtPullExpected": 0.6829687252473716,
+    "dv": 1.0049884792015074,
+    "dvExpected": 1.0049884792015074,
+    "J": 1.0049884792015074,
+    "JExpected": 1.0049884792015074,
+    "T": 4.682968725247371,
+    "tFirstStuck": 0.6850000000000005,
+    "vMax": 1.0049884792015074,
+    "fAfterStuck": [
+     0
+    ],
+    "dtPullUnique": [
+     0.6829687252473712
+    ],
+    "sMinusSCloth": 1.092459456231154e-13
+   },
+   {
+    "tag": "r2/cloth-crit--3",
+    "vCloth": 1.0249884792015074,
+    "stuck": 1,
+    "phase": 1,
+    "vFinal": 1.0249884792015074,
+    "relErrVsCloth": 0,
+    "dtPull": 0.6965602984719721,
+    "dtPullExpected": 0.6965602984719724,
+    "dv": 1.0249884792015074,
+    "dvExpected": 1.0249884792015074,
+    "J": 1.0249884792015074,
+    "JExpected": 1.0249884792015074,
+    "T": 4.696560298471972,
+    "tFirstStuck": 0.7000000000000005,
+    "vMax": 1.0249884792015074,
+    "fAfterStuck": [
+     0
+    ],
+    "dtPullUnique": [
+     0.6965602984719721
+    ],
+    "sMinusSCloth": 4.75175454539567e-14
+   },
+   {
+    "tag": "r2/cloth-crit--2",
+    "vCloth": 1.0449884792015074,
+    "stuck": 1,
+    "phase": 1,
+    "vFinal": 1.0449884792015074,
+    "relErrVsCloth": 0,
+    "dtPull": 0.7101518716965731,
+    "dtPullExpected": 0.7101518716965731,
+    "dv": 1.0449884792015074,
+    "dvExpected": 1.0449884792015074,
+    "J": 1.0449884792015074,
+    "JExpected": 1.0449884792015074,
+    "T": 4.710151871696573,
+    "tFirstStuck": 0.7150000000000005,
+    "vMax": 1.0449884792015074,
+    "fAfterStuck": [
+     0
+    ],
+    "dtPullUnique": [
+     0.7101518716965731
+    ],
+    "sMinusSCloth": 1.0746958878371515e-13
+   },
+   {
+    "tag": "r2/cloth-crit--1",
+    "vCloth": 1.0649884792015074,
+    "stuck": 1,
+    "phase": 1,
+    "vFinal": 1.0649884792015074,
+    "relErrVsCloth": 0,
+    "dtPull": 0.723743444921174,
+    "dtPullExpected": 0.7237434449211739,
+    "dv": 1.0649884792015074,
+    "dvExpected": 1.0649884792015074,
+    "J": 1.0649884792015074,
+    "JExpected": 1.0649884792015074,
+    "T": 4.723743444921174,
+    "tFirstStuck": 0.7250000000000005,
+    "vMax": 1.0649884792015074,
+    "fAfterStuck": [
+     0
+    ],
+    "dtPullUnique": [
+     0.723743444921174
+    ],
+    "sMinusSCloth": 3.4139358007223564e-14
+   },
+   {
+    "tag": "r2/cloth-crit-1",
+    "vCloth": 1.1049884792015074,
+    "stuck": 0,
+    "phase": 3,
+    "vFinal": 0,
+    "relErrVsCloth": 1,
+    "dtPull": 0.6087020623920714,
+    "dtPullExpected": 0.60870206239207,
+    "dv": 0.8957050848099337,
+    "dvExpected": 0.895705084809931,
+    "J": 0.8957050848099337,
+    "JExpected": 0.895705084809931,
+    "T": 3,
+    "tFirstStuck": null,
+    "vMax": 0.8931585312231769,
+    "fAfterStuck": null,
+    "dtPullUnique": null,
+    "sMinusSCloth": null
+   },
+   {
+    "tag": "r2/cloth-crit-2",
+    "vCloth": 1.1249884792015075,
+    "stuck": 0,
+    "phase": 3,
+    "vFinal": 0,
+    "relErrVsCloth": 1,
+    "dtPull": 0.5624659559665107,
+    "dtPullExpected": 0.5624659559665101,
+    "dv": 0.827668654204721,
+    "dvExpected": 0.8276686542047196,
+    "J": 0.827668654204721,
+    "JExpected": 0.8276686542047196,
+    "T": 3,
+    "tFirstStuck": null,
+    "vMax": 0.8240400000000011,
+    "fAfterStuck": null,
+    "dtPullUnique": null,
+    "sMinusSCloth": null
+   },
+   {
+    "tag": "r2/cloth-crit-3",
+    "vCloth": 1.1449884792015075,
+    "stuck": 0,
+    "phase": 3,
+    "vFinal": 0,
+    "relErrVsCloth": 1,
+    "dtPull": 0.5295301024798718,
+    "dtPullExpected": 0.5295301024798716,
+    "dv": 0.7792035457991318,
+    "dvExpected": 0.7792035457991311,
+    "J": 0.7792035457991318,
+    "JExpected": 0.7792035457991311,
+    "T": 3,
+    "tFirstStuck": null,
+    "vMax": 0.7782816068646395,
+    "fAfterStuck": null,
+    "dtPullUnique": null,
+    "sMinusSCloth": null
+   },
+   {
+    "tag": "r2/cloth-crit-4",
+    "vCloth": 1.1649884792015075,
+    "stuck": 0,
+    "phase": 3,
+    "vFinal": 0,
+    "relErrVsCloth": 1,
+    "dtPull": 0.5033819795295535,
+    "dtPullExpected": 0.5033819795295532,
+    "dv": 0.7407265828777384,
+    "dvExpected": 0.7407265828777376,
+    "J": 0.7407265828777384,
+    "JExpected": 0.7407265828777376,
+    "T": 3,
+    "tFirstStuck": null,
+    "vMax": 0.7375520267147218,
+    "fAfterStuck": null,
+    "dtPullUnique": null,
+    "sMinusSCloth": null
+   },
+   {
+    "tag": "r2/cloth-crit-5",
+    "vCloth": 1.1849884792015075,
+    "stuck": 0,
+    "phase": 3,
+    "vFinal": 0,
+    "relErrVsCloth": 1,
+    "dtPull": 0.4815125567782122,
+    "dtPullExpected": 0.48151255677821225,
+    "dv": 0.7085457272991397,
+    "dvExpected": 0.7085457272991393,
+    "J": 0.7085457272991397,
+    "JExpected": 0.7085457272991393,
+    "T": 3,
+    "tFirstStuck": null,
+    "vMax": 0.7063200000000008,
+    "fAfterStuck": null,
+    "dtPullUnique": null,
+    "sMinusSCloth": null
+   }
+  ]
+ },
+ "c11": {
+  "dvRelStd": 0,
+  "dvRange": [
+   0.11913942014320597,
+   0.11913942014320597
+  ],
+  "maxAOnCloth": 1.4715000000000003,
+  "muClothG": 1.4715,
+  "maxAOnTable": 1.9620000000000002,
+  "vMax": 0.11772000000000003,
+  "vCloth": 5,
+  "WOverM": [
+   9.81
+  ]
+ },
+ "c12": {
+  "scenario-cloth-impulse": {
+   "m": 1,
+   "f": 1.4715,
+   "stuck": 0,
+   "dtPull": 0.08096460764064284,
+   "dv": 0.11913942014320597,
+   "J": 0.11913942014320597,
+   "fDt": 0.11913942014320594,
+   "mDv": 0.11913942014320597,
+   "errJvsFdt": 2.3296718736977753e-16,
+   "errJvsMdv": 0
+  },
+  "extra-cloth-critical-above": {
+   "m": 1,
+   "f": 1.4715,
+   "stuck": 0,
+   "dtPull": 0.467115035868806,
+   "dv": 0.6873597752809484,
+   "J": 0.6873597752809484,
+   "fDt": 0.687359775280948,
+   "mDv": 0.6873597752809484,
+   "errJvsFdt": 4.84559788578566e-16,
+   "errJvsMdv": 0
+  },
+  "extra-cloth-stuck": {
+   "m": 1,
+   "f": 1.4715,
+   "stuck": 1,
+   "dtPull": 0.6795786612300369,
+   "dv": 1,
+   "J": 1,
+   "fDt": 0.9999999999999992,
+   "mDv": 1,
+   "errJvsFdt": 7.771561172376096e-16,
+   "errJvsMdv": 0
+  },
+  "random-4": {
+   "m": 1,
+   "f": 2.693064220572386,
+   "stuck": 0,
+   "dtPull": 0.10815576415718699,
+   "dv": 0.2912704187003854,
+   "J": 0.2912704187003854,
+   "fDt": 0.29127041870038556,
+   "mDv": 0.2912704187003854,
+   "errJvsFdt": 5.717485985594634e-16,
+   "errJvsMdv": 0
+  },
+  "cloth-v-19": {
+   "m": 1,
+   "f": 1.4715,
+   "stuck": 0,
+   "dtPull": 0.04011841804031518,
+   "dv": 0.059034252146323796,
+   "J": 0.059034252146323796,
+   "fDt": 0.05903425214632378,
+   "mDv": 0.059034252146323796,
+   "errJvsFdt": 2.350802678657912e-16,
+   "errJvsMdv": 0
+  },
+  "cloth-m-19": {
+   "m": 5,
+   "f": 7.3575,
+   "stuck": 0,
+   "dtPull": 0.08096460764064284,
+   "dv": 0.11913942014320597,
+   "J": 0.5956971007160299,
+   "fDt": 0.5956971007160297,
+   "mDv": 0.5956971007160299,
+   "errJvsFdt": 3.7274749979164404e-16,
+   "errJvsMdv": 0
+  },
+  "edge-cloth-fast": {
+   "m": 1,
+   "f": 5.886,
+   "stuck": 0,
+   "dtPull": 0.010029604510078794,
+   "dv": 0.05903425214632379,
+   "J": 0.05903425214632379,
+   "fDt": 0.05903425214632378,
+   "mDv": 0.05903425214632379,
+   "errJvsFdt": 1.175401339328956e-16,
+   "errJvsMdv": 0
+  }
+ },
+ "c13": {
+  "bus-mu0.31": {
+   "muG": 3.0411,
+   "aBus": 3,
+   "maxAbsSRel": 0,
+   "maxFminusMa": 0,
+   "nHoriz": [
+    1,
+    0
+   ],
+   "Fhand": [
+    0
+   ],
+   "sliding": [
+    0
+   ]
+  },
+  "bus-mu0.4": {
+   "muG": 3.9240000000000004,
+   "aBus": 3,
+   "maxAbsSRel": 0,
+   "maxFminusMa": 0,
+   "nHoriz": [
+    1,
+    0
+   ],
+   "Fhand": [
+    0
+   ],
+   "sliding": [
+    0
+   ]
+  },
+  "scenario-bus-brake": {
+   "muG": 1.9620000000000002,
+   "aBus": 3,
+   "slidingFrames": 2040,
+   "slidingAtT0": 1,
+   "maxAbsAminusMuG": 2.220446049250313e-16,
+   "minVminusVbusDuringBrake": 0.0017299999998598992,
+   "slidingStops": [
+    {
+     "t": 5.0999999999999135,
+     "v": 10,
+     "vBus": 10,
+     "sRel": -8.817533129458791
+    },
+    {
+     "t": 12.435000000000542,
+     "v": 0,
+     "vBus": 0,
+     "sRel": 0
+    }
+   ],
+   "tSlideStopExpected": [
+    5.09683995922528,
+    12.430173292558614
+   ],
+   "nHoriz": [
+    1,
+    0
+   ],
+   "nForces": [
+    3,
+    2
+   ],
+   "sRelMin": -8.817533129458795,
+   "sRelMinExpected": -8.81753312945973,
+   "sRelFinal": 0,
+   "brakeFrictionSign": [
+    -1
+   ],
+   "brakeFramesWithForwardHorizontalArrow": 0,
+   "kindsOnPassenger": [
+    "weight",
+    "normal",
+    "friction",
+    "net",
+    "acceleration",
+    "velocity"
+   ]
+  },
+  "extra-bus-handrail": {
+   "cap": 117.72,
+   "maxAbsSRel": 0,
+   "maxAbsVminusVbus": 0,
+   "nHoriz": [
+    2,
+    0
+   ],
+   "FhandValues": [
+    62.28,
+    0,
+    -62.28
+   ],
+   "fValues": [
+    117.72,
+    0,
+    -117.72
+   ],
+   "sumCheck": [
+    0
+   ],
+   "fWithinCap": true,
+   "fAtCapWhenAccel": [
+    117.72
+   ],
+   "tensionArrowsWhenA": [
+    1
+   ],
+   "tensionArrowsCruise": [
+    0
+   ],
+   "tensionLabel": [
+    "F/applied"
+   ],
+   "sliding": [
+    0
+   ],
+   "aEqualsBus": 0
+  },
+  "extra-bus-mu0": {
+   "mu": 0,
+   "vPassenger": [
+    0
+   ],
+   "sPassenger": [
+    0
+   ],
+   "frictionArrows": [
+    0
+   ],
+   "horizArrows": [
+    0
+   ],
+   "nHoriz": [
+    0
+   ],
+   "sRelEnd": -73.33333333333334,
+   "sBusEnd": 73.33333333333334,
+   "sBusExpected": 73.33333333333334
+  },
+  "bus-mu0.4-start": {
+   "frictionSign": [
+    1
+   ],
+   "a": [
+    3
+   ],
+   "sRel": [
+    0
+   ]
+  },
+  "slidingFlag": {
+   "first": [
+    [
+     0,
+     1,
+     1.962
+    ],
+    [
+     0.005,
+     1,
+     1.962
+    ],
+    [
+     0.01,
+     1,
+     1.962
+    ]
+   ],
+   "atCatchStart": [
+    [
+     5.0549999999999145,
+     1,
+     -0.08209
+    ],
+    [
+     5.059999999999914,
+     1,
+     -0.07228
+    ],
+    [
+     5.064999999999914,
+     1,
+     -0.06247
+    ],
+    [
+     5.069999999999914,
+     1,
+     -0.05266
+    ],
+    [
+     5.074999999999914,
+     1,
+     -0.04285
+    ],
+    [
+     5.079999999999914,
+     1,
+     -0.03304
+    ],
+    [
+     5.084999999999914,
+     1,
+     -0.02323
+    ],
+    [
+     5.089999999999914,
+     1,
+     -0.01342
+    ],
+    [
+     5.094999999999914,
+     1,
+     -0.00361
+    ],
+    [
+     5.0999999999999135,
+     0,
+     0
+    ],
+    [
+     5.104999999999913,
+     0,
+     0
+    ],
+    [
+     5.109999999999913,
+     0,
+     0
+    ],
+    [
+     5.114999999999913,
+     0,
+     0
+    ],
+    [
+     5.119999999999913,
+     0,
+     0
+    ],
+    [
+     5.124999999999913,
+     0,
+     0
+    ],
+    [
+     5.129999999999913,
+     0,
+     0
+    ],
+    [
+     5.134999999999913,
+     0,
+     0
+    ],
+    [
+     5.139999999999913,
+     0,
+     0
+    ],
+    [
+     5.1449999999999125,
+     0,
+     0
+    ],
+    [
+     5.149999999999912,
+     0,
+     0
+    ]
+   ]
+  }
+ },
+ "c14": {
+  "runs": 136,
+  "liveFrames": 168920,
+  "kinds": [
+   "weight",
+   "normal",
+   "tension",
+   "net",
+   "acceleration",
+   "velocity",
+   "friction"
+  ],
+  "labels": [
+   "W",
+   "R",
+   "F",
+   "ΣF",
+   "a",
+   "v",
+   "f"
+  ],
+  "layers": [
+   "weight",
+   "normal",
+   "applied",
+   "net",
+   "acceleration",
+   "velocity",
+   "friction"
+  ],
+  "busNoHandrailMaxNHoriz": 1
+ },
+ "c15": {
+  "default": {
+   "pairsChecked": 2397,
+   "maxAbsErr": 6.678685382510707e-17,
+   "keScale": 0.22500000000000037,
+   "relErr": 2.9683046144491984e-16
+  },
+  "scenario-stop-is-friction": {
+   "pairsChecked": 2397,
+   "maxAbsErr": 6.678685382510707e-17,
+   "keScale": 0.22500000000000037,
+   "relErr": 2.9683046144491984e-16
+  },
+  "extra-release-1s": {
+   "pairsChecked": 2397,
+   "maxAbsErr": 8.543513119185775e-17,
+   "keScale": 0.22500000000000037,
+   "relErr": 3.7971169418603384e-16
+  },
+  "release-1.5": {
+   "pairsChecked": 2396,
+   "maxAbsErr": 7.177418381854039e-17,
+   "keScale": 0.22500000000000037,
+   "relErr": 3.189963725268457e-16
+  },
+  "release-1.5-mu0.05": {
+   "pairsChecked": 2396,
+   "maxAbsErr": 7.090682208055199e-17,
+   "keScale": 0.40190225625000414,
+   "relErr": 1.7642802690922007e-16
+  },
+  "scenario-constant-v-zero-net": {
+   "pairsChecked": 2398,
+   "maxAbsErr": 1.1102230246251565e-16,
+   "keScale": 0.7499999999999996,
+   "relErr": 1.4802973661668763e-16
+  },
+  "edge-table-max": {
+   "pairsChecked": 2399,
+   "maxAbsErr": 2.05773176276125e-11,
+   "keScale": 63667.35891846675,
+   "relErr": 3.2320042761572824e-16
+  },
+  "random-0": {
+   "pairsChecked": 2399,
+   "maxAbsErr": 0,
+   "keScale": 0,
+   "relErr": 0
+  },
+  "noFrictionKEdrift": 0,
+  "cloth": {
+   "KEgained": 0.007097100716029676,
+   "workByCloth": 0.007781052912008394,
+   "slide": 0.0036172786524106427,
+   "slideExpected": 0.0036172786524106396,
+   "workOnTable": 0.007097100716029682
+  },
+  "bus": {
+   "maxAbsErr": 1.8496315590255108e-12,
+   "keScale": 3000,
+   "relErr": 6.165438530085036e-16
+  }
+ },
+ "c16": {
+  "runs": 119,
+  "netSumErr": 0,
+  "aVsFnet": 0,
+  "weightErr": 0,
+  "normalErr": 0,
+  "frictionErr": 0,
+  "appliedErr": 0,
+  "velErr": 1.2073675392798577e-15,
+  "accErr": 0,
+  "presence": 1,
+  "frictionDir": 0,
+  "scaleBad": 0,
+  "badKind": 0,
+  "pseudo": 0,
+  "offAxis": 0,
+  "laneBad": 0,
+  "appliedWhileZero": 0,
+  "worstRun": {
+   "velErr": "edge-space-max",
+   "presence:edge-space-max": {
+    "t": 0.2000000000000001,
+    "z": 1,
+    "k": "velocity",
+    "val": 0,
+    "n": 1
+   }
+  }
+ },
+ "c17": {
+  "weightDir": [
+   0,
+   -1,
+   0
+  ],
+  "velocityDirWhenMovingRight": [
+   1,
+   0,
+   0
+  ],
+  "lanesZ": [
+   0,
+   1
+  ],
+  "laneOfSecondBlock": 1,
+  "busBrakeFrictionDir": [
+   -1,
+   0,
+   0
+  ]
+ }
+}

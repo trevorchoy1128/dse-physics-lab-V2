@@ -5,5 +5,6 @@ export const REGISTRY: Record<string, () => Promise<SimModule<unknown, Record<st
   "example-fall": () => import("./example-fall").then(m => m.default as unknown as SimModule<unknown, Record<string, unknown>>),
   "motion-graphs-synced-with-real-motion": () => import("./motion-graphs-synced-with-real-motion").then(m => m.default as unknown as SimModule<unknown, Record<string, unknown>>),
   "projectile-motion-independence-of-components": () => import("./projectile-motion-independence-of-components").then(m => m.default as unknown as SimModule<unknown, Record<string, unknown>>),
+  "inertia-and-newtons-first-law": () => import("./inertia-and-newtons-first-law").then(m => m.default as unknown as SimModule<unknown, Record<string, unknown>>),
 };
 export const hasSim = (id: string) => id in REGISTRY;

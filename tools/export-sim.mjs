@@ -23,7 +23,8 @@ import { plan } from "${SRC}/sims/${simId}/plan";
 import { controls, defaults } from "${SRC}/sims/${simId}/controls";
 import { scenarios } from "${SRC}/sims/${simId}/scenarios";
 import { layers } from "${SRC}/sims/${simId}/charts";
-const allLayers = Object.fromEntries(layers.map(l => [l.key, true]));
+// 「只看…」類圖層（key 以 Only 結尾，如 netOnly）是排他開關，開啟會隱藏其他箭嘴；導出時關閉（#024 核數員第 1 輪）
+const allLayers = Object.fromEntries(layers.map(l => [l.key, !/Only$/.test(l.key)]));
 let seed = 12345; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const runs = [
   { name: "default", params: { ...defaults } },

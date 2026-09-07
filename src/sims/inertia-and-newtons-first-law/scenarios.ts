@@ -1,0 +1,95 @@
+import type { Scenario } from "@/shell/types";
+import type { P } from "./model";
+
+// 規格 13_024 §3「常見迷思與模擬器如何直接反駁」表逐行一個（M1–M10，M2′ 併入 stop-not-inertia）。
+// 先寫學生會怎樣想，再把參數設到能推翻它，再寫看甚麼、會見到甚麼。
+export const scenarios: Scenario<P>[] = [
+  {
+    key: "moving-needs-force",
+    misconception: { zh: "物體在動，就一定有一支力在推住它", en: "If it is moving, something must be pushing it" },
+    params: { scene: "table", m: 0.2, F: 0.3, mu1: 0, mu2: 0, push: "on" },
+    watch: { zh: "方塊開始動了就按「已放手」。看紫色施力箭嘴、綠色速度箭嘴，和「作用於方塊的力」讀數", en: "Once the block is moving, press “Released”. Watch the purple force arrow, the green velocity arrow and the “forces on the block” readout" },
+    expect: { zh: "施力箭嘴即時消失，速度箭嘴長度完全不變；力由 3 支變 2 支，水平方向 0 支。這正是 2024 卷一乙部 Q3(b) 的正確受力圖", en: "The force arrow vanishes at once; the velocity arrow keeps its length. Forces drop from 3 to 2, none horizontal. That is the correct diagram for DSE 2024 1B Q3(b)" },
+    layers: ["applied", "velocity", "weight", "normal", "net"],
+  },
+  {
+    key: "stop-is-friction",
+    misconception: { zh: "沒有力，物體就會慢慢停下來；停下來是因為力用完了", en: "Without a force an object slows down: the force is used up" },
+    params: { scene: "table", m: 0.2, F: 0.3, mu1: 0, mu2: 0.2, push: "on" },
+    watch: { zh: "方塊過了 B 點便按「已放手」，看橙色摩擦箭嘴和 v–t 圖。再把「後段桌面的摩擦係數」拖到 0，重播並再放手", en: "Press “Released” once the block passes B; watch the orange friction arrow and the v–t graph. Then drag the friction coefficient beyond B to 0, replay and release again" },
+    expect: { zh: "有摩擦：橙色箭嘴指向後，方塊減速至停，v–t 線向下斜。μ = 0：沒有橙色箭嘴，方塊永遠等速前進，v–t 線水平。停下來是摩擦造成的", en: "With friction the orange arrow points backwards and the block slows to rest. With μ = 0 there is no orange arrow and the block runs on for ever with a level v–t line. Friction is what stops it" },
+    layers: ["applied", "friction", "velocity", "net"],
+  },
+  {
+    key: "stop-not-inertia",
+    misconception: { zh: "物體慢慢停下來是因為慣性", en: "Inertia is what makes a moving object stop" },
+    params: { scene: "space", trio: true, engine: "off", Fe: 0 },
+    watch: { zh: "三艘飛船都關了引擎，沒有任何力。看它們的速度讀數和 v–t 圖", en: "All three craft have their engines off and no force acts. Watch their velocity readouts and the v–t graph" },
+    expect: { zh: "沒有摩擦，慣性令每艘飛船一直保持原速：靜止的仍靜止，動的仍等速。慣性令物體保持運動狀態，摩擦才令它停", en: "With no friction, inertia keeps every craft at its original velocity. Inertia keeps the state of motion; friction is what stops things" },
+    layers: ["velocity"],
+  },
+  {
+    key: "constant-v-zero-net",
+    misconception: { zh: "有推力物體就一定加速；勻速一定要有淨力", en: "A pushed object must accelerate; uniform motion needs a net force" },
+    params: { scene: "table", m: 0.5, F: 1, mu1: 0, mu2: 0.2, g: 10, push: "on" },
+    watch: { zh: "不要放手。方塊過了 B 點後，看紫色施力箭嘴與橙色摩擦箭嘴的長度、淨力讀數和 v–t 圖", en: "Keep pushing. After the block passes B, compare the purple applied arrow with the orange friction arrow; read the net force and the v–t graph" },
+    expect: { zh: "F = μmg = 1.00 N：兩支箭嘴等長反向，淨力 0 N，方塊以 1.73 m s⁻¹ 勻速前進。有力，但沒有淨力", en: "F = μmg = 1.00 N: the two arrows are equal and opposite, net force 0 N, the block moves at a steady 1.73 m s⁻¹. There is a force, but no net force" },
+    layers: ["applied", "friction", "net", "velocity"],
+  },
+  {
+    key: "rest-not-no-force",
+    misconception: { zh: "靜止即是沒有力", en: "At rest means no force" },
+    params: { scene: "table", m: 0.2, F: 0.3, mu1: 0.2, mu2: 0.2, push: "off" },
+    watch: { zh: "沒有施力，方塊靜止不動。看紅色重量箭嘴、藍色法向反作用力箭嘴和淨力讀數；然後開「只看淨力」", en: "No push; the block stays at rest. Look at the red weight arrow, the blue normal reaction arrow and the net-force readout; then switch on “Net force only”" },
+    expect: { zh: "淨力 0 N，但方塊受兩支力：重量與法向反作用力等長反向。「只看淨力」時畫面一支箭嘴都沒有——那正是學生腦中的錯誤圖像；切換回來才見到兩支力", en: "Net force is 0 N, yet two forces act: weight and normal reaction, equal and opposite. With “Net force only” the picture is empty — the wrong mental image; switch back to see the two forces" },
+    layers: ["weight", "normal", "applied", "friction", "net"],
+  },
+  {
+    key: "bus-brake",
+    misconception: { zh: "巴士急煞時有一股力把乘客推向前", en: "When a bus brakes, a force throws the passenger forwards" },
+    params: { scene: "bus", aBus: 3, vBus: 10, muBus: 0.2, handrail: false },
+    watch: { zh: "等巴士急煞（約 7.3 s 後）。看乘客身上的箭嘴，以及 v–t 圖上巴士與乘客兩條線", en: "Wait for the bus to brake (after about 7.3 s). Watch the arrows on the passenger and the two lines on the v–t graph" },
+    expect: { zh: "乘客身上只有向後的橙色摩擦，沒有任何向前的箭嘴。乘客的 v–t 線保持向前，巴士的線向下斜——「向前衝」只是巴士慢了而乘客沒有", en: "Only a backward orange friction arrow acts on the passenger; nothing pushes forwards. The passenger's v–t line stays level while the bus's falls — the “lurch” is the bus slowing while the passenger does not" },
+    layers: ["friction", "velocity", "net"],
+  },
+  {
+    key: "bus-start",
+    misconception: { zh: "巴士起步時乘客被拋向後", en: "When a bus starts, the passenger is thrown backwards" },
+    params: { scene: "bus", aBus: 3, vBus: 10, muBus: 0, handrail: false },
+    watch: { zh: "摩擦係數已設為 0。看巴士起步時乘客的位置和速度讀數；再把摩擦係數調到 0.4 重播", en: "Friction is set to 0. Watch the passenger's position and velocity as the bus starts; then set friction to 0.4 and replay" },
+    expect: { zh: "乘客根本沒動（v = 0），是地板從腳下向前走。μ = 0.4 時只有向前的橙色摩擦把乘客帶動，沒有任何向後的箭嘴", en: "The passenger does not move at all (v = 0); the floor moves forwards underneath. With μ = 0.4 only a forward orange friction force carries the passenger; nothing points backwards" },
+    layers: ["friction", "velocity", "net"],
+  },
+  {
+    key: "heavy-not-farther",
+    misconception: { zh: "重的物體慣性大，一旦推動了也難停，所以重的物體滑得比較遠", en: "A heavier object has more inertia, so once moving it slides further" },
+    params: { scene: "table", m: 0.2, F: 1, mu1: 0, mu2: 0, second: true, mB: 1, push: "on" },
+    watch: { zh: "兩個方塊受同一推力：看加速階段誰快；約 0.5 s 後按「已放手」，看兩支速度箭嘴", en: "Both blocks get the same push: see which accelerates faster; after about 0.5 s press “Released” and watch the two velocity arrows" },
+    expect: { zh: "重的（1 kg）加速慢五倍；放手後兩者速度各自保持不變，誰也不會「滑得更遠」。慣性大只是難改變速度", en: "The 1 kg block accelerates five times more slowly; after release each keeps its own velocity — neither slides “further”. More inertia only means harder to change velocity" },
+    layers: ["applied", "velocity", "net"],
+  },
+  {
+    key: "inertia-not-speed",
+    misconception: { zh: "慣性與速度有關；靜止的物體沒有慣性", en: "Inertia depends on speed; an object at rest has none" },
+    params: { scene: "space", trio: true, engine: "on", Fe: 2, mShip: 1 },
+    watch: { zh: "三艘飛船（靜止、向右、向左）同時開着引擎。看三個速度讀數怎樣變；然後把引擎「關」", en: "Three craft (at rest, moving right, moving left) fire their engines together. Watch the three velocity readouts; then switch the engine off" },
+    expect: { zh: "開引擎時三艘的速度變化完全一樣（Δv 只看 F 與 m）；關引擎後三艘各自保持當時的速度。慣性只由質量決定，與速度無關", en: "With engines on, all three change velocity identically (Δv depends only on F and m); with engines off each keeps its current velocity. Inertia depends on mass alone" },
+    layers: ["applied", "velocity"],
+  },
+  {
+    key: "cloth-impulse",
+    misconception: { zh: "桌布抽得快，物件留在原地是因為它「來不及反應」", en: "Pull the cloth fast and the object “has no time to react”" },
+    params: { scene: "cloth", vCloth: 5, muCloth: 0.15, muTable: 0.2, L: 0.4 },
+    watch: { zh: "看衝量條和讀數 Δt、J、Δv。把抽出速率改為 10 再播；再改為 1.0 播一次", en: "Watch the impulse bar and the Δt, J and Δv readouts. Replay at 10 m s⁻¹, then at 1.0 m s⁻¹" },
+    expect: { zh: "抽得越快，摩擦作用時間 Δt 越短，衝量 J = fΔt 越小，Δv 越小（5 → 10 m s⁻¹：0.119 → 0.059 m s⁻¹）。1.0 m s⁻¹ 時物件追上桌布，一起走——桌布抽不出", en: "The faster the pull, the shorter the friction time Δt, the smaller the impulse J = fΔt and Δv (5 → 10 m s⁻¹: 0.119 → 0.059 m s⁻¹). At 1.0 m s⁻¹ the object catches up with the cloth and goes with it — the cloth cannot be pulled out" },
+    layers: ["friction", "velocity", "net"],
+  },
+  {
+    key: "engine-off",
+    misconception: { zh: "太空中沒有重力，所以太空船要開着引擎才能前進", en: "In space a craft needs its engine on to keep moving" },
+    params: { scene: "space", trio: false, engine: "on", Fe: 2, mShip: 1 },
+    watch: { zh: "飛船正在加速。按引擎「關」，看速度讀數、燃料消耗和 v–t 圖", en: "The craft is accelerating. Switch the engine off and watch the velocity readout, fuel consumption and the v–t graph" },
+    expect: { zh: "關引擎後速度讀數紋絲不動，燃料消耗歸零，飛船繼續前進；只有開引擎時才有加速度", en: "With the engine off the velocity does not change, fuel use drops to zero and the craft keeps going; only with the engine on is there acceleration" },
+    layers: ["applied", "velocity", "acceleration"],
+  },
+];

@@ -42,7 +42,9 @@ if (manifest.spec) {
   const spec = readFileSync(join(ROOT, manifest.spec.doc), "utf8");
   const sec = spec.split(new RegExp(`^### ${manifest.spec.section}`, "m"))[1] ?? "";
   const m = sec.match(/#### 學生應該看見的現象\n([\s\S]*?)(?=\n####|\n---)/);
-  phenomena = m ? m[1].trim() : "";
+  // 獨立規格檔（如 13_024）以 H1 為題、「## N　學生應該看見的現象」為節：整份檔案內找
+  const m2 = m ? null : spec.match(/^## \d+　學生應該看見的現象\n([\s\S]*?)(?=\n## |\n---)/m);
+  phenomena = m ? m[1].trim() : m2 ? m2[1].trim() : "";
 }
 
 // 截圖（base64 內嵌）
@@ -126,9 +128,9 @@ ${existsSync(join(dir, "escalation.md")) ? `<section>
 <div class="report">${mdToHtml(readFileSync(join(dir, "escalation.md"), "utf8").replace(/^# .*\n/, ""))}</div>
 </section>` : ""}
 
-${md("escalation.md") ? `<section>
-<h2>驗收歷程與升級報告</h2>
-<div class="report">${mdToHtml(md("escalation.md").replace(/^# [^\n]*\n/, ""))}</div>
+${md("rounds.md") ? `<section>
+<h2>驗收歷程（閘 2 各輪）</h2>
+<div class="report">${mdToHtml(md("rounds.md").replace(/^# [^\n]*\n/, ""))}</div>
 </section>` : ""}
 
 <section>

@@ -1,0 +1,82 @@
+[
+ {
+  "file": "scenario-10-end.png",
+  "fillPx": 57,
+  "fillX": [
+   31,
+   87
+  ],
+  "fillY": 303,
+  "frameX": [
+   30,
+   548
+  ],
+  "frameY": 303,
+  "frameDarkCount": 462,
+  "inner": 517,
+  "ratio": 0.1102514506769826,
+  "expect": 0.1098070369260327,
+  "expectPx": 56.77023809075891,
+  "imgW": 1440
+ },
+ {
+  "file": "extra-cloth-t0.04.png",
+  "fillPx": 28,
+  "fillX": [
+   31,
+   58
+  ],
+  "fillY": 134,
+  "frameX": [
+   30,
+   548
+  ],
+  "frameY": 134,
+  "frameDarkCount": 491,
+  "inner": 517,
+  "ratio": 0.05415860735009671,
+  "expect": 0.05424942396007538,
+  "expectPx": 28.046952187358972,
+  "imgW": 1440
+ },
+ {
+  "file": "extra-cloth-v10.png",
+  "fillPx": 28,
+  "fillX": [
+   31,
+   58
+  ],
+  "fillY": 134,
+  "frameX": [
+   30,
+   548
+  ],
+  "frameY": 134,
+  "frameDarkCount": 491,
+  "inner": 517,
+  "ratio": 0.05415860735009671,
+  "expect": 0.054410070827153885,
+  "expectPx": 28.130006617638557,
+  "imgW": 1440
+ },
+ {
+  "file": "extra-cloth-v1-stuck.png",
+  "fillPx": 476,
+  "fillX": [
+   31,
+   506
+  ],
+  "fillY": 134,
+  "frameX": [
+   30,
+   548
+  ],
+  "frameY": 134,
+  "frameDarkCount": 43,
+  "inner": 517,
+  "ratio": 0.9206963249516441,
+  "expect": 0.9216687726822184,
+  "expectPx": 476.5027554767069,
+  "imgW": 1440
+ }
+]
