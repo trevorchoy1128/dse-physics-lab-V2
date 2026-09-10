@@ -10,6 +10,7 @@ HKDSE 物理 3D 實驗模擬器網站。中文為主（繁體、香港用語）�
 - `src/physics/` — `rk4`、`semiImplicitEuler`、`vec`、考評局常數
 - `src/i18n/` — `lang.ts` 中/EN、`glossary.gen.ts`（由 CSV 生成，`npm run build:glossary`）、`term()` 查不到即拋錯、`ui.ts`
 - `src/sims/<id>/` — 一個模擬；`registry.ts` 登記；`example-fall` 是共用層範本
+- `src/games/` — 遊戲（首頁「遊戲」部分、`#/games`、`#/game/<id>`）：`registry.ts` 登記；每個遊戲一個資料夾，邏輯（`game.ts`）與畫面（`*.tsx`）分開，關卡必須有窮舉測試證明有解。第一個是 `projectile-siege` 拋體攻城，物理與 #033 一致
 - 指令：`npm run dev`（5173）、`npm test`、`npm run termlint`、`npm run build:catalogue`、`npm run export -- <simId>`
 - 瀏覽器面板：`.claude/launch.json` 的 `dev`
 
@@ -21,6 +22,7 @@ HKDSE 物理 3D 實驗模擬器網站。中文為主（繁體、香港用語）�
   - `11_Book2_難點與3D模擬器規格.md` — 必修 II 物理規格（14 個模擬器）。其他冊的規格會陸續加入，檔名同款
   - `PhyGlossary_2020.pdf` — 教育局詞彙原件（pdftotext 抽不到中文欄，用 CSV）
 - `content/misconceptions-template.md` — 老師整理易錯概念的格式
+- `content/game-ideas.md` — 物理遊戲構思庫。**任何 session 想到新遊戲先寫入這裏**（單元、玩法、物理要點、常見錯誤、狀態），做好的在 `src/games/registry.ts` 登記並改狀態。不要刪別人的構思。
 - `site/index.html` — 首頁原型（單檔 HTML，之後移植到正式項目）
 - `tools/` — Node 工具：`term.mjs` 查術語、`termlint.mjs` 掃自創術語、`build-catalogue.mjs` 生成目錄
 - `.claude/skills/new-sim/` — 建立一個模擬的標準流程
@@ -41,6 +43,7 @@ HKDSE 物理 3D 實驗模擬器網站。中文為主（繁體、香港用語）�
 - 每個模擬必備：① 暫停與逐格 ② 每支向量可獨立開關 ③ 即時數值面板。
 - 反差原則：每個模擬都要有一組參數令學生的錯誤預測與模擬結果明顯不同。先寫下「學生會預測甚麼」。
 - 規格沒寫的物理內容不要靜靜加入；要加就標「規格以外，待老師定奪」。
+- **摩擦不用摩擦係數 μ 作控制項**（老師 2026-09-11：DSE 沒有教 μ）。學生直接控制摩擦力 f（單位 N）；模型內 μ 只可作內部換算，不可出現在滑桿、讀數或圖例。已建的模擬（#024 情景 1）要改。
 
 ## 畫面呈現（全站規則，老師 2026-09-06 定，每個模擬都要遵守，不用每次重講）
 - **要 colorful，吸引學生**：天空／地面／路面等場景有顏色，各單元用自己的主色（src/app/units.tsx 的 UNIT_COLORS，CSS 變數 --unit），線圖各有色系與標題色條，按鈕與「試試看」用單元色。物體避開向量顏色編碼的紅、藍、橙、紫、綠。向量顏色本身不可改。

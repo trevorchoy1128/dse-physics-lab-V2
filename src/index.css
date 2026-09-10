@@ -205,3 +205,65 @@ i { font-style: italic; font-family: "Noto Serif TC", "Times New Roman", serif; 
 .unit-head .icon, .unit-head .code { color: var(--unit, var(--accent)); }
 .chip-ch[aria-pressed="true"] { background: var(--unit, var(--accent)); border-color: var(--unit, var(--accent)); }
 .card .top .ch { color: var(--unit, var(--accent)); }
+
+/* ===== 遊戲（首頁部分、#/games、遊戲頁） ===== */
+.map-label .map-link { margin-left: auto; font-family: "Noto Sans TC", sans-serif; letter-spacing: 0; text-transform: none; font-size: 13px; color: var(--accent); text-decoration: none; min-height: 32px; display: inline-flex; align-items: center; padding: 0 6px; }
+.map-label .map-link:hover { text-decoration: underline; }
+.map-label:has(.map-link)::after { order: 1; }
+.map-label .map-link { order: 2; }
+.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.game-card { border-top: 4px solid var(--unit); }
+.game-card .top .topic { color: var(--unit); font-family: "Noto Sans TC", sans-serif; }
+.badge.b-g { background: color-mix(in srgb, var(--unit) 14%, var(--paper)); color: var(--unit); margin-left: auto; }
+.game-card .status.live { color: var(--unit); font-weight: 500; }
+.game-card .status.live::before { background: var(--unit); }
+.games-intro { color: var(--ink-2); max-width: 70ch; margin: 12px 0 18px; }
+
+.game .game-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 28px; flex-wrap: wrap; margin-bottom: 12px; }
+.game .game-head .code { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--unit); letter-spacing: .06em; }
+.game .game-head h2 { font-family: "Noto Serif TC", serif; font-size: 26px; font-weight: 600; margin: 0; line-height: 1.25; }
+.levels { display: flex; flex-wrap: wrap; gap: 6px; }
+.levels button { min-width: 48px; min-height: 48px; padding: 4px 6px; border: 1px solid var(--line); background: var(--paper); color: var(--ink-2); border-radius: 6px; cursor: pointer; display: flex; flex-direction: column; align-items: center; line-height: 1.1; }
+.levels button b { font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 15px; color: var(--ink); }
+.levels button span { font-size: 10px; color: var(--star); letter-spacing: -1px; }
+.levels button.done { border-color: color-mix(in srgb, var(--star) 50%, var(--line)); background: var(--star-soft); }
+.levels button[aria-selected="true"] { border-color: var(--unit); box-shadow: inset 0 0 0 2px var(--unit); }
+.game-main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; }
+.game-stage { position: relative; width: 100%; min-height: 320px; max-height: min(720px, calc(100vh - 200px)); background: var(--paper); border: 1px solid var(--line); overflow: hidden; }   /* 高度由關卡的世界比例（aspect-ratio 行內樣式）決定 */
+.shot-banner { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); background: rgba(255,255,255,.94); border: 2px solid var(--unit); border-radius: 8px; padding: 8px 18px; text-align: center; max-width: min(90%, 520px); color: #1b2530; box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+.shot-banner b { font-size: 18px; }
+.shot-banner .stars { color: var(--star); margin-left: 8px; letter-spacing: 1px; }
+.shot-banner p { margin: 4px 0 0; font-size: 13.5px; color: #4a5563; }
+.shot-banner.hit { border-color: #2f9e5b; }
+.shot-banner.block { border-color: #7b8591; }
+.game-panel .level-name { font-weight: 700; font-size: 17px; display: flex; align-items: center; gap: 10px; }
+.game-panel .level-name .n { font-family: "IBM Plex Mono", monospace; font-weight: 400; font-size: 12px; color: var(--unit); border: 1px solid var(--unit); border-radius: 4px; padding: 0 6px; }
+.game-panel .brief { margin: 6px 0 4px; font-size: 14.5px; }
+.game-panel .g-note { margin: 0 0 6px; font-size: 12.5px; color: var(--ink-3); }
+.game-panel .lock { color: var(--star); font-size: 12px; }
+.game-panel .locked-val { min-height: 40px; display: flex; align-items: center; padding: 0 10px; background: var(--bg); border: 1px dashed var(--line); color: var(--ink-2); }
+.fire-row { display: flex; align-items: center; gap: 14px; margin: 6px 0 4px; }
+.fire { flex: 1; min-height: 54px; font-size: 18px; font-weight: 700; border: 0; border-radius: 6px; background: var(--unit); color: #fff; cursor: pointer; letter-spacing: .06em; }
+.fire:disabled { opacity: .55; cursor: default; }
+.fire:not(:disabled):active { transform: scale(.98); }
+.shots-n { font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+.shots-n b { font-family: "IBM Plex Mono", monospace; font-weight: 500; color: var(--ink); }
+.hint-btn, .retry { min-height: 40px; padding: 0 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink-2); border-radius: 4px; cursor: pointer; font-size: 13.5px; }
+.hint-box { margin-top: 8px; padding: 8px 12px; background: var(--star-soft); border-left: 3px solid var(--star); font-size: 13.5px; }
+.hint-box p { margin: 4px 0; }
+.hint-box .formulas { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--ink-2); }
+.next-row { display: flex; gap: 8px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+.next { min-height: 48px; padding: 0 18px; border: 0; border-radius: 6px; background: var(--unit); color: #fff; font-weight: 700; font-size: 15px; cursor: pointer; }
+.all-done { margin: 0; font-weight: 700; color: var(--star); }
+/* v–t 圖追車：油門桿 */
+.lever-row { display: flex; align-items: center; gap: 10px; margin: 4px 0 2px; }
+.lever-btn { min-width: 52px; min-height: 52px; font-size: 26px; line-height: 1; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 6px; cursor: pointer; }
+.lever-btn:disabled { opacity: .4; cursor: default; }
+.lever-btn:not(:disabled):active { background: color-mix(in srgb, var(--unit) 18%, var(--bg)); }
+.lever-val { flex: 1; text-align: center; font-size: 26px; font-weight: 500; min-height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); }
+.lever-val.pos { color: var(--unit); } .lever-val.neg { color: var(--ink-2); }
+.lever-slider { width: 100%; min-height: 44px; accent-color: var(--unit); margin: 0; }
+.key-hint { margin: 2px 0 0; font-size: 12px; color: var(--ink-3); }
+.shot-banner.ready { border-color: var(--unit); }
+@media (max-width: 1024px) { .game-main { grid-template-columns: 1fr; } .game-stage { max-height: 60vh; min-height: 280px; } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .shot-banner { background: rgba(27,34,41,.94); color: #e6eaee; } :root:not([data-theme="light"]) .shot-banner p { color: #b4bcc5; } }

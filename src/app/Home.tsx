@@ -6,11 +6,16 @@ import { SIMS, simsOf } from "./catalogue";
 import { SimCards } from "./SimCards";
 import { TopBar } from "./TopBar";
 import { navigate } from "./router";
+import { GameCards } from "./GameCards";
+import { GAMES, isGameLive } from "@/games/registry";
+
+const HOME_GAMES = 6;   // 首頁只放可以玩的遊戲，最多六個（老師 2026-09-11 定）；其餘去「全部遊戲」
 
 export function Home() {
   const t = useT();
   const [q, setQ] = useState("");
   const nE = SIMS.filter(s => s.type === "e").length;
+  const liveGames = GAMES.filter(isGameLive); const nG = liveGames.length;
   const groups: { key: "c" | "e" | "s"; label: { zh: string; en: string } }[] = [
     { key: "c", label: { zh: "必修部分", en: "Compulsory" } }, { key: "e", label: { zh: "選修部分", en: "Electives" } }, { key: "s", label: { zh: "跨單元", en: "Cross-topic" } },
   ];
@@ -32,6 +37,7 @@ export function Home() {
                 <span><b>{SIMS.length}</b>{t({ zh: "模擬", en: "simulations" })}</span>
                 <span><b>{nE}</b>{t(UI.experiment)}</span>
                 <span><b>{SIMS.length - nE}</b>{t(UI.concept)}</span>
+                <span><b>{nG}</b>{t({ zh: "遊戲", en: "games" })}</span>
               </div>
             </div>
             {groups.map(g => (
@@ -52,6 +58,10 @@ export function Home() {
                 </div>
               </section>
             ))}
+            <section>
+              <div className="map-label">{t({ zh: "遊戲 · 玩住學", en: "Games · Learn by playing" })}<a className="map-link" href="#/games" onClick={ev => { ev.preventDefault(); navigate("#/games"); }}>{t({ zh: `全部遊戲（${nG}）→`, en: `All games (${nG}) →` })}</a></div>
+              <GameCards games={liveGames.slice(0, HOME_GAMES)} />
+            </section>
           </>
         )}
         <footer className="foot">

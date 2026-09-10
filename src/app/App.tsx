@@ -5,6 +5,7 @@ import { SimShell } from "@/shell/SimShell";
 import { HandednessFixture } from "@/shell/fixtures/handedness/HandednessScene";
 import { Home } from "./Home";
 import { UnitPage } from "./UnitPage";
+import { GamesPage, GamePage } from "./GamesPage";
 import { TopBar } from "./TopBar";
 import { SIMS } from "./catalogue";
 import { useT } from "@/i18n/lang";
@@ -16,6 +17,8 @@ export default function App() {
   useEffect(() => { window.scrollTo({ top: 0 }); }, [path.join("/")]);
   if (path[0] === "sim" && path[1]) return <SimPage id={path[1]} />;
   if (path[0] === "unit" && path[1]) return <UnitPage id={path[1]} />;
+  if (path[0] === "games") return <GamesPage />;
+  if (path[0] === "game" && path[1]) return <GamePage id={path[1]} />;
   if (path[0] === "fixtures" && path[1] === "handedness") return <HandednessFixture />;
   return <Home />;
 }
