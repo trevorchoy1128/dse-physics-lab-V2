@@ -4,6 +4,8 @@ import { UI } from "@/i18n/ui";
 import { unitOf } from "./units";
 import { CHAPTERS, simsOf } from "./catalogue";
 import { SimCards } from "./SimCards";
+import { GameCards } from "./GameCards";
+import { GAMES } from "@/games/registry";
 import { TopBar } from "./TopBar";
 import { navigate } from "./router";
 import type { UnitId } from "@/shell/types";
@@ -52,6 +54,7 @@ export function UnitPage({ id }: { id: string }) {
         </div>
         <SimCards title={UI.experiment} sims={list.filter(s => s.type === "e")} />
         <SimCards title={UI.concept} sims={list.filter(s => s.type === "c")} />
+        {!chapter && type === "all" && <GameCards title={{ zh: "遊戲", en: "Games" }} games={GAMES.filter(g => g.unit === u.id)} />}   {/* 學生按課題進來，在單元頁就見到該單元的遊戲 */}
         {!list.length && <p className="empty">{t({ zh: "沒有符合的模擬", en: "No matching simulations" })}</p>}
       </main>
     </>

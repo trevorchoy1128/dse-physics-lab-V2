@@ -22,6 +22,7 @@ HKDSE 物理 3D 實驗模擬器網站。中文為主（繁體、香港用語）�
   - `11_Book2_難點與3D模擬器規格.md` — 必修 II 物理規格（14 個模擬器）。其他冊的規格會陸續加入，檔名同款
   - `PhyGlossary_2020.pdf` — 教育局詞彙原件（pdftotext 抽不到中文欄，用 CSV）
 - `content/misconceptions-template.md` — 老師整理易錯概念的格式
+- `content/game-ideas.md` — 物理遊戲構思庫。**任何 session 想到新遊戲先寫入這裏**（單元、玩法、物理要點、常見錯誤、狀態），做好的在 `src/games/registry.ts` 登記並改狀態。不要刪別人的構思。
 - `site/index.html` — 首頁原型（單檔 HTML，之後移植到正式項目）
 - `tools/` — Node 工具：`term.mjs` 查術語、`termlint.mjs` 掃自創術語、`build-catalogue.mjs` 生成目錄
 - `.claude/skills/new-sim/` — 建立一個模擬的標準流程
