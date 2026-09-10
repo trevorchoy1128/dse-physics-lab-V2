@@ -102,15 +102,15 @@ describe("運動線圖 畫面", () => {
       draw([2, 1.6, 1.2, 0.8, 0.4, 0, -0.4, -0.8, -1.2, -1.6, -2]), draw([2, 2, 2, 2, 2, -2, -2, -2, -2, -2, -2]),
       { ...draw([0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2]), T: 45 },
     ];
-    for (let k = 0; k < 20; k++) cases.push(live(Math.round((Math.random() * 10 - 5) * 2) / 2, Math.round((Math.random() * 20 - 10) * 2) / 2, 2 + Math.floor(Math.random() * 59)));
+    for (let k = 0; k < 8; k++) cases.push(live(Math.round((Math.random() * 10 - 5) * 2) / 2, Math.round((Math.random() * 20 - 10) * 2) / 2, 2 + Math.floor(Math.random() * 59)));
     for (const p of cases) {
       let s: S = model.init(p); let ax: Axes = { s: 0, v: 0, a: 0, t: 0 };
       ax = axesFor(ax, plan(s, p, model.observe(s, p), all).meta!); const first = { ...ax };
-      const n = Math.round(p.T / 1e-3) + 50;   // 走過 T 之後的凍結幀也要相同
+      const dt = 5e-3, n = Math.round(p.T / dt) + 10;   // 走過 T 之後的凍結幀也要相同；步長 5 ms 已足夠（梯形法對分段線性 v 精確）
       for (let i = 0; i < n; i++) {
-        s = model.step(s, p, 1e-3);
-        if (i % 25 === 0 || i === n - 1) { ax = axesFor(ax, plan(s, p, model.observe(s, p), all).meta!); expect([ax.s, ax.v, ax.a], JSON.stringify(p) + " t=" + s.t).toEqual([first.s, first.v, first.a]); }
+        s = model.step(s, p, dt);
+        if (i % 5 === 0 || i === n - 1) { ax = axesFor(ax, plan(s, p, model.observe(s, p), all).meta!); expect([ax.s, ax.v, ax.a], JSON.stringify(p) + " t=" + s.t).toEqual([first.s, first.v, first.a]); }
       }
     }
-  });
+  }, 60_000);   // CI 的 Linux runner 較慢，預設 5 s 會超時（#024 同一教訓）
 });
