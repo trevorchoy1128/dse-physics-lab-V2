@@ -265,5 +265,51 @@ i { font-style: italic; font-family: "Noto Serif TC", "Times New Roman", serif; 
 .lever-slider { width: 100%; min-height: 44px; accent-color: var(--unit); margin: 0; }
 .key-hint { margin: 2px 0 0; font-size: 12px; color: var(--ink-3); }
 .shot-banner.ready { border-color: var(--unit); }
+.banner-btns { display: flex; gap: 8px; justify-content: center; margin-top: 8px; flex-wrap: wrap; }
+.banner-btn { min-height: 44px; padding: 0 16px; border: 1px solid var(--unit); border-radius: 6px; background: #fff; color: var(--unit); font-weight: 700; font-size: 14.5px; cursor: pointer; }
+.banner-btn.primary { background: var(--unit); color: #fff; }
+.banner-note { font-size: 13.5px; color: #4a5563; align-self: center; }
+.shot-banner.paused { border-color: #e0522d; }
+.quick-row { display: flex; gap: 6px; margin: 6px 0 2px; }
+.quick { flex: 1; min-height: 44px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 6px; cursor: pointer; font-family: "IBM Plex Mono", monospace; font-size: 15px; }
+.quick.on { background: var(--unit); border-color: var(--unit); color: #fff; }
+.fire-col { display: flex; flex-direction: column; gap: 6px; }
+.fire-col .fire { width: 100%; }
+.mode-row { display: flex; gap: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.mode { flex: 1; min-height: 44px; border: 0; background: var(--bg); color: var(--ink-2); cursor: pointer; font-size: 14px; font-weight: 700; }
+.mode.on { background: var(--unit); color: #fff; }
+.mode:disabled { cursor: default; opacity: .7; }
+.toggle { display: flex; align-items: center; gap: 8px; min-height: 32px; font-size: 13.5px; color: var(--ink-2); cursor: pointer; }
+.toggle input { width: 20px; height: 20px; accent-color: var(--unit); margin: 0; }
+/* 追車：關卡說明＋油門桿＋開始 自成一塊；桌面在右上，窄屏（iPad 直向）放在畫面之上，學生撥桿時看得到線圖 */
+.game-main.chase { grid-template-areas: "stage lever" "stage panel"; grid-template-rows: auto 1fr; }
+.game-main.chase .game-stage { grid-area: stage; }
+.chase-lever { grid-area: lever; }
+.chase-panel { grid-area: panel; }
+.lever-grid { display: grid; gap: 6px; margin-top: 8px; }
+.lever-grid .fire-row { margin: 0; }
+.fire-col .shots-n { text-align: right; }
+.lever-grid .next-row { grid-column: 1 / -1; margin-top: 8px; }
+@media (max-width: 1024px) {
+  .game-main.chase { grid-template-areas: "lever" "stage" "panel"; grid-template-rows: auto; }
+  .lever-grid { grid-template-columns: minmax(0, 1fr) 200px; align-items: end; column-gap: 14px; }
+}
+/* 激光迷宮：格位、元件與轉角 */
+.inv { margin: 4px 0; font-size: 13.5px; color: var(--ink-2); display: flex; gap: 14px; flex-wrap: wrap; }
+.inv b { font-family: "IBM Plex Mono", monospace; font-weight: 500; color: var(--ink); }
+.stage-tip { margin: 0 0 4px; font-size: 12.5px; color: var(--ink-3); }
+.slot-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+.slot-btn { min-width: 52px; min-height: 48px; padding: 4px 8px; border: 1px dashed var(--ink-3); background: var(--paper); color: var(--ink-2); border-radius: 6px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; }
+.slot-btn b { font-family: "IBM Plex Mono", monospace; font-weight: 700; font-size: 14px; color: var(--ink); }
+.slot-btn .pc { font-size: 11.5px; font-family: "IBM Plex Mono", monospace; }
+.slot-btn.has { border-style: solid; background: color-mix(in srgb, var(--unit) 8%, var(--paper)); }
+.slot-btn[aria-pressed="true"] { border-color: var(--unit); box-shadow: inset 0 0 0 2px var(--unit); }
+.slot-btn:disabled { opacity: .55; cursor: default; }
+.rot-row { display: flex; align-items: center; gap: 8px; margin: 4px 0 8px; flex-wrap: wrap; }
+.rot-row .lever-val { flex: 1; font-size: 15px; min-width: 150px; }
+.rot-row .lever-val .mono { font-family: "IBM Plex Mono", monospace; font-size: 20px; }
+.place-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 4px 0 8px; }
+.place-row .place { min-height: 44px; padding: 0 16px; border: 0; border-radius: 6px; background: var(--unit); color: #fff; font-weight: 700; cursor: pointer; }
+.place-row .place:disabled { opacity: .45; cursor: default; }
 @media (max-width: 1024px) { .game-main { grid-template-columns: 1fr; } .game-stage { max-height: 60vh; min-height: 280px; } }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .shot-banner { background: rgba(27,34,41,.94); color: #e6eaee; } :root:not([data-theme="light"]) .shot-banner p { color: #b4bcc5; } }

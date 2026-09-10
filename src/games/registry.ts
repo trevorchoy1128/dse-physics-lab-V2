@@ -26,7 +26,8 @@ export const GAMES: GameDef[] = [
   {
     id: "laser-maze", unit: "c3", topic: { zh: "光的折射", en: "Refraction" },
     title: { zh: "激光迷宮", en: "Laser Maze" },
-    summary: { zh: "放置鏡、稜鏡與透鏡，令激光繞過障礙射中目標。", en: "Place mirrors, prisms and lenses to guide a laser round obstacles to the target." },
+    summary: { zh: "放置平面鏡、稜鏡與凸透鏡，或調校入射角，令激光射中探測器。十一關：反射、折射、臨界角、光纖、透鏡。", en: "Place mirrors, prisms and a convex lens, or set the angle of incidence, so the laser reaches the detector. Eleven levels: reflection, refraction, critical angle, fibres, lenses." },
+    load: () => import("./laser-maze/LaserMaze"),
   },
   {
     id: "circuit-escape", unit: "c4", topic: { zh: "電路", en: "Circuits" },
