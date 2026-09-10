@@ -87,7 +87,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
     }
     ctx.font = monoFont(11); ctx.fillStyle = ink3; ctx.textAlign = "center"; ctx.fillText(zh ? "位移 s / m（向右為正 →）" : "displacement s / m (right = + →)", tr.x + tr.w / 2, ty + 46);
     // 鏡頭偏離起點時說明「鏡頭跟着小車移動，比例不變」（學生試用者第 7 輪：地面刻度範圍變了，以為是縮放）
-    if (Math.abs(cam.current.s - viewW * 0.2) > 1e-9) {   // 鏡頭離開了起始位置才提示 ctx.font = uiFont(12, "700"); ctx.fillStyle = ink; ctx.textAlign = "right"; ctx.fillText(zh ? "鏡頭跟着小車移動（比例不變）" : "Camera follows the trolley (same scale)", tr.x + tr.w - 8, tr.y + 14); }
+    if (Math.abs(cam.current.s - viewW * 0.2) > 1e-9) { ctx.font = uiFont(12, "700"); ctx.fillStyle = ink; ctx.textAlign = "right"; ctx.fillText(zh ? "鏡頭跟着小車移動（比例不變）" : "Camera follows the trolley (same scale)", tr.x + tr.w - 8, tr.y + 14); }   // 鏡頭離開了起始位置才提示
     // 起點旗（原點，在畫面內才畫）
     const x0 = sx(0);
     if (x0 > tr.x - 20 && x0 < tr.x + tr.w + 20) {
