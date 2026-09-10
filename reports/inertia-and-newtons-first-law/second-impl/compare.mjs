@@ -1,4 +1,5 @@
-// 逐幀逐鍵比對 data/<run>.json（主實作）與 second-impl/<run>.json（第二實作）——第 2 輪：25 個運行
+// 逐幀逐鍵比對 data/<run>.json（主實作）與 second-impl/<run>.json（第二實作）——第 8 輪：26 個運行（第 7 輪 25 個 + extra-table-hold-6s）
+// 主運行（index.json）dt 0.001、2000 幀；extra 運行（index-extra.json）dt 0.005、3200 幀。
 // 容限：連續量 1e-6（本模型全部量皆有分段解析解，故一律用嚴格容限；同時記錄 1e-4 是否通過）；
 //       離散量（scene、phase、busPhase、sliding、stuck、nForces、nHoriz、engineOn）須完全相等，
 //       但事件時刻（離散量首次改變的幀）容許相差 ≤ 2 dt。
@@ -8,18 +9,19 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const dataDir = path.join(here, "..", "data");
-// 第 2 輪：主運行（index.json）與 extra 運行（index-extra.json）一併比對
-const idxMain = JSON.parse(fs.readFileSync(path.join(dataDir, "index.json"), "utf8"));
-const idxExtra = JSON.parse(fs.readFileSync(path.join(dataDir, "index-extra.json"), "utf8"));
-const index = { dt: idxMain.dt, runs: [...idxMain.runs, ...idxExtra.runs] };
-const dt = index.dt;
+const runs = [];
+for (const idxName of ["index.json", "index-extra.json"]) {
+  const idx = JSON.parse(fs.readFileSync(path.join(dataDir, idxName), "utf8"));
+  for (const r of idx.runs) runs.push({ ...r, dt: idx.dt, nFrames: idx.frames });
+}
 const DISCRETE = new Set(["scene", "phase", "busPhase", "sliding", "stuck", "nForces", "nHoriz", "engineOn"]);
 const TOL = 1e-6, TOL_LOOSE = 1e-4;
 
 const rows = [];
 const eventRows = [];
 let allOk = true;
-for (const r of index.runs) {
+for (const r of runs) {
+  const dt = r.dt;
   const A = JSON.parse(fs.readFileSync(path.join(dataDir, r.name + ".json"), "utf8")).frames;
   const B = JSON.parse(fs.readFileSync(path.join(here, r.name + ".json"), "utf8")).frames;
   if (A.length !== B.length) { console.log("frame count differs", r.name, A.length, B.length); allOk = false; }
@@ -29,9 +31,8 @@ for (const r of index.runs) {
   const keys = ["t", ...keysA];
   for (const k of keys) {
     let maxAbs = 0, maxRel = 0, firstBad = null, firstBadLoose = null, tAt = null;
-    // 事件時刻（離散量的變化幀）
     const changesA = [], changesB = [];
-    for (let i = 0; i < A.length; i++) {
+    for (let i = 0; i < Math.min(A.length, B.length); i++) {
       const a = k === "t" ? A[i].t : A[i].obs[k];
       const b = k === "t" ? B[i].t : B[i].obs[k];
       if (DISCRETE.has(k)) {
@@ -51,7 +52,6 @@ for (const r of index.runs) {
     let pass = firstBad === null;
     let note = "";
     if (DISCRETE.has(k)) {
-      // 離散量：逐幀完全相等即通過；否則看事件幀差是否 ≤ 2 幀
       if (!pass) {
         let evOk = changesA.length === changesB.length;
         if (evOk) for (let j = 0; j < changesA.length; j++) {
@@ -78,10 +78,13 @@ for (const e of eventRows) evLines.push(`| ${e.run} | ${e.key} | ${e.main} | ${e
 fs.writeFileSync(path.join(here, "compare-table.md"), lines.join("\n") + "\n\n" + evLines.join("\n") + "\n");
 fs.writeFileSync(path.join(here, "compare.json"), JSON.stringify({ allOk, rows, eventRows }, null, 1));
 
-// 摘要
 const worst = rows.filter(w => !w.pass);
-console.log("allOk =", allOk, " rows =", rows.length, " failing =", worst.length);
+console.log("allOk =", allOk, " rows =", rows.length, " failing =", worst.length, " events =", eventRows.length, " maxEventDiff =", Math.max(0, ...eventRows.map(e => e.diff || 0)));
 for (const w of worst) console.log("FAIL", w.run, w.key, "maxAbs", w.maxAbs, "maxRel", w.maxRel, "first", w.firstBad, w.note);
 const byRun = {};
 for (const w of rows) { byRun[w.run] = byRun[w.run] || { maxAbs: 0, maxRel: 0, key: "" }; if (w.maxAbs > byRun[w.run].maxAbs) byRun[w.run] = { maxAbs: w.maxAbs, maxRel: w.maxRel, key: w.key }; }
-for (const [k, v] of Object.entries(byRun)) console.log(k.padEnd(32), "worst key", v.key.padEnd(8), "maxAbs", v.maxAbs.toExponential(3), "maxRel", v.maxRel.toExponential(3));
+for (const [k, v] of Object.entries(byRun)) console.log(k.padEnd(30), "worst key", v.key.padEnd(8), "maxAbs", v.maxAbs.toExponential(3), "maxRel", v.maxRel.toExponential(3));
+// 相對誤差最大的列（連續量），供報告註記
+const relTop = rows.filter(w => !DISCRETE.has(w.key)).sort((a, b) => b.maxRel - a.maxRel).slice(0, 6);
+console.log("--- top maxRel ---");
+for (const w of relTop) console.log(w.run, w.key, "maxAbs", w.maxAbs.toExponential(2), "maxRel", w.maxRel.toExponential(2), "t", w.tAt);

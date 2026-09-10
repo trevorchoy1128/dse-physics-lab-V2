@@ -13,12 +13,13 @@ const FRAMES = 3200, DT = 0.005;
 interface Run { name: string; params: P; change?: { t: number; params: Partial<P> } }
 const runs: Run[] = [
   { name: "extra-release-1s", params: { ...defaults, scene: "table" }, change: { t: 1.0, params: { push: "off" } } },                         // 2024 Q3：t = 1.0 s 越過 B 一刻放手
-  { name: "extra-release-smooth", params: { ...defaults, scene: "table", mu2: 0 }, change: { t: 0.5, params: { push: "off" } } },             // 光滑：放手後 v 恆定
-  { name: "extra-release-two-blocks", params: { ...defaults, scene: "table", mu1: 0, mu2: 0, F: 1, second: true, mB: 1 }, change: { t: 0.5, params: { push: "off" } } },
+  { name: "extra-table-hold-6s", params: { ...defaults, scene: "table" }, frames: 6000 },   // 第二實作者第 7 輪：預設不放手 6 s——F = 0.30 < f₂ = 0.40，過 B 後減速至停（t = 4.0 s、s = 3.0 m），停後靜摩擦 = −F、淨力 0
+  { name: "extra-release-smooth", params: { ...defaults, scene: "table", f2: 0 }, change: { t: 0.5, params: { push: "off" } } },             // 光滑：放手後 v 恆定
+  { name: "extra-release-two-blocks", params: { ...defaults, scene: "table", f1: 0, f2: 0, F: 1, second: true, mB: 1 }, change: { t: 0.5, params: { push: "off" } } },
   { name: "extra-cloth-stuck", params: { ...defaults, scene: "cloth", vCloth: 1.0 } },                                                          // 低於臨界 1.085：抽不出
   { name: "extra-cloth-critical-above", params: { ...defaults, scene: "cloth", vCloth: 1.2 } },
   { name: "extra-bus-handrail", params: { ...defaults, scene: "bus", handrail: true } },
-  { name: "extra-bus-mu0", params: { ...defaults, scene: "bus", muBus: 0 } },
+  { name: "extra-bus-f0", params: { ...defaults, scene: "bus", fBus: 0 } },
   { name: "extra-space-engine-off-1s", params: { ...defaults, scene: "space", Fe: 2, trio: true }, change: { t: 1.0, params: { engine: "off" } } },
 ];
 const index: { name: string; params: P; change?: Run["change"] }[] = [];
