@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { model, type P, type S } from "./model";
-import { plan, trackExtent } from "./plan";
+import { plan, trackExtent, axesFor, type Axes } from "./plan";
 import { UNITS_ALLOWED } from "@/shell/units";
 
 const all = { velocity: true, acceleration: true, tangent: true, area: true };
@@ -94,6 +94,23 @@ describe("運動線圖 畫面", () => {
         if (i === 399) for (const tr of pl.trails!) for (const q of tr.points) if (!Number.isFinite(q[1])) bad++;
       }
       expect(bad).toBe(0);
+    }
+  });
+  it("線圖軸範圍在整段運行中每一幀相同（老師：主格線不可中途改變）", () => {
+    const cases: P[] = [
+      live(0, 1, 10), live(3, -9.81, 5), live(0, 0, 10), live(5, 10, 20), live(-5, -10, 2), live(2, -1, 60),
+      draw([2, 1.6, 1.2, 0.8, 0.4, 0, -0.4, -0.8, -1.2, -1.6, -2]), draw([2, 2, 2, 2, 2, -2, -2, -2, -2, -2, -2]),
+      { ...draw([0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2]), T: 45 },
+    ];
+    for (let k = 0; k < 20; k++) cases.push(live(Math.round((Math.random() * 10 - 5) * 2) / 2, Math.round((Math.random() * 20 - 10) * 2) / 2, 2 + Math.floor(Math.random() * 59)));
+    for (const p of cases) {
+      let s: S = model.init(p); let ax: Axes = { s: 0, v: 0, a: 0, t: 0 };
+      ax = axesFor(ax, plan(s, p, model.observe(s, p), all).meta!); const first = { ...ax };
+      const n = Math.round(p.T / 1e-3) + 50;   // 走過 T 之後的凍結幀也要相同
+      for (let i = 0; i < n; i++) {
+        s = model.step(s, p, 1e-3);
+        if (i % 25 === 0 || i === n - 1) { ax = axesFor(ax, plan(s, p, model.observe(s, p), all).meta!); expect([ax.s, ax.v, ax.a], JSON.stringify(p) + " t=" + s.t).toEqual([first.s, first.v, first.a]); }
+      }
     }
   });
 });
