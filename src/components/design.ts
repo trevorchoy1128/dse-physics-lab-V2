@@ -69,10 +69,13 @@ export function drawArrow2D(ctx: CanvasRenderingContext2D, x0: number, y0: numbe
 }
 
 // ---- 線圖框：同一種版式（底色、頂部色條、標題、y 格線、t 軸在 y = 0）----
-export interface Pane { x: number; y: number; w: number; h: number; yMin: number; yMax: number; tMax: number }
+export interface Pane { x: number; y: number; w: number; h: number; yMin: number; yMax: number; tMax: number; padY?: number }
+// y 方向上下留白：格線仍畫在 yMax / yMin，但曲線到頂時距離圖框頂部仍有 padY × (yMax − yMin) 的空位
+// （老師 2026-09-11：曲線緊貼頂部學生很難看）。預設 0.12。
+const yRange = (p: Pane) => { const pad = (p.padY ?? 0.12) * (p.yMax - p.yMin); return { lo: p.yMin - pad, hi: p.yMax + pad }; };
 export const px = (p: Pane, t: number) => p.x + 44 + ((p.w - 56) * t) / p.tMax;
-export const py = (p: Pane, y: number) => p.y + 22 + ((p.h - 44) * (p.yMax - y)) / (p.yMax - p.yMin);
-export const fromPy = (p: Pane, yy: number) => p.yMax - ((yy - p.y - 22) * (p.yMax - p.yMin)) / (p.h - 44);
+export const py = (p: Pane, y: number) => { const { lo, hi } = yRange(p); return p.y + 22 + ((p.h - 44) * (hi - y)) / (hi - lo); };
+export const fromPy = (p: Pane, yy: number) => { const { lo, hi } = yRange(p); return hi - ((yy - p.y - 22) * (hi - lo)) / (p.h - 44); };
 
 export interface PaneStyle {
   title: string;            // 例：「s–t 圖（位移—時間）」
