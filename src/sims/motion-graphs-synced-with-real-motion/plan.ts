@@ -30,6 +30,30 @@ export function trackExtent(p: P): number {
 }
 
 // 注意：meta.vmax / amax 有下限 1，是軸與箭嘴比例的顯示下限（核數員第 9 輪 §7-1），不是物理量
+/** 三張線圖的軸範圍（正負對稱的絕對值）與最後一次計算時的 t */
+export interface Axes { s: number; v: number; a: number; t: number }
+const niceStep = (m: number) => { const e = 10 ** Math.floor(Math.log10(m)); const f = m / e; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * e; };
+/**
+ * 軸範圍政策（老師 2026-09-06 / 09-11：y 軸的主格線不可在模擬中途改變）。
+ * 重置（t 回到 0）時由參數預測的上界一次定好：s 用 trackExtent（已是好看刻度），v、a 用預測最大值取 1–2–5 刻度。
+ * 「至今出現過的值」只作保險，而且不加邊際：0.6.1 之前乘 1.02，曲線一到預測上限就令軸跳到下一級（10 → 20、50 → 100），
+ * a = 1 時甚至一開始就變成 ±2。只有學生自己改參數令預測值變大才會放大軸；同一次運行內只放大、不縮小。
+ * 畫圖模式的 v、a 軸固定為拖動範圍 ±5、±10。
+ */
+export function axesFor(prev: Axes, meta: Record<string, number>): Axes {
+  const fresh = meta.t < prev.t - 1e-9 || meta.t === 0;   // 重置（t 已是 0 時按「還原預設」或改參數也要重算）
+  const base = fresh ? { s: 0, v: 0, a: 0 } : prev;
+  const grow = (cur: number, need: number, min: number) => Math.max(cur, niceStep(Math.max(min, need)));
+  // 「至今出現過的值」只在明顯超出預測（相對 1e-9 以上）時才生效：浮點殘餘（50.0000000000028 > 50）不可令軸跳級
+  const over = (pred: number, seen: number) => (seen > pred * (1 + 1e-9) ? seen : pred);
+  return {
+    s: grow(base.s, over(meta.smax, meta.sGraph), 5),
+    v: meta.draw ? 5 : grow(base.v, over(meta.vmax, meta.vSeen), 1),
+    a: meta.draw ? 10 : grow(base.a, over(meta.amax, meta.aSeen), 1),
+    t: meta.t,
+  };
+}
+
 export const plan: PlanFn<S, P> = (s, p, obs, layers) => {
   // 位置、標籤、箭嘴一律用 observe() 歸零後的值，畫面與讀數面板一致（核數員 F6）
   const pos: Vec3 = [obs.s, 0, 0];

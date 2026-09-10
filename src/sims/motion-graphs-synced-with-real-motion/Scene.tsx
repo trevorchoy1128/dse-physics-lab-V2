@@ -4,6 +4,7 @@ import { theme, SCENE, SERIES, AREA_FILL, uiFont, monoFont, nice, tick, trim3, d
 import { sig } from "@/shell/format";
 import { useLang } from "@/i18n/lang";
 import type { RenderPlan, SceneProps } from "@/shell/types";
+import { axesFor, type Axes } from "./plan";
 
 // 2D 場景：上方直線軌道與小車，下方 s–t、v–t、a–t 三張線圖。只畫 plan，不算物理。
 // 「由圖生成運動」時 v–t 圖上每秒一個可拖的控制點（拖動範圍 ≥ 44 px），拖動結果經 onInput("vt", …) 交回。
@@ -11,21 +12,7 @@ import type { RenderPlan, SceneProps } from "@/shell/types";
 interface Layout { track: { x: number; y: number; w: number; h: number; smax: number }; panes: Record<"s" | "v" | "a", Pane> }
 
 
-// 軸範圍在重置（t 回到 0）時由參數預測的最大值一次定好，播放期間不隨時間改變（老師 2026-09-06：軸隨時間變，學生會不明白為何條線突然跳）。
-// 只有學生自己改參數（即時加速度滑桿）才可能令預測值變大而放大軸；同一次運行內只放大、不縮小。
-// 預測值（|u|、|u + aT|、½|a|T² 等）是上界，「至今出現過的值」只作保險。畫圖模式的 v、a 軸固定為拖動範圍 ±5、±10。
-interface Axes { s: number; v: number; a: number; t: number }
-function growAxes(prev: Axes, meta: Record<string, number>): Axes {
-  const fresh = meta.t < prev.t - 1e-9 || meta.t === 0;   // 重置（t 已是 0 時按「還原預設」或改參數也要重算：學生試用者第 9 輪）
-  const base = fresh ? { s: 0, v: 0, a: 0 } : prev;
-  const grow = (cur: number, need: number, min: number) => Math.max(cur, nice(Math.max(min, need)));
-  return {
-    s: grow(base.s, Math.max(meta.smax, meta.sGraph * 1.02), 5),
-    v: meta.draw ? 5 : grow(base.v, Math.max(meta.vmax, meta.vSeen * 1.02), 1),
-    a: meta.draw ? 10 : grow(base.a, Math.max(meta.amax, meta.aSeen * 1.02), 1),
-    t: meta.t,
-  };
-}
+// 軸範圍政策（axesFor）在 plan.ts：重置時由參數預測一次定好，播放期間不變，有測試保證每一幀相同。
 
 function layoutOf(w: number, h: number, meta: Record<string, number>, axes: Axes): Layout {
   const trackH = Math.max(170, Math.round(h * 0.34));   // 最少 170 px：天空要放得下 s 標籤、a 箭嘴、v 箭嘴三行（iPad 直向）
@@ -42,7 +29,7 @@ function layoutOf(w: number, h: number, meta: Record<string, number>, axes: Axes
 export default function Scene({ plan, onInput }: SceneProps) {
   const lang = useLang(s => s.lang);
   const lay = useRef<Layout | null>(null);
-  const axes = useRef<Axes>({ s: 0, v: 0, a: 0, t: 0 });
+  const axes = useRef<Axes>({ s: 0, v: 0, a: 0, t: 0 });   // 軸範圍：見 plan.ts axesFor
   const cam = useRef({ s: 0, t: 0 });   // 鏡頭中心（米）；小車離開中央 40% 區域時跟隨
   // 軌道米數與箭嘴像素比例在重置時凍結；即時改加速度不得令畫面比例跳動（老師 2026-09-06：改 a 時畫面抖動）
   const frozen = useRef({ t: 0, viewW: 0, maxMag: 0 });
@@ -51,7 +38,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
 
   const draw = useCallback((ctx: CanvasRenderingContext2D, w: number, h: number) => {
     const m = plan.meta!;
-    axes.current = growAxes(axes.current, m);
+    axes.current = axesFor(axes.current, m);
     const L = layoutOf(w, h, m, axes.current); lay.current = L;
     const T = theme(); const { ink, ink3, accent } = T;
     const zh = lang === "zh";
@@ -66,7 +53,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
     const viewW = frozen.current.viewW;      // 畫面橫跨的米數：重置時由參數預測定好，運行中（包括即時改 a）不變
     const pxPerM = (tr.w - 2 * pad) / viewW;
     const body = plan.bodies?.[0]; const carS = body?.position[0] ?? 0;
-    if (m.t < cam.current.t - 1e-9 || m.t === 0) cam.current.s = 0;   // 重置：鏡頭回到起點
+    if (m.t < cam.current.t - 1e-9 || m.t === 0) cam.current.s = viewW * 0.2;   // 重置：起點放在畫面約 30% 處（老師 2026-09-11：起點偏左一點，向右行有較多路）
     { const dz = viewW * 0.2; if (carS > cam.current.s + dz) cam.current.s = carS - dz; else if (carS < cam.current.s - dz) cam.current.s = carS + dz; }
     cam.current.t = m.t;
     const sx = (s: number) => tr.x + tr.w / 2 + (s - cam.current.s) * pxPerM;
@@ -100,7 +87,7 @@ export default function Scene({ plan, onInput }: SceneProps) {
     }
     ctx.font = monoFont(11); ctx.fillStyle = ink3; ctx.textAlign = "center"; ctx.fillText(zh ? "位移 s / m（向右為正 →）" : "displacement s / m (right = + →)", tr.x + tr.w / 2, ty + 46);
     // 鏡頭偏離起點時說明「鏡頭跟着小車移動，比例不變」（學生試用者第 7 輪：地面刻度範圍變了，以為是縮放）
-    if (Math.abs(cam.current.s) > 1e-9) { ctx.font = uiFont(12, "700"); ctx.fillStyle = ink; ctx.textAlign = "right"; ctx.fillText(zh ? "鏡頭跟着小車移動（比例不變）" : "Camera follows the trolley (same scale)", tr.x + tr.w - 8, tr.y + 14); }
+    if (Math.abs(cam.current.s - viewW * 0.2) > 1e-9) { ctx.font = uiFont(12, "700"); ctx.fillStyle = ink; ctx.textAlign = "right"; ctx.fillText(zh ? "鏡頭跟着小車移動（比例不變）" : "Camera follows the trolley (same scale)", tr.x + tr.w - 8, tr.y + 14); }   // 鏡頭離開了起始位置才提示
     // 起點旗（原點，在畫面內才畫）
     const x0 = sx(0);
     if (x0 > tr.x - 20 && x0 < tr.x + tr.w + 20) {
