@@ -13,7 +13,7 @@ import type { ArrowPlan, RenderPlan, SceneProps } from "@/shell/types";
 // 第 2 輪（儀器審核員）：推手畫成手、桌面畫成桌（室內）、粗糙紋跟 μ、樽有頸、拉布的手、巴士車廂兩端開放且鏡頭跟乘客與巴士的中點、
 // 受力標籤分層不重疊、水平力與垂直力各自一個像素比例（同一 kind 全場景一個係數）。
 
-interface Frozen { t: number; viewW: number; pxH: number; pxV: number; pxVel: number; pxA: number; sAx: number; vAx: number }
+interface Frozen { t: number; viewW: number; pxH: number; pxV: number; pxVel: number; pxA: number; sAx: number; vAx: number; aAx: number }
 const LABEL_H = 15;
 const isIndoor = (scene: number) => scene === 1 || scene === 2;
 
@@ -39,9 +39,26 @@ function drawHand(ctx: CanvasRenderingContext2D, x: number, y: number, size: num
   ctx.beginPath(); ctx.roundRect(dir > 0 ? palmX + w * 0.15 : palmX + w * 0.5, y - h * 0.9, w * 0.35, h * 0.42, 3); ctx.fill(); ctx.stroke();
 }
 
+/** 火箭（側視）：dir = +1 船頭向右；stripe 為色帶（主船琥珀、其餘鋼藍／灰）；flame 為火焰長度（px，0 = 引擎關） */
+function drawRocket(ctx: CanvasRenderingContext2D, cx: number, cy: number, L: number, H: number, dir: 1 | -1, stripe: string, edge: string, flame: number) {
+  ctx.save(); ctx.translate(cx, cy); ctx.scale(dir, 1);
+  ctx.fillStyle = SCENE.post; ctx.beginPath(); ctx.moveTo(-L * 0.5, -H * 0.22); ctx.lineTo(-L * 0.62, -H * 0.34); ctx.lineTo(-L * 0.62, H * 0.34); ctx.lineTo(-L * 0.5, H * 0.22); ctx.closePath(); ctx.fill();   // 噴嘴
+  if (flame > 0) {   // 火焰：外橙紅、內黃
+    ctx.fillStyle = SCENE.flag; ctx.beginPath(); ctx.moveTo(-L * 0.62, -H * 0.3); ctx.lineTo(-L * 0.62 - flame, 0); ctx.lineTo(-L * 0.62, H * 0.3); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = SCENE.roadDash; ctx.beginPath(); ctx.moveTo(-L * 0.62, -H * 0.15); ctx.lineTo(-L * 0.62 - flame * 0.55, 0); ctx.lineTo(-L * 0.62, H * 0.15); ctx.closePath(); ctx.fill();
+  }
+  ctx.fillStyle = stripe; ctx.strokeStyle = edge; ctx.lineWidth = 1.2;   // 尾翼（上下）
+  for (const sgn of [-1, 1]) { ctx.beginPath(); ctx.moveTo(-L * 0.48, sgn * H * 0.3); ctx.lineTo(-L * 0.22, sgn * H * 0.3); ctx.lineTo(-L * 0.4, sgn * H * 0.85); ctx.lineTo(-L * 0.6, sgn * H * 0.85); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+  ctx.fillStyle = SCENE.white; ctx.strokeStyle = edge; ctx.lineWidth = 1.5;   // 機身 + 鼻錐
+  ctx.beginPath(); ctx.moveTo(-L * 0.5, -H * 0.5); ctx.lineTo(L * 0.15, -H * 0.5); ctx.quadraticCurveTo(L * 0.48, -H * 0.42, L * 0.56, 0); ctx.quadraticCurveTo(L * 0.48, H * 0.42, L * 0.15, H * 0.5); ctx.lineTo(-L * 0.5, H * 0.5); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = stripe; ctx.fillRect(-L * 0.5, -H * 0.5, L * 0.18, H); ctx.fillRect(L * 0.02, -H * 0.5, L * 0.05, H);   // 色帶
+  ctx.fillStyle = SCENE.skyTop; ctx.strokeStyle = edge; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(L * 0.24, 0, H * 0.2, 0, Math.PI * 2); ctx.fill(); ctx.stroke();   // 舷窗
+  ctx.restore();
+}
+
 export default function Scene({ plan }: SceneProps) {
   const lang = useLang(s => s.lang);
-  const frozen = useRef<Frozen>({ t: 0, viewW: 0, pxH: 0, pxV: 0, pxVel: 0, pxA: 0, sAx: 0, vAx: 0 });
+  const frozen = useRef<Frozen>({ t: 0, viewW: 0, pxH: 0, pxV: 0, pxVel: 0, pxA: 0, sAx: 0, vAx: 0, aAx: 0 });
   const cam = useRef({ s: [0, 0, 0] as number[], t: 0 });   // 每條泳道各自的鏡頭中心（米）
 
   const draw = useCallback((ctx: CanvasRenderingContext2D, w: number, h: number) => {
@@ -53,10 +70,10 @@ export default function Scene({ plan }: SceneProps) {
     const trackH = Math.max(240, Math.round(h * 0.56));
     const tr = { x: 0, y: 0, w, h: trackH };
     const pad = 44;
-    const ty = scene === 4 ? tr.y + tr.h * 0.5 : isIndoor(scene) ? tr.y + tr.h * 0.66 : tr.y + tr.h * 0.72;   // 桌面／路面／中線
+    const ty = scene === 4 ? tr.y + tr.h * 0.56 : isIndoor(scene) ? tr.y + tr.h * 0.66 : tr.y + tr.h * 0.72;   // 桌面／路面／太空中線（略低，留位給上方那艘的速度箭嘴）
     const floorY = tr.y + tr.h - 26;
     const lanesN = scene === 1 || scene === 4 ? Math.max(1, m.lanes) : 1;
-    const laneGap = scene === 4 ? tr.h * 0.3 : Math.max(90, tr.h * 0.34);
+    const laneGap = scene === 4 ? tr.h * 0.25 : Math.max(90, tr.h * 0.34);
     const laneY = (lane: number) => (scene === 4 ? ty - (lane === 1 ? 1 : lane === 2 ? -1 : 0) * laneGap : ty - lane * laneGap);
     const reset = frozen.current.viewW === 0 || m.t < frozen.current.t - 1e-9 || m.t === 0;
     if (reset) {
@@ -67,19 +84,21 @@ export default function Scene({ plan }: SceneProps) {
       // 垂直力另設上限：室內時重量箭頭不落到地板刻度（標籤在箭頭旁），泳道疊排時上下箭頭相隔 ≥ 0.2 倍間距
       const maxLenV = Math.min(maxLen, isIndoor(scene) ? Math.max(30, floorY - ty - 22) : Infinity);
       f.pxH = maxLen / m.FmaxH; f.pxV = maxLenV / m.FmaxV; f.pxVel = maxLen / m.vmax; f.pxA = (0.8 * maxLen) / m.amax;
-      f.sAx = nice(Math.max(0.5, m.smax * 1.02)); f.vAx = nice(Math.max(0.5, m.vmax * 1.02));
+      f.sAx = nice(Math.max(0.5, m.smax * 1.02)); f.vAx = nice(Math.max(0.5, m.vmax * 1.02)); f.aAx = nice(Math.max(0.5, m.amax * 1.02));
       cam.current.s = [0, 0, 0];
     }
     if (m.sSeen * 1.02 > frozen.current.sAx) frozen.current.sAx = nice(m.sSeen * 1.02);
     if (m.vSeen * 1.02 > frozen.current.vAx) frozen.current.vAx = nice(m.vSeen * 1.02);
+    if (m.aSeen * 1.02 > frozen.current.aAx) frozen.current.aAx = nice(m.aSeen * 1.02);
     frozen.current.t = m.t;
     const F = frozen.current; const pxPerM = (tr.w - 2 * pad) / F.viewW;
+    const rocketL = lanesN > 1 ? Math.max(48, 0.9 * pxPerM) : Math.max(64, 1.2 * pxPerM);   // 火箭畫面長度（三艘並排時縮小一級，令每條泳道放得下速度與力箭嘴）
     // 鏡頭：情景 3 跟乘客與巴士的中點（地面視角；兩者都留在畫面內），其餘每條泳道跟自己的物體
     const anchors: number[] = scene === 3 ? [bodyOf("passenger")!.position[0]]   // 地面視角：鏡頭跟乘客（儀器審核員第 2 輪）；巴士離開畫面時邊緣指示
       : scene === 2 ? [bodyOf("object")!.position[0]]
-      : scene === 4 ? ["ship", "shipR", "shipL"].map(k => bodyOf(k)?.position[0] ?? 0)
+      : scene === 4 ? ["ship", "shipR", "shipL"].map(k => (bodyOf(k)?.position[0] ?? 0) + F.viewW * 0.25)   // 火箭在畫面左方四分一（老師 2026-09-11：速度箭嘴向右要有空間）
       : ["block", "blockB"].map(k => bodyOf(k)?.position[0] ?? 0);
-    anchors.forEach((a, lane) => { const dz = F.viewW * 0.2; if (a > cam.current.s[lane] + dz) cam.current.s[lane] = a - dz; else if (a < cam.current.s[lane] - dz) cam.current.s[lane] = a + dz; });
+    anchors.forEach((a, lane) => { const dz = F.viewW * (scene === 4 ? 0.04 : 0.2); if (a > cam.current.s[lane] + dz) cam.current.s[lane] = a - dz; else if (a < cam.current.s[lane] - dz) cam.current.s[lane] = a + dz; });
     cam.current.t = m.t;
     const sx = (s: number, lane = 0) => tr.x + tr.w / 2 + (s - cam.current.s[lane]) * pxPerM;
     const camS = cam.current.s[0];
@@ -198,17 +217,18 @@ export default function Scene({ plan }: SceneProps) {
       else if (m.phase >= 2) { ctx.font = uiFont(12); ctx.fillStyle = ink2; ctx.fillText(zh ? "桌布已抽出，樽在桌面滑行" : "Cloth out; the bottle slides on the table", bx, by + 72); }
     } else if (scene === 3) {
       const bus = bodyOf("bus")!; const bh = bus.size[1] * pxPerM; const floor = ty - 12; const busX = sx(bus.position[0]);
-      // 車廂貫穿整個畫面（視為無限長）：車身、地板、扶手橫桿由左畫到右；窗框、吊桿與車輪在世界座標跟巴士走
-      ctx.fillStyle = SCENE.objectA; ctx.fillRect(tr.x, floor - bh, tr.w, bh);
-      ctx.strokeStyle = SCENE.objectAEdge; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(tr.x, floor - bh); ctx.lineTo(tr.x + tr.w, floor - bh); ctx.moveTo(tr.x, floor); ctx.lineTo(tr.x + tr.w, floor); ctx.stroke();
-      const winW = 2.2 * pxPerM, winGap = 2.8 * pxPerM; const win0 = busX - Math.ceil((busX - tr.x) / winGap) * winGap;
-      ctx.fillStyle = SCENE.objectAWindow; for (let wx = win0; wx < tr.x + tr.w; wx += winGap) ctx.fillRect(wx, floor - bh + 8, winW, bh * 0.34);
-      ctx.fillStyle = SCENE.trunk; ctx.fillRect(tr.x, floor, tr.w, 5);   // 地板
-      const wheelGap = 7 * pxPerM; for (let wx = busX - Math.ceil((busX - tr.x) / wheelGap) * wheelGap; wx < tr.x + tr.w; wx += wheelGap) { ctx.fillStyle = SCENE.wheel; ctx.beginPath(); ctx.arc(wx, ty - 2, 11, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = SCENE.hub; ctx.beginPath(); ctx.arc(wx, ty - 2, 4, 0, Math.PI * 2); ctx.fill(); }
-      const railY = floor - bh * 0.66; ctx.strokeStyle = SCENE.post; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(tr.x, railY); ctx.lineTo(tr.x + tr.w, railY); ctx.stroke();   // 扶手橫桿
-      for (let wx = win0 + winW / 2; wx < tr.x + tr.w; wx += winGap) { ctx.strokeStyle = SCENE.post; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(wx, floor - bh); ctx.lineTo(wx, railY); ctx.stroke(); }   // 扶手吊桿
-      ctx.font = uiFont(11, "700"); ctx.fillStyle = ink2; ctx.textAlign = "left"; ctx.fillText(zh ? "扶手" : "handrail", tr.x + 8, railY - 6);
-      ctx.font = uiFont(11); ctx.fillStyle = ink2; ctx.fillText(zh ? "車廂視為無限長（貫穿畫面）" : "Bus interior taken as unbounded (spans the view)", tr.x + 8, floor - bh - 6);
+      // 有頭有尾的車廂（老師 2026-09-11：巴士短一點）：長度 = plan 的 BUS_L；窗、吊桿、座椅、車輪只畫在車身內；乘客滑出車尾不模擬撞牆（假設已列明）
+      const bl = bus.size[0] * pxPerM; const bx0 = busX - bl / 2, bx1 = busX + bl / 2;
+      ctx.fillStyle = SCENE.objectA; ctx.strokeStyle = SCENE.objectAEdge; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.roundRect(bx0, floor - bh, bl, bh, [14, 20, 6, 6]); ctx.fill(); ctx.stroke();   // 車頭（右）較圓
+      const winW = 2.2 * pxPerM, winGap = 2.8 * pxPerM;
+      ctx.fillStyle = SCENE.objectAWindow; for (let wx = bx0 + 0.5 * pxPerM; wx + winW < bx1 - 0.4 * pxPerM; wx += winGap) ctx.fillRect(wx, floor - bh + 8, winW, bh * 0.34);
+      ctx.fillRect(bx1 - 1.6 * pxPerM, floor - bh + 8, 1.3 * pxPerM, bh * 0.5);   // 車頭擋風玻璃
+      ctx.fillStyle = SCENE.trunk; ctx.fillRect(bx0, floor, bl, 5);   // 地板
+      for (const fx of [0.14, 0.5, 0.86]) { const wx = bx0 + bl * fx; ctx.fillStyle = SCENE.wheel; ctx.beginPath(); ctx.arc(wx, ty - 2, 11, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = SCENE.hub; ctx.beginPath(); ctx.arc(wx, ty - 2, 4, 0, Math.PI * 2); ctx.fill(); }
+      const railY = floor - bh * 0.66; ctx.strokeStyle = SCENE.post; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(bx0 + 10, railY); ctx.lineTo(bx1 - 10, railY); ctx.stroke();   // 扶手橫桿
+      for (let wx = bx0 + 0.5 * pxPerM + winW / 2; wx < bx1 - 0.4 * pxPerM; wx += winGap) { ctx.strokeStyle = SCENE.post; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(wx, floor - bh); ctx.lineTo(wx, railY); ctx.stroke(); }   // 扶手吊桿
+      ctx.font = uiFont(11, "700"); ctx.fillStyle = ink2; ctx.textAlign = "left"; ctx.fillText(zh ? "扶手" : "handrail", Math.max(tr.x + 8, bx0 + 12), railY - 6);
       if (busX < tr.x + 8 || busX > tr.x + tr.w - 8) { const left = busX < tr.x + 8; ctx.font = uiFont(12, "700"); ctx.fillStyle = ink; ctx.textAlign = left ? "left" : "right"; ctx.fillText(`${left ? "◀ " : ""}${zh ? "巴士中心在 s = " : "bus centre at s = "}${trim3(sig(bus.position[0]))} m${left ? "" : " ▶"}`, left ? tr.x + 8 : tr.x + tr.w - 8, ty - 60); }
       // 乘客（鋼藍人形）站在地板上
       const pas = bodyOf("passenger")!; const ph = pas.size[1] * pxPerM, pw = pas.size[0] * pxPerM; const cx = sx(pas.position[0]);
@@ -216,6 +236,20 @@ export default function Scene({ plan }: SceneProps) {
       ctx.beginPath(); ctx.roundRect(cx - pw / 2, floor - ph * 0.72, pw, ph * 0.72, 5); ctx.fill(); ctx.stroke();
       ctx.beginPath(); ctx.arc(cx, floor - ph * 0.86, ph * 0.13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       if (m.handrail) { ctx.strokeStyle = SCENE.objectBEdge; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(cx + pw * 0.4, floor - ph * 0.6); ctx.lineTo(cx + pw * 0.9, railY); ctx.stroke(); ctx.fillStyle = SCENE.objectB; ctx.beginPath(); ctx.arc(cx + pw * 0.9, railY, 6, 0, Math.PI * 2); ctx.fill(); }
+      // 座椅列（跟巴士走，每 1.4 m 一張）：乘客相對車廂的移動一眼可見
+      const seatGap = 1.4 * pxPerM, seatW = 0.5 * pxPerM, seatH = ph * 0.32;
+      for (let sxSeat = bx0 + 0.6 * pxPerM; sxSeat + seatW < bx1 - 1.8 * pxPerM; sxSeat += seatGap) { if (Math.abs(sxSeat - cx) < pw) continue; ctx.fillStyle = SCENE.objectAEdge; ctx.fillRect(sxSeat, floor - seatH, seatW, seatH); ctx.fillRect(sxSeat, floor - seatH * 1.9, seatW * 0.28, seatH); }
+      // 車廂內固定點：乘客起步時所站的位置（隨巴士走）；由該點到乘客的水平線 = 相對巴士的位移
+      const originX = busX;   // 乘客 t = 0 時在 s = 0 = 巴士中心
+      ctx.strokeStyle = SCENE.flag; ctx.lineWidth = 3; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.moveTo(originX, floor); ctx.lineTo(originX, floor - bh + 4); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = SCENE.flag; ctx.beginPath(); ctx.moveTo(originX, floor - bh + 4); ctx.lineTo(originX + 18, floor - bh + 11); ctx.lineTo(originX, floor - bh + 18); ctx.closePath(); ctx.fill();
+      ctx.font = uiFont(11, "700"); ctx.fillStyle = SCENE.flag; if (originX > tr.x + tr.w - 170) { ctx.textAlign = "right"; ctx.fillText(zh ? "起點（車廂內固定點）" : "start (fixed to the bus)", originX - 6, floor - bh + 16); } else { ctx.textAlign = "left"; ctx.fillText(zh ? "起點（車廂內固定點）" : "start (fixed to the bus)", originX + 22, floor - bh + 16); }
+      if (Math.abs(cx - originX) > 6) {
+        const yDim = floor - ph - 34;   // 乘客頭頂之上（速度箭嘴之下）
+        ctx.strokeStyle = SCENE.flag; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(originX, yDim); ctx.lineTo(cx, yDim); ctx.moveTo(originX, yDim - 6); ctx.lineTo(originX, yDim + 6); ctx.moveTo(cx, yDim - 6); ctx.lineTo(cx, yDim + 6); ctx.stroke();
+        const dirSign = Math.sign(cx - originX); ctx.beginPath(); ctx.moveTo(cx, yDim); ctx.lineTo(cx - dirSign * 9, yDim - 5); ctx.lineTo(cx - dirSign * 9, yDim + 5); ctx.closePath(); ctx.fillStyle = SCENE.flag; ctx.fill();
+        ctx.font = monoFont(12, "700"); ctx.textAlign = "center"; ctx.fillText(`s_rel = ${sig(m.sRel)} m`, (originX + cx) / 2, yDim - 8);
+      }
       const phaseTxt = zh ? ["起步（勻加速）", "巡航（勻速）", "急煞（勻減速）", "已停"][m.busPhase] : ["starting (uniform acceleration)", "cruising", "braking", "stopped"][m.busPhase];
       ctx.font = uiFont(13, "700"); ctx.fillStyle = ink; ctx.textAlign = "left"; ctx.fillText(`${zh ? "巴士" : "Bus"}：${phaseTxt}　v = ${trim3(sig(m.vBus))} m s⁻¹`, tr.x + 14, tr.y + 34);
       ctx.font = uiFont(12, "700"); ctx.fillStyle = accent; ctx.fillText(zh ? "地面（慣性）視角；考試作答一律用地面視角" : "Ground (inertial) frame — always the frame used in exam answers", tr.x + 14, tr.y + 52);
@@ -223,14 +257,17 @@ export default function Scene({ plan }: SceneProps) {
       if (m.sliding && !m.handrail) { ctx.font = uiFont(12); ctx.fillStyle = ink2; ctx.fillText(zh ? "乘客相對地板滑動（地板加速超過 μg）" : "Passenger sliding on the floor (floor acceleration exceeds μg)", tr.x + 14, tr.y + 88); }
     } else {
       for (const b of plan.bodies!) {
-        const lane = b.position[2]; const yl = laneY(lane); const cx = sx(b.position[0], lane); const L = Math.max(44, b.size[0] * pxPerM), H = Math.max(22, b.size[1] * pxPerM);
-        const main = b.key === "ship"; const dir = b.key === "shipL" ? -1 : 1;   // 向左那艘船頭向左
-        ctx.fillStyle = main ? SCENE.objectA : dir < 0 ? SCENE.ghost : SCENE.objectB; ctx.strokeStyle = main ? SCENE.objectAEdge : SCENE.objectBEdge; ctx.lineWidth = 1.5;   // 向左那艘灰色，與圖例一致
-        ctx.beginPath(); ctx.moveTo(cx + dir * L / 2, yl); ctx.lineTo(cx - dir * L / 2, yl - H / 2); ctx.lineTo(cx - dir * L / 3, yl); ctx.lineTo(cx - dir * L / 2, yl + H / 2); ctx.closePath(); ctx.fill(); ctx.stroke();
-        if (m.engineOn && m.Fe !== 0) { const back = m.Fe > 0 ? -1 : 1; ctx.fillStyle = SCENE.flag; ctx.beginPath(); ctx.moveTo(cx + back * L / 3, yl - H / 4); ctx.lineTo(cx + back * (L / 3 + Math.min(60, 12 + Math.abs(m.Fe) * 8)), yl); ctx.lineTo(cx + back * L / 3, yl + H / 4); ctx.closePath(); ctx.fill(); }
+        const lane = b.position[2]; const yl = laneY(lane); const cx = sx(b.position[0], lane); const L = rocketL, H = rocketL * 0.36;
+        const main = b.key === "ship"; const dir: 1 | -1 = b.key === "shipL" ? -1 : 1;   // 向左那艘船頭向左
+        // 火焰在推力反方向：推力向右（Fe > 0）火焰在左端；船頭向左那艘則畫在船頭側（推力方向與船頭無關，畫面已註明）
+        const flame = m.engineOn && m.Fe !== 0 ? Math.min(60, 12 + Math.abs(m.Fe) * 8) : 0;
+        const flameOnTail = (m.Fe > 0 ? -1 : 1) === -dir;   // 火焰應在 x 方向 −sgn(Fe)；drawRocket 的火焰在尾（−dir）
+        if (flameOnTail) drawRocket(ctx, cx, yl, L, H, dir, main ? SCENE.objectA : dir < 0 ? SCENE.ghost : SCENE.objectB, main ? SCENE.objectAEdge : SCENE.objectBEdge, flame);
+        else { drawRocket(ctx, cx, yl, L, H, dir, main ? SCENE.objectA : dir < 0 ? SCENE.ghost : SCENE.objectB, main ? SCENE.objectAEdge : SCENE.objectBEdge, 0); if (flame > 0) { const back = m.Fe > 0 ? -1 : 1; ctx.fillStyle = SCENE.flag; ctx.beginPath(); ctx.moveTo(cx + back * L * 0.56, yl - H * 0.2); ctx.lineTo(cx + back * (L * 0.56 + flame), yl); ctx.lineTo(cx + back * L * 0.56, yl + H * 0.2); ctx.closePath(); ctx.fill(); } }
       }
       ctx.font = uiFont(13, "700"); ctx.fillStyle = SCENE.white; ctx.textAlign = "left";
-      ctx.fillText(`${zh ? "引擎" : "Engine"}：${m.engineOn ? (zh ? "開" : "on") : zh ? "關" : "off"}　${zh ? "燃料消耗" : "fuel"} ${trim3(sig(m.fuel))}`, tr.x + 14, tr.y + 34);
+      const sShip = plan.labels.find(l => l.symbol === "s")?.value ?? 0;
+      ctx.fillText(`${zh ? "引擎" : "Engine"}：${m.engineOn ? (zh ? "開" : "on") : zh ? "關" : "off"}　${zh ? "燃料消耗" : "fuel"} ${trim3(sig(m.fuel))}　s = ${sig(sShip)} m`, tr.x + 14, tr.y + 34);
       ctx.font = uiFont(12); ctx.fillStyle = SCENE.muted; ctx.fillText(zh ? "太空：無重量、無摩擦；關引擎後沒有任何力（船頭方向與速度方向無關）" : "Space: no weight, no friction; with the engine off no force acts (heading is independent of velocity)", tr.x + 14, tr.y + 52);
     }
 
@@ -249,7 +286,7 @@ export default function Scene({ plan }: SceneProps) {
     let shrink = 1;
     for (const a of plan.arrows) { if (a.vector[1] !== 0) continue; const need = Math.abs(a.vector[0]) * pxOf(a); const cx = sx(a.origin[0], a.origin[2]); const room = (a.vector[0] > 0 ? tr.x + tr.w - 8 - cx : cx - tr.x - 8) - 14; if (need > room && need > 0) shrink = Math.min(shrink, Math.max(0.05, room / need)); }
     const baseOf = (lane: number) => (scene === 1 ? laneY(lane) - 9 : scene === 2 ? ty - 15 : scene === 3 ? ty - 12 : laneY(lane));   // 物體底部（接觸面）像素
-    const bodyTopOf = (lane: number) => (scene === 1 ? baseOf(lane) - Math.max(22, 0.12 * pxPerM) : scene === 2 ? baseOf(lane) - 0.22 * pxPerM : scene === 3 ? baseOf(lane) - 1.7 * pxPerM : laneY(lane) - Math.max(22, 0.5 * pxPerM) / 2);
+    const bodyTopOf = (lane: number) => (scene === 1 ? baseOf(lane) - Math.max(22, 0.12 * pxPerM) : scene === 2 ? baseOf(lane) - 0.22 * pxPerM : scene === 3 ? baseOf(lane) - 1.7 * pxPerM : laneY(lane) - rocketL * 0.36 * 0.85);   // 火箭尾翼頂
     // 標籤底框（半透明白）：在車窗、扶手、桌腳等雜背景上仍可讀
     const label = (text: string, x: number, y: number, color: string, align: CanvasTextAlign) => {
       ctx.font = symbolFont(13); const wText = ctx.measureText(text).width; const x0 = align === "left" ? x - 2 : align === "right" ? x - wText - 2 : x - wText / 2 - 2;
@@ -264,29 +301,30 @@ export default function Scene({ plan }: SceneProps) {
       const onCloth = scene === 2 && m.phase < 2;
       const normalArrow = plan.arrows.find(x => x.kind === "normal" && x.origin[2] === lane);
       const yRTip = normalArrow ? base - Math.abs(normalArrow.vector[1]) * pxOf(normalArrow) - 22 : Infinity;   // R 標籤（箭頭上方）之上
-      if (a.kind === "velocity" || a.kind === "acceleration") { const yy = Math.min(top - 30, yRTip) - (a.kind === "velocity" ? 0 : 24); drawArrow2D(ctx, cx, yy, cx + a.vector[0] * k, yy, a.kind, a.label); continue; }
+      if (a.kind === "velocity" || a.kind === "acceleration") { const yy = Math.min(top - (scene === 4 ? 26 : 30), yRTip) - (a.kind === "velocity" ? 0 : 24); drawArrow2D(ctx, cx, yy, cx + a.vector[0] * k, yy, a.kind, a.label); continue; }
       if (a.vector[1] !== 0) {   // 垂直力：法向反作用力由接觸面向上、標籤在箭頭上方置中；重量由中心向下、標籤在箭頭旁（桿左側）
         const y0 = a.kind === "normal" ? base : cy; const y1 = y0 - a.vector[1] * k; drawArrow2D(ctx, cx, y0, cx, y1, a.kind);
         if (a.vector[1] > 0) label(forceLabel(a, scene, zh, onCloth), cx, y1 - 6, color, "center"); else label(forceLabel(a, scene, zh, onCloth), cx - 9, y1 + 4, color, "right");
         continue;
       }
       // 水平力分三層：施力在中心之上（標籤在箭嘴上方）、淨力在中心（標籤在箭嘴下方）、摩擦貼接觸面（標籤在桌面／地板之下）
-      const yy = a.layer === "applied" ? cy - 14 : a.kind === "friction" ? base - 5 : cy;
+      const rocketH = rocketL * 0.36;
+      const yy = scene === 4 ? cy + rocketH * 0.85 + (a.layer === "applied" ? 8 : 24) : a.layer === "applied" ? cy - 14 : a.kind === "friction" ? base - 5 : cy;   // 太空：箭嘴在火箭之下，推力在上、淨力在下
       const x1 = cx + a.vector[0] * k; drawArrow2D(ctx, cx, yy, x1, yy, a.kind);
       const align: CanvasTextAlign = a.vector[0] > 0 ? "left" : "right"; const lx = x1 + (a.vector[0] > 0 ? 6 : -6);
       // 施力：箭頭外側、箭嘴上方；摩擦：箭頭外側、沿箭嘴線；淨力：沿箭嘴線，但有同向摩擦（放手後粗糙段淨力 = 摩擦，兩箭頭同 x）時改放箭嘴上方
       const frictionSameDir = a.kind === "net" && plan.arrows.some(x => x.kind === "friction" && x.origin[2] === lane && Math.sign(x.vector[0]) === Math.sign(a.vector[0]));
-      label(forceLabel(a, scene, zh, onCloth), lx, a.layer === "applied" ? yy - 8 : frictionSameDir ? yy - 9 : yy + 5, color, align);
+      label(forceLabel(a, scene, zh, onCloth), lx, scene === 4 ? yy + 5 : a.layer === "applied" ? yy - 8 : frictionSameDir ? yy - 9 : yy + 5, color, align);
     }
     if (shrink < 1 - 1e-9) { ctx.font = uiFont(11); ctx.fillStyle = scene === 4 ? SCENE.muted : ink3; ctx.textAlign = "right"; ctx.fillText(zh ? "箭嘴已按邊緣空間同步縮短（比例不變）" : "Arrows shortened together to fit the edge (same ratio)", tr.x + tr.w - 8, tr.y + 16); }
     // 位移標籤
     // 位移標籤：只有情景 4 畫在飛船下方（情景 1、2 的 s 已併入左上資訊行；情景 3 的 s_rel 亦在資訊行）
-    for (const lab of plan.labels) if (lab.symbol === "s" && scene === 4) { const cx = sx(lab.position[0]); ctx.font = monoFont(12); ctx.fillStyle = SCENE.white; ctx.textAlign = "center"; ctx.fillText(`s = ${sig(lab.value)} ${lab.unit}`, cx, laneY(0) + 40); }
+    // 位移讀數：四個情景都已併入左上資訊行（火箭下方留給力箭嘴），畫面上不再另畫 s 標籤；plan.labels 仍供讀數面板與測試用
 
     // ---- 線圖：左 s–t（巴士：相對巴士的位移），右 v–t（可多條線）----
-    const gap = 12, top = trackH + 8, gh = h - top - 8, gw = (w - gap * 3) / 2;
+    const gap = 12, top = trackH + 8, gh = h - top - 8, gw = (w - gap * 4) / 3;   // 三張：s–t、v–t、a–t（老師 2026-09-11）
     const mk = (i: number, yAbs: number): Pane => ({ x: gap + i * (gw + gap), y: top, w: gw, h: gh, yMin: -yAbs, yMax: yAbs, tMax: m.T });
-    const sPane = mk(0, F.sAx), vPane = mk(1, F.vAx);
+    const sPane = mk(0, F.sAx), vPane = mk(1, F.vAx), aPane = mk(2, F.aAx);
     const tr2 = (key: string) => plan.trails?.find(t => t.key === key)?.points ?? [];
     const line = (p: Pane, pts: [number, number, number][], color: string, width = 2.5, alpha = 1) => {
       if (pts.length < 2) return; ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = color; ctx.lineWidth = width; ctx.beginPath();
@@ -304,9 +342,15 @@ export default function Scene({ plan }: SceneProps) {
     if (third.length) line(vPane, third, SCENE.ghost, 2, 0.9);
     line(vPane, tr2("v-t"), SERIES.v.color);
     if (second.length) { ctx.font = uiFont(11); ctx.fillStyle = ink2; ctx.textAlign = "left"; const who = scene === 1 ? (zh ? "綠＝方塊 A（琥珀色），藍＝方塊 B" : "green = block A (amber), blue = block B") : scene === 2 ? (zh ? "綠＝樽，藍＝桌布" : "green = bottle, blue = cloth") : scene === 3 ? (zh ? "綠＝乘客，藍＝巴士" : "green = passenger, blue = bus") : zh ? "綠＝靜止那艘（琥珀色），藍＝向右，灰＝向左" : "green = at rest (amber), blue = right, grey = left"; ctx.fillText(who, vx0 + 6, vPane.y + vPane.h - 28); }
-    if (scene === 1) marker(vPane, m.tRelease, zh ? "放手" : "released");
-    if (scene === 2 && m.tLeave >= 0) marker(vPane, m.tLeave, zh ? "抽出" : "out");
-    for (const [p, key] of [[sPane, "s-t"], [vPane, "v-t"]] as const) { const cur = tr2(key).at(-1); if (!cur) continue; const cxp = px(p, cur[0]), cyp = py(p, Math.max(p.yMin, Math.min(p.yMax, cur[1]))); ctx.fillStyle = key === "s-t" ? accent : SERIES.v.color; ctx.beginPath(); ctx.arc(cxp, cyp, 4.5, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = ink3; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(cxp, py(p, p.yMax)); ctx.lineTo(cxp, py(p, p.yMin)); ctx.stroke(); ctx.setLineDash([]); }
+    // a–t 圖：主體（青藍）與第二體（鋼藍）；巴士情景煞車時乘客 a = −μg、巴士 a = −a車，兩線分開
+    const { x0: ax0 } = drawPane(ctx, aPane, { title: zh ? "a–t 圖（加速度—時間）" : "a–t graph", yLabel: "a / m s⁻²", color: SERIES.a.color, tint: SERIES.a.tint, xTicks }, T);
+    const second2 = tr2("a2-t");
+    if (second2.length) line(aPane, second2, SCENE.objectB, 2, 0.9);
+    line(aPane, tr2("a-t"), SERIES.a.color);
+    if (second2.length) { ctx.font = uiFont(11); ctx.fillStyle = ink2; ctx.textAlign = "left"; const whoA = scene === 1 ? (zh ? "青＝方塊 A，藍＝方塊 B" : "teal = block A, blue = block B") : scene === 2 ? (zh ? "青＝樽，藍＝桌布（恆速，a = 0）" : "teal = bottle, blue = cloth (a = 0)") : scene === 3 ? (zh ? "青＝乘客，藍＝巴士" : "teal = passenger, blue = bus") : zh ? "青＝主飛船，藍＝其餘（同一推力）" : "teal = main craft, blue = others"; ctx.fillText(whoA, ax0 + 6, aPane.y + aPane.h - 28); }
+    if (scene === 1) { marker(vPane, m.tRelease, zh ? "放手" : "released"); marker(aPane, m.tRelease, zh ? "放手" : "released"); }
+    if (scene === 2 && m.tLeave >= 0) { marker(vPane, m.tLeave, zh ? "抽出" : "out"); marker(aPane, m.tLeave, zh ? "抽出" : "out"); }
+    for (const [p, key] of [[sPane, "s-t"], [vPane, "v-t"], [aPane, "a-t"]] as const) { const cur = tr2(key).at(-1); if (!cur) continue; const cxp = px(p, cur[0]), cyp = py(p, Math.max(p.yMin, Math.min(p.yMax, cur[1]))); ctx.fillStyle = key === "s-t" ? accent : key === "v-t" ? SERIES.v.color : SERIES.a.color; ctx.beginPath(); ctx.arc(cxp, cyp, 4.5, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = ink3; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(cxp, py(p, p.yMax)); ctx.lineTo(cxp, py(p, p.yMin)); ctx.stroke(); ctx.setLineDash([]); }
   }, [plan, lang]);
 
   return (

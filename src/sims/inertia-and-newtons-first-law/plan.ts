@@ -7,7 +7,7 @@ import { model, duration, blockForces, clothForces, passengerForces, busAt, ship
 
 export const BLOCK = 0.12;        // 方塊邊長 / m
 export const OBJ_W = 0.08, OBJ_H = 0.22;   // 桌布上的物件（樽）/ m
-export const BUS_L = 16, BUS_H = 2.8;      // 巴士車廂（畫面上兩端截斷，視為無限長）/ m
+export const BUS_L = 18, BUS_H = 2.8;      // 巴士車廂（有頭有尾；預設參數急煞時乘客相對位移 −8.8 m 仍在車內；不模擬撞牆）/ m
 export const PASS_W = 0.4, PASS_H = 1.7;   // 乘客 / m
 export const SHIP_L = 1.0, SHIP_H = 0.5;   // 飛船 / m
 export const HOLD = 3;                     // 預測軸範圍時假設施力／引擎維持的秒數
@@ -61,6 +61,7 @@ export const plan: PlanFn<S, P> = (st, p, obs, layers) => {
     // 至今出現過的最大 |s|、|v|（所有物體）：學生一直按着施力時軸只放大、不縮小
     sSeen: Math.max(...st.hist.map(h => Math.max(Math.abs(p.scene === "bus" ? h.s - h.s2 : h.s), p.scene === "table" && p.second ? Math.abs(h.s2) : 0, p.scene === "space" && p.trio ? Math.max(Math.abs(h.s2), Math.abs(h.s3)) : 0))),
     vSeen: Math.max(...st.hist.map(h => Math.max(Math.abs(h.v), (p.scene === "cloth" || p.scene === "bus" || (p.scene === "table" && p.second) || (p.scene === "space" && p.trio)) ? Math.abs(h.v2) : 0, p.scene === "space" && p.trio ? Math.abs(h.v3) : 0))),
+    aSeen: Math.max(...st.hist.map(h => Math.max(Math.abs(h.a), Math.abs(h.a2)))),
   };
   // 力箭嘴：origin 在物體中心；layer 為圖層鍵；label 為符號（施力物 → 受力物的文字由 Scene 按語言配）
   const force = (kind: ArrowPlan["kind"], layer: string, origin: Vec3, vector: Vec3, label: string) => {
@@ -144,7 +145,8 @@ export const plan: PlanFn<S, P> = (st, p, obs, layers) => {
     { key: "s-t", points: H.map(h => [h.t, p.scene === "bus" ? h.s - h.s2 : h.s, 0] as Vec3) },
     { key: "v-t", points: H.map(h => [h.t, h.v, 0] as Vec3) },
   ];
-  if ((p.scene === "table" && p.second) || p.scene === "cloth" || p.scene === "bus" || (p.scene === "space" && p.trio)) trails.push({ key: "v2-t", points: H.map(h => [h.t, h.v2, 0] as Vec3) });
+  trails.push({ key: "a-t", points: H.map(h => [h.t, h.a, 0] as Vec3) });   // a–t 圖（老師 2026-09-11 要求）
+  if ((p.scene === "table" && p.second) || p.scene === "cloth" || p.scene === "bus" || (p.scene === "space" && p.trio)) { trails.push({ key: "v2-t", points: H.map(h => [h.t, h.v2, 0] as Vec3) }); trails.push({ key: "a2-t", points: H.map(h => [h.t, h.a2, 0] as Vec3) }); }
   if (p.scene === "space" && p.trio) trails.push({ key: "v3-t", points: H.map(h => [h.t, h.v3, 0] as Vec3) });
   if (p.scene === "table" && p.second) trails.push({ key: "s2-t", points: H.map(h => [h.t, h.s2, 0] as Vec3) });
 

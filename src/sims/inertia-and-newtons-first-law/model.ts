@@ -40,7 +40,7 @@ export interface P {
 }
 
 export interface Body { s: number; v: number }
-export interface Sample { t: number; s: number; v: number; a: number; s2: number; v2: number; s3: number; v3: number }
+export interface Sample { t: number; s: number; v: number; a: number; s2: number; v2: number; a2: number; s3: number; v3: number }   // a2：第二體的加速度（方塊 B / 桌布 0 / 巴士 / 向右的飛船），供 a–t 圖
 export interface S {
   t: number;
   done: boolean;
@@ -335,5 +335,6 @@ export const model: SimModel<S, P> = {
 
 function sample(st: S, p: P): Sample {
   const o = model.observe(st, p);
-  return { t: st.t, s: st.a.s, v: st.a.v, a: o.a, s2: st.b.s, v2: st.b.v, s3: st.c.s, v3: st.c.v };
+  const a2 = p.scene === "table" ? (p.second ? o.aB : 0) : p.scene === "bus" ? busAt(p, st.t).a : p.scene === "space" ? o.a : 0;   // 桌布以恆速抽出：a = 0
+  return { t: st.t, s: st.a.s, v: st.a.v, a: o.a, s2: st.b.s, v2: st.b.v, a2, s3: st.c.s, v3: st.c.v };
 }
