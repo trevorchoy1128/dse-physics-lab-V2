@@ -121,7 +121,7 @@ describe("慣性 畫面", () => {
     // 一直按着：sSeen / vSeen 隨時間單調不減，且等於至今的最大值
     const p = table({ F: 10, m: 0.1, mu2: 0 }); let s = model.init(p); let prevS = 0, prevV = 0;
     for (let i = 0; i < 200; i++) { s = model.step(s, p, 0.05); const m = mk(s, p).meta!; expect(m.sSeen).toBeGreaterThanOrEqual(prevS); expect(m.vSeen).toBeGreaterThanOrEqual(prevV); expect(m.vSeen).toBeCloseTo(Math.abs(s.a.v), 9); prevS = m.sSeen; prevV = m.vSeen; }
-  });
+  }, 60000);
 
   it("控制範圍內隨機 50 組參數：無 NaN / Infinity，箭嘴長度有界", () => {
     let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
@@ -144,7 +144,7 @@ describe("慣性 畫面", () => {
       }
       expect(bad, `case ${k} ${p.scene}`).toBe(0);
     }
-  });
+  }, 60000);   // CI runner 較慢（第一次部署時 5 s 內未跑完）
 
   it("第二個方塊在 lane 1，箭嘴與模型一致；三艘飛船各在自己的 lane", () => {
     const p = table({ second: true, mB: 1, mu1: 0, mu2: 0 }); const s = advance(p, 0.5).s; const pl = mk(s, p); const o = model.observe(s, p);

@@ -13,7 +13,18 @@ export const SHIP_L = 1.0, SHIP_H = 0.5;   // 飛船 / m
 export const HOLD = 3;                     // 預測軸範圍時假設施力／引擎維持的秒數
 
 /** 預測上界：假設施力／引擎開 HOLD 秒後放手／關掉（情景 2、3 無此開關），用模型本身（閉式積分，粗步長亦精確）跑完整個時間窗，取各量的最大絕對值。重置時 Scene 用它定軸與箭嘴比例 */
-export function extent(p: P): { smax: number; vmax: number; amax: number; Fmax: number; FmaxH: number; FmaxV: number } {
+export interface Extent { smax: number; vmax: number; amax: number; Fmax: number; FmaxH: number; FmaxV: number }
+// 純函數的記憶：同一組參數只算一次（每幀 plan() 都會呼叫；CI 的慢 runner 上 50 組隨機參數 × 300 幀曾超過 5 s）
+const extentCache = new Map<string, Extent>();
+export function extent(p: P): Extent {
+  const key = JSON.stringify(p);
+  const hit = extentCache.get(key); if (hit) return hit;
+  const e = extentUncached(p);
+  if (extentCache.size > 200) extentCache.clear();
+  extentCache.set(key, e);
+  return e;
+}
+function extentUncached(p: P): Extent {
   // 情景 1、4：假設施力／引擎只開頭 HOLD 秒然後放手／關掉（學生通常很快放手；若一直按着，Scene 的軸只放大不縮小）
   const on: P = { ...p, push: "on", engine: "on" }, off: P = { ...p, push: "off", engine: "off" };
   const T = duration(on); const n = 300; const dt = T / n;
