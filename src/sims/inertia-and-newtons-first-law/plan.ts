@@ -1,5 +1,5 @@
 import type { PlanFn, Vec3, ArrowPlan, BodyPlan, LabelPlan, Layers } from "@/shell/types";
-import { model, duration, blockForces, clothForces, passengerForces, busAt, shipAccel, clothAnalytic, sceneCode, L_AB, M_PASSENGER, type S, type P } from "./model";
+import { model, duration, blockForces, clothForces, passengerForces, busAt, shipAccel, clothAnalytic, passengerALimit, sceneCode, L_AB, M_PASSENGER, type S, type P } from "./model";
 
 // 畫面的物理（純函數）。2D 側視：上方情景（方塊／桌布／巴士／太空），下方 s–t 與 v–t 線圖（以 trails 傳遞，點 = [t, y, 0]）。
 // 箭嘴 vector 一律填物理量（SI），縮放係數在 scales 統一為 1；像素比例由 Scene 按 meta 的預測上界在重置時定好，運行中不變。
@@ -40,9 +40,9 @@ function extentUncached(p: P): Extent {
     if (i < n) { if ((p.scene === "table" || p.scene === "space") && st.t >= HOLD) q = off; st = model.step(st, q, dt); }
   }
   // 水平力（施力、摩擦、淨力、扶手、引擎）與垂直力（重量、法向反作用力）各一個上界：Scene 各用一個像素比例（同一 kind 全場景一個係數）
-  if (q.scene === "table") { FmaxV = Math.max(q.m, q.second ? q.mB : 0) * g; FmaxH = Math.max(q.F, Math.max(q.mu1, q.mu2) * Math.max(q.m, q.second ? q.mB : 0) * g); }
-  else if (q.scene === "cloth") { FmaxV = q.mObj * g; FmaxH = Math.max(q.muCloth, q.muTable) * q.mObj * g; }
-  else if (q.scene === "bus") { FmaxV = M_PASSENGER * g; FmaxH = Math.max(M_PASSENGER * q.aBus, q.muBus * M_PASSENGER * g); }
+  if (q.scene === "table") { FmaxV = Math.max(q.m, q.second ? q.mB : 0) * g; FmaxH = Math.max(q.F, q.f1, q.f2); }
+  else if (q.scene === "cloth") { FmaxV = q.mObj * g; FmaxH = Math.max(q.fCloth, q.fTable); }
+  else if (q.scene === "bus") { FmaxV = M_PASSENGER * g; FmaxH = Math.max(M_PASSENGER * q.aBus, q.fBus); }
   else { FmaxV = 0; FmaxH = q.Fe; }
   return { smax: Math.max(smax, 0.5), vmax: Math.max(vmax, 0.5), amax: Math.max(amax, 0.5), Fmax: Math.max(FmaxH, FmaxV, 0.1), FmaxH: Math.max(FmaxH, 0.1), FmaxV: Math.max(FmaxV, 0.1) };
 }
@@ -79,7 +79,7 @@ export const plan: PlanFn<S, P> = (st, p, obs, layers) => {
 
   if (p.scene === "table") {
     meta.LAB = L_AB; meta.tRelease = Number.isNaN(st.tRelease) ? -1 : st.tRelease; meta.push = p.push === "on" ? 1 : 0; meta.lanes = p.second ? 2 : 1;
-    meta.mu1 = p.mu1; meta.mu2 = p.mu2; meta.mA = p.m; meta.mB = p.mB;
+    meta.f1 = p.f1; meta.f2 = p.f2; meta.mA = p.m; meta.mB = p.mB;
     const draw = (key: string, b: { s: number; v: number }, m: number, lane: number, main: boolean) => {
       const c: Vec3 = [b.s, BLOCK / 2, lane];
       bodies.push({ key, shape: "box", position: [b.s, BLOCK / 2, lane], size: [BLOCK, BLOCK, BLOCK] });
@@ -106,8 +106,8 @@ export const plan: PlanFn<S, P> = (st, p, obs, layers) => {
     force("net", "net", c, [fo.Fnet, 0, 0], "ΣF");
     motion(c, st.a.v, fo.a);
     const ana = clothAnalytic(p);
-    meta.edge = st.b.s; meta.L = p.L; meta.vCloth = p.vCloth; meta.phase = st.phase; meta.stuck = st.phase === 1 ? 1 : 0; meta.muTable = p.muTable; meta.muCloth = p.muCloth;
-    meta.J = Number.isFinite(obs.J) ? obs.J : 0; meta.Jmax = m * Math.max(0.05, Math.sqrt(2 * p.muCloth * p.g * p.L));   // 衝量條的尺不隨 v布 變（核數員第 3 輪 H）：滿格 = 臨界速度 √(2μ布gL) 的衝量；v布 5 → 10 時條長減半
+    meta.edge = st.b.s; meta.L = p.L; meta.vCloth = p.vCloth; meta.phase = st.phase; meta.stuck = st.phase === 1 ? 1 : 0; meta.fTable = p.fTable; meta.fCloth = p.fCloth;
+    meta.J = Number.isFinite(obs.J) ? obs.J : 0; meta.Jmax = m * Math.max(0.05, Math.sqrt(2 * (p.fCloth / m) * p.L));   // 衝量條的尺不隨 v布 變（核數員第 3 輪 H）：滿格 = 臨界速度 √(2 f布 L / m) 的衝量；v布 5 → 10 時條長減半
     meta.dtPull = Number.isFinite(obs.dtPull) ? obs.dtPull : -1; meta.dv = Number.isFinite(obs.dv) ? obs.dv : 0;
     meta.tLeave = ana.stuck ? -1 : ana.tLeave; meta.sLeave = Number.isNaN(st.sLeave) ? -1 : st.sLeave;
     labels.push({ position: [st.a.s, -0.1, 0], symbol: "s", value: obs.s, unit: "m" });
@@ -124,7 +124,7 @@ export const plan: PlanFn<S, P> = (st, p, obs, layers) => {
     force("net", "net", c, [fp.Fnet, 0, 0], "ΣF");
     motion([c[0], PASS_H + 0.1, 0], st.a.v, fp.a);
     meta.sBus = bus.s; meta.vBus = bus.v; meta.aBus = bus.a; meta.busPhase = bus.phase; meta.handrail = p.handrail ? 1 : 0;
-    meta.sRel = obs.sRel; meta.sliding = st.phase; meta.busL = BUS_L; meta.busH = BUS_H; meta.muG = p.muBus * g;
+    meta.sRel = obs.sRel; meta.sliding = st.phase; meta.busL = BUS_L; meta.busH = BUS_H; meta.aLim = passengerALimit(p); meta.fBus = p.fBus;
     labels.push({ position: [st.a.s, -0.1, 0], symbol: "sRel", value: obs.sRel, unit: "m" });
   } else {
     const acc = shipAccel(p); const Fe = obs.Fe;

@@ -1,6 +1,6 @@
-// 依 data/index.json 與 data/index-extra.json 的參數與幀數跑第二實作，輸出 second-impl/<run>.json
-// 格式：{name, params, change?, dt, frames:[{t, obs}]}。
-// 第 2 輪：extra 運行的 change = {t, params}（由 t 起把 params 換成該值，之後保持）交給 model.run 處理。
+// 第 8 輪：依 data/index.json（17 個運行，dt 0.001，2000 幀）與 data/index-extra.json（9 個運行，dt 0.005，3200 幀；本輪新增 extra-table-hold-6s）
+// 的參數與幀數跑第二實作，輸出 second-impl/<run>.json。格式：{name, params, change?, dt, frames:[{t, obs}]}。
+// extra 運行的 change = {t, params}（由 t 起把 params 換成該值，之後保持）交給 model.run 處理。
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,6 +16,6 @@ for (const idxName of ["index.json", "index-extra.json"]) {
     if (r.change) out.change = r.change;
     fs.writeFileSync(path.join(here, r.name + ".json"), JSON.stringify(out));
     const last = frames[frames.length - 1];
-    console.log(r.name.padEnd(32), "T=", last.obs.T, r.change ? `change@${r.change.t} ${JSON.stringify(r.change.params)}` : "", "final:", JSON.stringify(last.obs).slice(0, 140));
+    console.log(r.name.padEnd(32), "dt", index.dt, "n", frames.length, "T=", last.obs.T, r.change ? `change@${r.change.t} ${JSON.stringify(r.change.params)}` : "", "final:", JSON.stringify(last.obs).slice(0, 120));
   }
 }

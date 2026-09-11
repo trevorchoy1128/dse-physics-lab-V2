@@ -2,8 +2,9 @@ import type { SimModel, SimEvent } from "@/shell/types";
 
 // 規格 13_024（S15）§7 方程。四個情景共用一個模型：
 //   第一定律：ΣF = 0 ⇒ v 恆定；第二定律 ΣF = ma 只用於量化不平衡力。
-//   摩擦統一：與相對接觸面的運動（或運動趨勢）反向，大小上限 μR = μmg；μs = μk = μ（老師決定）。
-//   接觸面本身在加速（巴士地板、桌布）時，物體加速度上限 μg：|a面| ≤ μg 跟着走，否則相對滑動。
+//   摩擦統一：與相對接觸面的運動（或運動趨勢）反向，大小上限為學生設定的摩擦力 f（N）；靜摩擦上限 = 動摩擦 = f（老師決定）。
+//   全站規則（老師 2026-09-11：DSE 沒有教摩擦係數 μ）：控制項、讀數、圖例只用摩擦力 f，模型內不出現 μ。
+//   接觸面本身在加速（巴士地板、桌布）時，物體加速度上限 f/m：|a面| ≤ f/m 跟着走，否則相對滑動。
 // 每一段的加速度都是常數，所以逐步用閉式 s = s₀ + vt + ½at²、v = v₀ + at 精確積分；
 // 步內的事件（v 過零、越過 B 點、桌布抽出、追上桌布、巴士換相、相對速度過零）先算出時刻再分段走，不用 RK4。
 
@@ -16,20 +17,20 @@ export interface P {
   m: number;            // 方塊質量 / kg
   F: number;            // 外加水平力 / N
   push: "on" | "off";   // 施力中 / 已放手（即時控制，不重置）
-  mu1: number;          // 前段桌面（A→B）的摩擦係數
-  mu2: number;          // 後段桌面（B 之後）的摩擦係數
+  f1: number;           // 前段桌面（A→B）的摩擦力上限 / N
+  f2: number;           // 後段桌面（B 之後）的摩擦力上限 / N
   second: boolean;      // 第二個方塊
   mB: number;           // 第二個方塊質量 / kg
   // 情景 2 桌布實驗
   vCloth: number;       // 桌布抽出速率 / m s⁻¹（恆定）
-  muCloth: number;      // 布與物件之間的摩擦係數
-  muTable: number;      // 物件與桌面之間的摩擦係數
+  fCloth: number;       // 布對樽的摩擦力 / N
+  fTable: number;       // 桌面對樽的摩擦力 / N
   L: number;            // 物件下方的桌布長度 / m
-  mObj: number;         // 物件質量 / kg（不設滑桿，固定 1.0；模型內可變供驗證條件 11）
+  mObj: number;         // 物件質量 / kg（不設滑桿，固定 1.0）
   // 情景 3 巴士上的乘客
   aBus: number;         // 起步／煞車的加速度大小 / m s⁻²
   vBus: number;         // 巡航速度 / m s⁻¹
-  muBus: number;        // 乘客（鞋）與地板的摩擦係數
+  fBus: number;         // 乘客（鞋）與地板之間的摩擦力上限 / N
   handrail: boolean;    // 握扶手
   // 情景 4 太空中的飛船
   Fe: number;           // 引擎推力 / N
@@ -85,29 +86,29 @@ function timeToCover(v: number, a: number, d: number): number {
 }
 
 // ---- 情景 1：方塊 ----
-export interface BlockForces { Fapp: number; f: number; Fnet: number; a: number; mu: number }
-export const muAt = (s: number, p: P) => (s < L_AB - EPS ? p.mu1 : p.mu2);
+export interface BlockForces { Fapp: number; f: number; Fnet: number; a: number; fmax: number }
+/** 該位置的摩擦力上限（學生設定）：A→B 段 f₁，B 之後 f₂ */
+export const fAt = (s: number, p: P) => (s < L_AB - EPS ? p.f1 : p.f2);
 /** 方塊在 (s, v) 的受力：施力 Fapp、摩擦 f（含靜摩擦）、淨力與加速度 */
 export function blockForces(b: Body, m: number, p: P): BlockForces {
   const Fapp = p.push === "on" ? p.F : 0;
-  const mu = muAt(b.s, p);
-  const fmax = mu * m * p.g;
+  const fmax = fAt(b.s, p);
   let f: number;
   if (b.v === 0) f = Math.abs(Fapp) <= fmax + EPS ? -Fapp : -fmax * Math.sign(Fapp);
   else f = -fmax * Math.sign(b.v);
   if (f === 0) f = 0;                       // 去掉 −0
   const Fnet = Fapp + f;
-  return { Fapp, f, Fnet, a: Fnet / m, mu };
+  return { Fapp, f, Fnet, a: Fnet / m, fmax };
 }
 function stepBlock(b: Body, m: number, p: P, h: number): Body {
   let rem = h;
   for (let guard = 0; rem > EPS && guard < 32; guard++) {
     const { a } = blockForces(b, m, p);
     let tau = rem, ev: "stop" | "B" | null = null;
-    const ts = timeToStop(b.v, a); if (ts < tau) { tau = ts; ev = "stop"; }
+    const ts = timeToStop(b.v, a); if (ts <= tau) { tau = ts; ev = "stop"; }   // 恰落步末亦當停止事件（核數員第 7 輪：v 殘留 1e-17 令該幀仍報滑動摩擦）
     if (b.s < L_AB - EPS && (b.v > 0 || a > 0)) { const tb = timeToCover(b.v, a, L_AB - b.s); if (tb < tau) { tau = tb; ev = "B"; } }
     b = move(b, a, tau);
-    if (ev === "stop") b = { s: b.s, v: 0 };
+    if (ev === "stop" || Math.abs(b.v) < 1e-12) b = { s: b.s, v: 0 };
     if (ev === "B") b = { s: L_AB, v: b.v };
     rem -= tau;
   }
@@ -117,9 +118,11 @@ function stepBlock(b: Body, m: number, p: P, h: number): Body {
 // ---- 情景 2：桌布 ----
 /** 桌布尾邊位置 / m（物件起點為 0，尾邊起於 −L，以 vCloth 向右） */
 export const clothEdge = (p: P, t: number) => -p.L + p.vCloth * t;
-/** 解析解：抽出時刻、Δv 與是否抽不出（規格 §7）。a = μ布 g；v布² ≤ 2aL 時根式無實解 → 抽不出 */
+/** 布上滑動時物件的加速度 a = f布 / m */
+export const clothAccel = (p: P) => p.fCloth / p.mObj;
+/** 解析解：抽出時刻、Δv 與是否抽不出（規格 §7）。a = f布/m；v布² ≤ 2aL 時根式無實解 → 抽不出 */
 export function clothAnalytic(p: P): { stuck: boolean; tLeave: number; dv: number; tStuck: number } {
-  const a = p.muCloth * p.g;
+  const a = clothAccel(p);
   if (a === 0) return { stuck: false, tLeave: p.L / p.vCloth, dv: 0, tStuck: Infinity };
   const disc = p.vCloth * p.vCloth - 2 * a * p.L;
   if (disc < 0) return { stuck: true, tLeave: NaN, dv: NaN, tStuck: p.vCloth / a };
@@ -131,7 +134,7 @@ function stepCloth(st: S, p: P, h: number): S {
   for (let guard = 0; rem > EPS && guard < 32; guard++) {
     let tau = rem;
     if (phase === 0) {
-      const acc = p.muCloth * p.g;
+      const acc = clothAccel(p);
       const w = p.vCloth - o.v;                                  // 布相對物件的速度（≥ 0）
       const d = o.s - clothEdge(p, t);                           // 尾邊還差多少才到物件下方
       let ev: "stuck" | "leave" | null = null;
@@ -144,13 +147,14 @@ function stepCloth(st: S, p: P, h: number): S {
       if (tl < tau) { tau = tl; ev = "leave"; }
       o = move(o, acc, tau); t += tau; rem -= tau;
       if (ev === "stuck") { o = { s: o.s, v: p.vCloth }; phase = 1; tStuck = t; }
-      if (ev === "leave") { phase = 2; tLeave = t; dv = o.v; sLeave = o.s; }
+      if (ev === "leave") { phase = 2; tLeave = t; dv = o.v; sLeave = o.s; if (o.v <= EPS) { o = { s: o.s, v: 0 }; phase = 3; } }   // f布 = 0：物件仍靜止，抽出後不受滑動摩擦（核數員第 7 輪 F1）
     } else if (phase === 1) {
       o = move(o, 0, tau); t += tau; rem -= tau;
     } else if (phase === 2) {
-      const acc = -p.muTable * p.g;
+      if (o.v <= EPS) { o = { s: o.s, v: 0 }; phase = 3; continue; }   // 已靜止：靜摩擦，不再施加滑動摩擦
+      const acc = -p.fTable / p.mObj;
       const ts = timeToStop(o.v, acc); let ev = false;
-      if (ts < tau) { tau = ts; ev = true; }
+      if (ts <= tau) { tau = ts; ev = true; }
       o = move(o, acc, tau); t += tau; rem -= tau;
       if (ev || o.v <= 0) { o = { s: o.s, v: 0 }; phase = 3; }
     } else { t += tau; rem -= tau; }
@@ -160,14 +164,16 @@ function stepCloth(st: S, p: P, h: number): S {
 export function clothForces(st: S, p: P): { f: number; a: number; Fnet: number } {
   const m = p.mObj;
   let f = 0;
-  if (st.phase === 0) f = p.muCloth * m * p.g;                  // 布拖物件向前（物件相對布向後滑）
-  else if (st.phase === 2) f = -p.muTable * m * p.g;            // 桌面阻物件
+  if (st.phase === 0) f = p.fCloth;                             // 布拖物件向前（物件相對布向後滑）
+  else if (st.phase === 2) f = -p.fTable;                       // 桌面阻物件
   return { f, a: f / m, Fnet: f };
 }
 
 // ---- 情景 3：巴士 ----
 export interface BusState { s: number; v: number; a: number; phase: number }   // phase 0 起步、1 巡航、2 煞車、3 停
 export const busT1 = (p: P) => (p.aBus > 0 ? p.vBus / p.aBus : Infinity);
+/** 乘客不滑的加速度上限 = f / m */
+export const passengerALimit = (p: P) => p.fBus / M_PASSENGER;
 /** 巴士的解析運動：起步（勻加速 a）→ 巡航 4 s → 急煞（勻減速 a）→ 停 */
 export function busAt(p: P, t: number): BusState {
   if (p.aBus <= 0) return { s: 0, v: 0, a: 0, phase: 3 };
@@ -181,11 +187,11 @@ export function busAt(p: P, t: number): BusState {
 }
 /** 乘客在 (v, 相對狀態) 下的加速度與摩擦（老師決定：全部以地面座標系計算，不引入虛擬力） */
 export function passengerForces(st: S, p: P): { f: number; Fhand: number; a: number; Fnet: number } {
-  const m = M_PASSENGER, bus = busAt(p, st.t), fmax = p.muBus * m * p.g;
+  const m = M_PASSENGER, bus = busAt(p, st.t), fmax = p.fBus;
   if (p.handrail) { const need = m * bus.a; const f = Math.max(-fmax, Math.min(fmax, need)); return { f, Fhand: need - f, a: bus.a, Fnet: need }; }
   const vRel = st.a.v - bus.v;
-  if (st.phase === 0) {                                          // 相對靜止：|a車| ≤ μg 才跟得上
-    if (Math.abs(bus.a) <= p.muBus * p.g + EPS) return { f: m * bus.a, Fhand: 0, a: bus.a, Fnet: m * bus.a };
+  if (st.phase === 0) {                                          // 相對靜止：|a車| ≤ f/m 才跟得上
+    if (Math.abs(bus.a) <= passengerALimit(p) + EPS) return { f: m * bus.a, Fhand: 0, a: bus.a, Fnet: m * bus.a };
     const f = fmax * Math.sign(bus.a); return { f, Fhand: 0, a: f / m, Fnet: f };
   }
   const f = Math.abs(vRel) > EPS ? -fmax * Math.sign(vRel) : fmax * Math.sign(bus.a);
@@ -199,19 +205,20 @@ function stepBus(st: S, p: P, h: number): S {
     let tau = rem;
     for (const tb of bounds) if (tb > t + EPS && tb - t < tau) tau = tb - t;     // 巴士換相
     if (p.handrail) { pas = { s: busAt(p, t + tau).s + (pas.s - bus.s), v: busAt(p, t + tau).v }; t += tau; rem -= tau; phase = 0; continue; }
-    const muG = p.muBus * p.g;
-    if (phase === 0 && Math.abs(bus.a) > muG + EPS) phase = 1;                     // 地板加速太快，開始滑
+    const aLim = passengerALimit(p);
+    if (phase === 0 && Math.abs(bus.a) > aLim + EPS) phase = 1;                    // 地板加速太快，開始滑
     if (phase === 0) { pas = { s: busAt(p, t + tau).s + (pas.s - bus.s), v: busAt(p, t + tau).v }; t += tau; rem -= tau; continue; }
-    // 相對滑動：乘客 a = −μg·sgn(v_rel)；相對加速度 (a_p − a_bus) 令 v_rel 過零時停止滑動
+    // 相對滑動：乘客 a = −(f/m)·sgn(v_rel)；相對加速度 (a_p − a_bus) 令 v_rel 過零時停止滑動
     const vRel = pas.v - bus.v;
-    if (Math.abs(vRel) <= EPS && Math.abs(bus.a) <= muG + EPS) { phase = 0; pas = { s: pas.s, v: bus.v }; continue; }   // 已同速且地板加速不超限：回到相對靜止
-    const aP = Math.abs(vRel) > EPS ? -muG * Math.sign(vRel) : muG * Math.sign(bus.a);
+    if (Math.abs(vRel) <= EPS && Math.abs(bus.a) <= aLim + EPS) { phase = 0; pas = { s: pas.s, v: bus.v }; continue; }   // 已同速且地板加速不超限：回到相對靜止
+    const aP = Math.abs(vRel) > EPS ? -aLim * Math.sign(vRel) : aLim * Math.sign(bus.a);
     const aRel = aP - bus.a; let ev = false;
-    if (Math.abs(vRel) > EPS && aRel !== 0 && Math.sign(aRel) !== Math.sign(vRel)) { const tz = -vRel / aRel; if (tz < tau) { tau = tz; ev = true; } }
+    if (Math.abs(vRel) > EPS && aRel !== 0 && Math.sign(aRel) !== Math.sign(vRel)) { const tz = -vRel / aRel; if (tz <= tau) { tau = tz; ev = true; } }   // 恰好落在步末亦當事件處理（f/m 為整數時追上時刻常與步長對齊）
     pas = move(pas, aP, tau); t += tau; rem -= tau;
-    if (ev) { pas = { s: pas.s, v: busAt(p, t).v }; if (Math.abs(busAt(p, t).a) <= muG + EPS) phase = 0; }
+    if (ev) { pas = { s: pas.s, v: busAt(p, t).v }; if (Math.abs(busAt(p, t).a) <= aLim + EPS) phase = 0; }
   }
   const bus = busAt(p, t);
+  if (phase === 1 && Math.abs(pas.v - bus.v) <= EPS && Math.abs(bus.a) <= passengerALimit(p) + EPS) { phase = 0; pas = { s: pas.s, v: bus.v }; }   // 步末剛好同速：即時回到相對靜止，觀察量不會出現「滑動中卻零摩擦」的一幀
   return { ...st, t, a: pas, b: { s: bus.s, v: bus.v }, phase };
 }
 
@@ -226,12 +233,12 @@ export function duration(p: P): number {
   if (p.scene === "cloth") {
     const c = clothAnalytic(p);
     if (c.stuck) return Math.min(30, Math.max(3, c.tStuck + 4));
-    const slide = p.muTable > 0 ? c.dv / (p.muTable * p.g) : 6;
+    const slide = p.fTable > 0 ? c.dv / (p.fTable / p.mObj) : 6;
     return Math.min(30, Math.max(3, c.tLeave + Math.min(6, slide) + 1));
   }
   if (p.aBus <= 0) return 8;
   const t3 = 2 * busT1(p) + T_CRUISE;
-  const settle = p.handrail ? 1 : Math.min(6, p.muBus > 0 ? p.vBus / (p.muBus * p.g) : 6) + 0.5;
+  const settle = p.handrail ? 1 : Math.min(6, p.fBus > 0 ? p.vBus / passengerALimit(p) : 6) + 0.5;
   return Math.min(60, t3 + settle);
 }
 
@@ -288,7 +295,7 @@ export const model: SimModel<S, P> = {
       o.nForces = 2 + (fo.f !== 0 ? 1 : 0); o.nHoriz = fo.f !== 0 ? 1 : 0;
       o.vCloth = p.vCloth; o.sCloth = z(st.b.s); o.phase = st.phase;
       const left = st.phase >= 2;
-      o.dtPull = left ? st.tLeave : st.phase === 1 ? st.tStuck : st.t;           // 摩擦作用時間 Δt：抽出後凍結於抽出時刻；追上布速後摩擦為零，凍結於追上時刻（核數員第 1 輪 B）
+      o.dtPull = left ? st.tLeave : st.phase === 1 ? st.tStuck : st.t;           // 摩擦作用時間 Δt：抽出後凍結於抽出時刻；追上布速後摩擦為零，凍結於追上時刻
       o.dv = left ? st.dv : st.a.v;                                              // 物件獲得的 Δv
       o.J = p.mObj * o.dv;                                                       // 衝量 J = fΔt = mΔv
       o.slide = left ? z(st.a.s - st.sLeave) : 0;
@@ -298,7 +305,7 @@ export const model: SimModel<S, P> = {
       o.a = z(fp.a); o.f = z(fp.f); o.Fhand = z(fp.Fhand); o.Fnet = z(fp.Fnet); o.W = M_PASSENGER * p.g; o.N = M_PASSENGER * p.g;
       o.nForces = 2 + (fp.f !== 0 ? 1 : 0) + (fp.Fhand !== 0 ? 1 : 0); o.nHoriz = (fp.f !== 0 ? 1 : 0) + (fp.Fhand !== 0 ? 1 : 0);
       o.vBus = z(bus.v); o.aBusNow = bus.a; o.sBus = z(bus.s); o.sRel = z(st.a.s - bus.s); o.busPhase = bus.phase;
-      o.sliding = !p.handrail && (st.phase === 1 || Math.abs(bus.a) > p.muBus * p.g + EPS) ? 1 : 0;   // 滑動開始的一瞬（a 已 = μg）亦報 1（第二實作者第 1 輪）
+      o.sliding = !p.handrail && (st.phase === 1 || Math.abs(bus.a) > passengerALimit(p) + EPS) ? 1 : 0;   // 滑動開始的一瞬（a 已 = f/m）亦報 1
     } else {
       const acc = shipAccel(p); const Fe = p.engine === "on" ? p.Fe : 0;
       o.a = z(acc); o.Fe = Fe * (p.dir === "forward" ? 1 : -1); o.Fnet = o.Fe; o.W = 0; o.N = 0;

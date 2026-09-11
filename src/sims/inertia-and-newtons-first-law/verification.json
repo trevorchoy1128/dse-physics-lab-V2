@@ -1,8 +1,8 @@
 {
   "simId": "inertia-and-newtons-first-law",
-  "version": "0.2.4",
-  "date": "2026-09-07",
-  "spec": "reference/13_024_慣性與牛頓運動第一定律_模擬器規格.md（v0.3，老師 2026-09-07 核准）",
+  "version": "0.4.0",
+  "date": "2026-09-11",
+  "spec": "reference/13_024_慣性與牛頓運動第一定律_模擬器規格.md（v0.4：v0.3 老師 2026-09-07 核准；v0.4 摩擦改為摩擦力 f，2026-09-11，滑桿範圍與預設待老師核准）",
   "tests": {
     "total": 24,
     "passed": 24,
@@ -16,7 +16,7 @@
         "status": "passed"
       },
       {
-        "name": "靜止時外力不超過 μmg 則不動",
+        "name": "靜止時外力不超過摩擦力則不動",
         "status": "passed"
       },
       {
@@ -44,7 +44,7 @@
         "status": "passed"
       },
       {
-        "name": "桌布：Δv 與質量無關",
+        "name": "桌布：加速度上限 f布/m，速度不超過布速",
         "status": "passed"
       },
       {
@@ -68,7 +68,7 @@
         "status": "passed"
       },
       {
-        "name": "乘客受力：相對靜止時 f = ma；滑動時 |f| = μmg 且與相對速度反向",
+        "name": "乘客受力：相對靜止時 f = ma；滑動時 |f| 等於設定的摩擦力且與相對速度反向",
         "status": "passed"
       },
       {
@@ -105,38 +105,41 @@
       }
     ]
   },
-  "conditions": "規格 §10 驗證條件 1–17：1、2、5–13、15 在 model.test.ts；3、4、14、16、17 在 plan.test.ts；核數員 §1 逐條數字見 physics-audit.md",
-  "rounds": 6,
+  "conditions": "規格 v0.4 §10 驗證條件 1–17（條件 11 改為「加速度上限 f布/m」）：1、2、5–13、15 在 model.test.ts；3、4、14、16、17 在 plan.test.ts；核數員 §1 逐條數字見 physics-audit.md",
+  "rounds": 8,
   "reports": {
     "physicsAudit": {
       "file": "physics-audit.md",
-      "conclusion": "**通過**（物理與畫面全部項目；數據與箭嘴對 0.2.3 完全相同；衝量條加高後 *v*布 5 → 10 仍為 57 : 28 px = 2.04 : 1；§8 九項全部在本輪 `shots/` 看到，第 8 條第三子項「*μ* ≥ *a*/*g* 一起走」首次有畫面 `extra-bus-start-mu04.png`，*s*_rel = 0.00、黑淨力 91 px = 橙摩擦 92 px）。"
+      "conclusion": "**通過**。條件 1–17 全部通過；147 個運行逐幀誤差 ≤ 7.0 × 10⁻¹³（相對）；箭嘴 248 602 幀零違規；§5 參數表與 controls.ts 逐行一致（乘客 *f* 150 N）；47 張截圖無「*μ*」／「摩擦係數」；§8 九項現象全部在截圖找到。餘下只有規格待釐清（§7，與第 7 輪相同，無新增）。"
     },
     "secondImpl": {
       "file": "second-impl.md",
-      "conclusion": "**一致。** 25 個運行 × 全部 observe 鍵（含 t）共 **415 列**，每一列逐幀最大絕對誤差均 ≤ 1.1 × 10⁻¹¹（容限 10⁻⁶），相對誤差（sRel 除外，見註）≤ 1.5 × 10⁻¹²；**99 列離散量**（scene、phase、busPhase、sliding、stuck、nForces、nHoriz、engineOn）逐幀完全相等；**72 個事件**（放手、越過 B、抽出／追上布、停下、追上巴士、巴士換相、關引擎）的幀差全部為 0（容限 2 dt）。"
+      "conclusion": "**一致。** 26 個運行 × 全部 observe 鍵（含 t）共 **428 列**（326 列連續量、102 列離散量），每一列逐幀最大絕對誤差均 ≤ 1.6 × 10⁻¹³（容限 10⁻⁶），連續量最大相對誤差 ≤ 1.7 × 10⁻¹¹（`scenario-inertia-not-speed` 的 sC 在過零附近，絕對誤差 3.7 × 10⁻¹⁴，與第 7 輪相同）；102 列離散量（scene、phase、busPhase、sliding、stuck、nForces、nHoriz、engineOn）逐幀完全相等；**47 個事件**（放手、越過 B、抽出／追上布、停下、巴士換相、關引擎）的幀差全部為 0（容限 2 dt）。7 個運行（`scenario-stop-not-inertia`、`scenario-rest-not-no-force`、`scenario-bus-start`、`random-0`、`random-2`、`extra-bus-handrail`、`extra-bus-f0`）所有鍵逐位相同（誤差 0）。"
     },
     "studentTest": {
-      "file": "student-test-r6.md",
+      "file": "student-test-r8.md",
       "rounds": [
         "student-test-r1.md",
         "student-test-r2.md",
         "student-test-r3.md",
         "student-test-r4.md",
         "student-test-r5.md",
-        "student-test-r6.md"
+        "student-test-r6.md",
+        "student-test-r7.md",
+        "student-test-r8.md"
       ]
     },
     "apparatusReview": {
       "file": "apparatus-review.md",
-      "conclusion": "**可接受。**"
+      "conclusion": "**可接受**。三項必改全部消除，沒有新的必改項目。μ 檢查再次通過：47 張截圖逐張看過，沒有「μ」、「摩擦係數」、「μs」、「μk」；滑桿標題全是「摩擦力（滑動時的大小）/ N」，桌布一行是「布對樽的摩擦力 f布 = 1.5 N」「桌面摩擦力 f桌 = 2 N」，巴士提示是「巴士加速度超過摩擦力能給乘客的 f/m = 2.5 m s⁻²」（150 N ÷ 60 kg，與新預設一致）。"
     },
     "fixLogs": [
       "fix-log.md",
       "fix-log-r2.md",
       "fix-log-r3.md",
       "fix-log-r4.md",
-      "fix-log-r5.md"
+      "fix-log-r5.md",
+      "fix-log-r7.md"
     ]
   },
   "dsePapers": {

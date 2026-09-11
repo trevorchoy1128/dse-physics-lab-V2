@@ -20,13 +20,13 @@ const setNum = async (label, v) => { const el = page.getByLabel(label).last(); a
 // 情景 1：運動中放手（t ≈ 0.5 s，仍在光滑段），放手後 0.5 s
 await page.getByRole("button", { name: "⟲ 還原預設" }).click(); await play(); await page.waitForTimeout(550);
 await page.getByRole("button", { name: "已放手" }).click(); await page.waitForTimeout(500); await pause(); await shot("extra-release-moving");
-// 光滑段運動中放手（μ₂ = 0）：2 支力、水平 0 支、v 不變（核數員第 3 輪 G-i）
-await page.getByRole("button", { name: "⟲ 還原預設" }).click(); await setNum("後段桌面（B 之後）的摩擦係數", 0); await play(); await page.waitForTimeout(600);
+// 光滑段運動中放手（f₂ = 0）：2 支力、水平 0 支、v 不變（核數員第 3 輪 G-i）
+await page.getByRole("button", { name: "⟲ 還原預設" }).click(); await setNum("後段桌面（B 之後）的摩擦力", 0); await play(); await page.waitForTimeout(600);
 await page.getByRole("button", { name: "已放手" }).click(); await page.waitForTimeout(600); await pause(); await shot("extra-release-smooth-2forces");
 // 放手後停下：摩擦箭嘴消失（G-ii）：預設參數 t ≈ 1.2 s 放手，跳到末端
 await page.getByRole("button", { name: "⟲ 還原預設" }).click(); await play(); await page.waitForTimeout(1200); await page.getByRole("button", { name: "已放手" }).click(); await page.waitForTimeout(2500); await pause(); await shot("extra-release-stopped");
 // 兩方塊放手後並肩（G-iii）
-await page.getByRole("button", { name: "⟲ 還原預設" }).click(); await setNum("後段桌面（B 之後）的摩擦係數", 0); await page.getByLabel("第二個方塊（同一推力）").check(); await play(); await page.waitForTimeout(700);
+await page.getByRole("button", { name: "⟲ 還原預設" }).click(); await setNum("後段桌面（B 之後）的摩擦力", 0); await page.getByLabel("第二個方塊（同一推力）").check(); await play(); await page.waitForTimeout(700);
 await page.getByRole("button", { name: "已放手" }).click(); await page.waitForTimeout(1000); await pause(); await shot("extra-two-blocks-released"); await page.getByLabel("第二個方塊（同一推力）").uncheck();
 // 只看淨力（靜止方塊）
 await page.getByRole("button", { name: "⟲ 還原預設" }).click(); await page.getByRole("button", { name: "已放手" }).click(); await seek(0);
@@ -38,7 +38,7 @@ await setNum("桌布抽出速率", 1.0); await pause(); await seek(2.5); await s
 // 情景 3：急煞當刻 t = 8.5（不握／握扶手）；起步 t = 1.5
 await scene("巴士上的乘客"); await pause(); await seek(1.5); await shot("extra-bus-start"); await seek(8.5); await shot("extra-bus-brake");
 await page.getByLabel("握扶手").check(); await pause(); await seek(8.5); await shot("extra-bus-brake-handrail"); await page.getByLabel("握扶手").uncheck();
-await setNum("乘客（鞋）與地板的摩擦係數", 0.4); await pause(); await seek(1.5); await shot("extra-bus-start-mu04"); await setNum("乘客（鞋）與地板的摩擦係數", 0.2);   // μ ≥ a/g：乘客與巴士一起走（§8 第 8 條第三子項）
+await setNum("地板對乘客（鞋）的摩擦力", 240); await pause(); await seek(1.5); await shot("extra-bus-start-f240"); await setNum("地板對乘客（鞋）的摩擦力", 150);   // f ≥ ma：乘客與巴士一起走（§8 第 8 條第三子項）
 // 情景 4：三艘關引擎
 await scene("太空中的飛船"); await setNum("引擎推力", 2); await page.getByLabel("三艘飛船（靜止、向右、向左）").check(); await play(); await page.waitForTimeout(1000);
 await pause(); await shot("extra-space-engine-on");   // 關引擎前一刻（G-iv）

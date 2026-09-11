@@ -1,0 +1,124 @@
+{
+ "Jmax": 1.0954451150103324,
+ "out": [
+  {
+   "file": "scenario-10-end.png",
+   "tag": "v5 (J=0.121)",
+   "frameRow": {
+    "y": 303,
+    "x": [
+     30,
+     548
+    ],
+    "w": 519
+   },
+   "fill": {
+    "y": 303,
+    "x": [
+     31,
+     87
+    ],
+    "w": 57
+   },
+   "fillRows": [
+    303,
+    324
+   ],
+   "expectedFrac": 0.11089157123025212,
+   "measuredFrac": 0.1102514506769826
+  },
+  {
+   "file": "extra-cloth-t0.png",
+   "tag": "t=0 (J=0)",
+   "frameRow": {
+    "y": 134,
+    "x": [
+     30,
+     548
+    ],
+    "w": 519
+   },
+   "fillRows": null,
+   "expectedFrac": 0,
+   "measuredFrac": 0
+  },
+  {
+   "file": "extra-cloth-t0.04.png",
+   "tag": "t=0.04 (J=0.0600)",
+   "frameRow": {
+    "y": 134,
+    "x": [
+     30,
+     548
+    ],
+    "w": 519
+   },
+   "fill": {
+    "y": 134,
+    "x": [
+     31,
+     58
+    ],
+    "w": 28
+   },
+   "fillRows": [
+    134,
+    155
+   ],
+   "expectedFrac": 0.0547722557505166,
+   "measuredFrac": 0.05415860735009671
+  },
+  {
+   "file": "extra-cloth-v10.png",
+   "tag": "v10 (J=0.0602)",
+   "frameRow": {
+    "y": 134,
+    "x": [
+     30,
+     548
+    ],
+    "w": 519
+   },
+   "fill": {
+    "y": 134,
+    "x": [
+     31,
+     58
+    ],
+    "w": 28
+   },
+   "fillRows": [
+    134,
+    155
+   ],
+   "expectedFrac": 0.05493756754708096,
+   "measuredFrac": 0.05415860735009671
+  },
+  {
+   "file": "extra-cloth-v1-stuck.png",
+   "tag": "v1 stuck (J=1)",
+   "frameRow": {
+    "y": 133,
+    "x": [
+     31,
+     547
+    ],
+    "w": 517
+   },
+   "fill": {
+    "y": 134,
+    "x": [
+     31,
+     502
+    ],
+    "w": 472
+   },
+   "fillRows": [
+    134,
+    155
+   ],
+   "expectedFrac": 0.9128709291752768,
+   "measuredFrac": 0.916504854368932
+  }
+ ]
+}

@@ -16,7 +16,7 @@ const FORCE_KINDS = new Set(["weight", "normal", "friction", "tension", "net"]);
 describe("慣性 畫面", () => {
   it("2024 卷一乙部 Q3(b) 的受力圖", () => {
     // 施力移除後：layer 'applied' 的箭嘴數目必須為 0；weight 與 normal 各 1 支
-    const p0 = table({ mu1: 0, mu2: 0 });
+    const p0 = table({ f1: 0, f2: 0 });
     const { s, p } = advance(p0, 2, 1e-3, (_s, i) => (i === 800 ? { ...p0, push: "off" } : undefined));
     const pl = mk(s, p);
     expect(pl.arrows.filter(a => a.layer === "applied")).toHaveLength(0);
@@ -33,7 +33,7 @@ describe("慣性 畫面", () => {
   });
 
   it("靜止不等於無力", () => {
-    const p = table({ push: "off", mu1: 0.2, mu2: 0.2 });
+    const p = table({ push: "off", f1: 0.4, f2: 0.4 });
     const s = model.init(p); const pl = mk(s, p);
     const W = pl.arrows.find(a => a.kind === "weight")!, R = pl.arrows.find(a => a.kind === "normal")!;
     expect(W).toBeDefined(); expect(R).toBeDefined();
@@ -68,7 +68,7 @@ describe("慣性 畫面", () => {
   it("畫面一致：淨力箭嘴 = 各力之和；a = F_net / m；摩擦反相對運動趨勢；同一 kind 一個縮放係數；標籤 = observe；單位在允許清單", () => {
     const cases: { p: P; T: number; m: number; onStep?: (s: S, i: number) => P | void }[] = [
       { p: table(), T: 0.5, m: 0.2 },
-      { p: table({ mu1: 0.2, mu2: 0.2, F: 0.5 }), T: 0.5, m: 0.2 },
+      { p: table({ f1: 0.4, f2: 0.4, F: 0.5 }), T: 0.5, m: 0.2 },
       { p: table({ second: true, mB: 1 }), T: 0.5, m: 0.2 },
       { p: { ...defaults, scene: "cloth" }, T: 0.1, m: 1 },
       { p: { ...defaults, scene: "cloth" }, T: 1.0, m: 1 },
@@ -107,19 +107,19 @@ describe("慣性 畫面", () => {
     const p = table(); const s = advance(p, 0.5).s;
     const none = plan(s, p, model.observe(s, p), { weight: false, normal: false, friction: false, applied: false, net: false, velocity: false, acceleration: false, netOnly: false });
     expect(none.arrows).toHaveLength(0);
-    const q = table({ mu1: 0, mu2: 0 }); const r = advance(q, 1, 1e-3, (_s, i) => (i === 500 ? { ...q, push: "off" } : undefined));
+    const q = table({ f1: 0, f2: 0 }); const r = advance(q, 1, 1e-3, (_s, i) => (i === 500 ? { ...q, push: "off" } : undefined));
     expect(mk(r.s, r.p).arrows.filter(a => a.layer === "net")).toHaveLength(0);
   });
 
   it("預測上界涵蓋整段運動（施力／引擎在 HOLD 秒內放手／關掉）且有限；一直按着時 meta.sSeen / vSeen 只增不減", () => {
-    for (const p of [table(), table({ F: 10, m: 0.1, mu2: 0 }), { ...defaults, scene: "cloth" as const }, { ...defaults, scene: "bus" as const }, { ...defaults, scene: "space" as const, Fe: 5, trio: true }]) {
+    for (const p of [table(), table({ F: 10, m: 0.1, f2: 0 }), { ...defaults, scene: "cloth" as const }, { ...defaults, scene: "bus" as const }, { ...defaults, scene: "space" as const, Fe: 5, trio: true }]) {
       const e = extent(p); for (const v of Object.values(e)) expect(Number.isFinite(v) && v > 0).toBe(true);
       let s = model.init(p); let smax = 0, vmax = 0; let q = p;
       for (let i = 0; i < 600; i++) { if (s.t >= HOLD) q = { ...p, push: "off", engine: "off" }; s = model.step(s, q, duration(p) / 600); const o = model.observe(s, q); smax = Math.max(smax, Math.abs(p.scene === "bus" ? o.sRel : o.s)); vmax = Math.max(vmax, Math.abs(o.v)); }
       expect(smax).toBeLessThanOrEqual(e.smax + 1e-9); expect(vmax).toBeLessThanOrEqual(e.vmax + 1e-9);
     }
     // 一直按着：sSeen / vSeen 隨時間單調不減，且等於至今的最大值
-    const p = table({ F: 10, m: 0.1, mu2: 0 }); let s = model.init(p); let prevS = 0, prevV = 0;
+    const p = table({ F: 10, m: 0.1, f2: 0 }); let s = model.init(p); let prevS = 0, prevV = 0;
     for (let i = 0; i < 200; i++) { s = model.step(s, p, 0.05); const m = mk(s, p).meta!; expect(m.sSeen).toBeGreaterThanOrEqual(prevS); expect(m.vSeen).toBeGreaterThanOrEqual(prevV); expect(m.vSeen).toBeCloseTo(Math.abs(s.a.v), 9); prevS = m.sSeen; prevV = m.vSeen; }
   }, 60000);
 
@@ -147,7 +147,7 @@ describe("慣性 畫面", () => {
   }, 60000);   // CI runner 較慢（第一次部署時 5 s 內未跑完）
 
   it("第二個方塊在 lane 1，箭嘴與模型一致；三艘飛船各在自己的 lane", () => {
-    const p = table({ second: true, mB: 1, mu1: 0, mu2: 0 }); const s = advance(p, 0.5).s; const pl = mk(s, p); const o = model.observe(s, p);
+    const p = table({ second: true, mB: 1, f1: 0, f2: 0 }); const s = advance(p, 0.5).s; const pl = mk(s, p); const o = model.observe(s, p);
     const bB = pl.bodies!.find(b => b.key === "blockB")!; expect(bB.position[2]).toBe(1); expect(bB.position[0]).toBe(s.b.s);
     expect(pl.arrows.find(a => a.kind === "velocity" && a.origin[2] === 1)!.vector[0]).toBeCloseTo(o.vB, 12);
     const q: P = { ...defaults, scene: "space", trio: true }; const t = advance(q, 1).s; const ql = mk(t, q);

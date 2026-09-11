@@ -7,7 +7,7 @@ export const scenarios: Scenario<P>[] = [
   {
     key: "moving-needs-force",
     misconception: { zh: "物體在動，就一定有一支力在推住它", en: "If it is moving, something must be pushing it" },
-    params: { scene: "table", m: 0.2, F: 0.3, mu1: 0, mu2: 0, push: "on" },
+    params: { scene: "table", m: 0.2, F: 0.3, f1: 0, f2: 0, push: "on" },
     watch: { zh: "方塊開始動了就按「已放手」。看紫色施力箭嘴、綠色速度箭嘴，和「作用於方塊的力」讀數", en: "Once the block is moving, press “Released”. Watch the purple force arrow, the green velocity arrow and the “forces on the block” readout" },
     expect: { zh: "施力箭嘴即時消失，速度箭嘴長度完全不變；力由 3 支變 2 支，水平方向 0 支。這正是 2024 卷一乙部 Q3(b) 的正確受力圖", en: "The force arrow vanishes at once; the velocity arrow keeps its length. Forces drop from 3 to 2, none horizontal. That is the correct diagram for DSE 2024 1B Q3(b)" },
     layers: ["applied", "velocity", "weight", "normal", "net"],
@@ -15,9 +15,9 @@ export const scenarios: Scenario<P>[] = [
   {
     key: "stop-is-friction",
     misconception: { zh: "沒有力，物體就會慢慢停下來；停下來是因為力用完了", en: "Without a force an object slows down: the force is used up" },
-    params: { scene: "table", m: 0.2, F: 0.3, mu1: 0, mu2: 0.2, push: "on" },
-    watch: { zh: "方塊過了 B 點便按「已放手」，看橙色摩擦箭嘴和 v–t 圖。再把「後段桌面的摩擦係數」拖到 0，重播並再放手", en: "Press “Released” once the block passes B; watch the orange friction arrow and the v–t graph. Then drag the friction coefficient beyond B to 0, replay and release again" },
-    expect: { zh: "有摩擦：橙色箭嘴指向後，方塊減速至停，v–t 線向下斜。μ = 0：沒有橙色箭嘴，方塊永遠等速前進，v–t 線水平。停下來是摩擦造成的", en: "With friction the orange arrow points backwards and the block slows to rest. With μ = 0 there is no orange arrow and the block runs on for ever with a level v–t line. Friction is what stops it" },
+    params: { scene: "table", m: 0.2, F: 0.3, f1: 0, f2: 0.4, push: "on" },
+    watch: { zh: "方塊過了 B 點便按「已放手」，看橙色摩擦箭嘴和 v–t 圖。再把「後段桌面的摩擦力」拖到 0，重播並再放手", en: "Press “Released” once the block passes B; watch the orange friction arrow and the v–t graph. Then drag the friction beyond B to 0, replay and release again" },
+    expect: { zh: "有摩擦：橙色箭嘴指向後，方塊減速至停，v–t 線向下斜。f = 0：沒有橙色箭嘴，方塊永遠等速前進，v–t 線水平。停下來是摩擦造成的", en: "With friction the orange arrow points backwards and the block slows to rest. With f = 0 there is no orange arrow and the block runs on for ever with a level v–t line. Friction is what stops it" },
     layers: ["applied", "friction", "velocity", "net"],
   },
   {
@@ -31,15 +31,15 @@ export const scenarios: Scenario<P>[] = [
   {
     key: "constant-v-zero-net",
     misconception: { zh: "有推力物體就一定加速；勻速一定要有淨力", en: "A pushed object must accelerate; uniform motion needs a net force" },
-    params: { scene: "table", m: 0.5, F: 1, mu1: 0, mu2: 0.2, g: 10, push: "on" },
+    params: { scene: "table", m: 0.5, F: 1, f1: 0, f2: 1, g: 10, push: "on" },
     watch: { zh: "不要放手。方塊過了 B 點後，看紫色施力箭嘴與橙色摩擦箭嘴的長度、淨力讀數和 v–t 圖", en: "Keep pushing. After the block passes B, compare the purple applied arrow with the orange friction arrow; read the net force and the v–t graph" },
-    expect: { zh: "F = μmg = 1.00 N：兩支箭嘴等長反向，淨力 0 N，方塊以 1.73 m s⁻¹ 勻速前進。有力，但沒有淨力", en: "F = μmg = 1.00 N: the two arrows are equal and opposite, net force 0 N, the block moves at a steady 1.73 m s⁻¹. There is a force, but no net force" },
+    expect: { zh: "F = f = 1.00 N：兩支箭嘴等長反向，淨力 0 N，方塊以 1.73 m s⁻¹ 勻速前進。有力，但沒有淨力", en: "F = f = 1.00 N: the two arrows are equal and opposite, net force 0 N, the block moves at a steady 1.73 m s⁻¹. There is a force, but no net force" },
     layers: ["applied", "friction", "net", "velocity"],
   },
   {
     key: "rest-not-no-force",
     misconception: { zh: "靜止即是沒有力", en: "At rest means no force" },
-    params: { scene: "table", m: 0.2, F: 0.3, mu1: 0.2, mu2: 0.2, push: "off" },
+    params: { scene: "table", m: 0.2, F: 0.3, f1: 0.4, f2: 0.4, push: "off" },
     watch: { zh: "沒有施力，方塊靜止不動。看紅色重量箭嘴、藍色法向反作用力箭嘴和淨力讀數；然後開「只看淨力」", en: "No push; the block stays at rest. Look at the red weight arrow, the blue normal reaction arrow and the net-force readout; then switch on “Net force only”" },
     expect: { zh: "淨力 0 N，但方塊受兩支力：重量與法向反作用力等長反向。「只看淨力」時畫面一支箭嘴都沒有——那正是學生腦中的錯誤圖像；切換回來才見到兩支力", en: "Net force is 0 N, yet two forces act: weight and normal reaction, equal and opposite. With “Net force only” the picture is empty — the wrong mental image; switch back to see the two forces" },
     layers: ["weight", "normal", "applied", "friction", "net"],
@@ -47,7 +47,7 @@ export const scenarios: Scenario<P>[] = [
   {
     key: "bus-brake",
     misconception: { zh: "巴士急煞時有一股力把乘客推向前", en: "When a bus brakes, a force throws the passenger forwards" },
-    params: { scene: "bus", aBus: 3, vBus: 10, muBus: 0.2, handrail: false },
+    params: { scene: "bus", aBus: 3, vBus: 10, fBus: 150, handrail: false },
     watch: { zh: "等巴士急煞（約 7.3 s 後）。看乘客身上的箭嘴，以及 v–t 圖上巴士與乘客兩條線", en: "Wait for the bus to brake (after about 7.3 s). Watch the arrows on the passenger and the two lines on the v–t graph" },
     expect: { zh: "乘客身上只有向後的橙色摩擦，沒有任何向前的箭嘴。乘客的 v–t 線保持向前，巴士的線向下斜——「向前衝」只是巴士慢了而乘客沒有", en: "Only a backward orange friction arrow acts on the passenger; nothing pushes forwards. The passenger's v–t line stays level while the bus's falls — the “lurch” is the bus slowing while the passenger does not" },
     layers: ["friction", "velocity", "net"],
@@ -55,15 +55,15 @@ export const scenarios: Scenario<P>[] = [
   {
     key: "bus-start",
     misconception: { zh: "巴士起步時乘客被拋向後", en: "When a bus starts, the passenger is thrown backwards" },
-    params: { scene: "bus", aBus: 3, vBus: 10, muBus: 0, handrail: false },
-    watch: { zh: "摩擦係數已設為 0。看巴士起步時乘客的位置和速度讀數；再把摩擦係數調到 0.4 重播", en: "Friction is set to 0. Watch the passenger's position and velocity as the bus starts; then set friction to 0.4 and replay" },
-    expect: { zh: "乘客根本沒動（v = 0），是地板從腳下向前走。μ = 0.4 時只有向前的橙色摩擦把乘客帶動，沒有任何向後的箭嘴", en: "The passenger does not move at all (v = 0); the floor moves forwards underneath. With μ = 0.4 only a forward orange friction force carries the passenger; nothing points backwards" },
+    params: { scene: "bus", aBus: 3, vBus: 10, fBus: 0, handrail: false },
+    watch: { zh: "摩擦力已設為 0。看巴士起步時乘客的位置和速度讀數；再把摩擦力調到 240 N 重播", en: "Friction is set to 0. Watch the passenger's position and velocity as the bus starts; then set friction to 240 N and replay" },
+    expect: { zh: "乘客根本沒動（v = 0），是地板從腳下向前走。f = 240 N 時只有向前的橙色摩擦把乘客帶動，沒有任何向後的箭嘴", en: "The passenger does not move at all (v = 0); the floor moves forwards underneath. With f = 240 N only a forward orange friction force carries the passenger; nothing points backwards" },
     layers: ["friction", "velocity", "net"],
   },
   {
     key: "heavy-not-farther",
     misconception: { zh: "重的物體慣性大，一旦推動了也難停，所以重的物體滑得比較遠", en: "A heavier object has more inertia, so once moving it slides further" },
-    params: { scene: "table", m: 0.2, F: 1, mu1: 0, mu2: 0, second: true, mB: 1, push: "on" },
+    params: { scene: "table", m: 0.2, F: 1, f1: 0, f2: 0, second: true, mB: 1, push: "on" },
     watch: { zh: "兩個方塊受同一推力：看加速階段誰快；約 0.5 s 後按「已放手」，看兩支速度箭嘴", en: "Both blocks get the same push: see which accelerates faster; after about 0.5 s press “Released” and watch the two velocity arrows" },
     expect: { zh: "重的（1 kg）加速慢五倍；放手後兩者速度各自保持不變，誰也不會「滑得更遠」。慣性大只是難改變速度", en: "The 1 kg block accelerates five times more slowly; after release each keeps its own velocity — neither slides “further”. More inertia only means harder to change velocity" },
     layers: ["applied", "velocity", "net"],
@@ -79,9 +79,9 @@ export const scenarios: Scenario<P>[] = [
   {
     key: "cloth-impulse",
     misconception: { zh: "桌布抽得快，物件留在原地是因為它「來不及反應」", en: "Pull the cloth fast and the object “has no time to react”" },
-    params: { scene: "cloth", vCloth: 5, muCloth: 0.15, muTable: 0.2, L: 0.4 },
+    params: { scene: "cloth", vCloth: 5, fCloth: 1.5, fTable: 2, L: 0.4 },
     watch: { zh: "看衝量條和讀數 Δt、J、Δv。把抽出速率改為 10 再播；再改為 1.0 播一次", en: "Watch the impulse bar and the Δt, J and Δv readouts. Replay at 10 m s⁻¹, then at 1.0 m s⁻¹" },
-    expect: { zh: "抽得越快，摩擦作用時間 Δt 越短，衝量 J = fΔt 越小，Δv 越小（5 → 10 m s⁻¹：0.119 → 0.059 m s⁻¹）。1.0 m s⁻¹ 時物件追上桌布，一起走——桌布抽不出", en: "The faster the pull, the shorter the friction time Δt, the smaller the impulse J = fΔt and Δv (5 → 10 m s⁻¹: 0.119 → 0.059 m s⁻¹). At 1.0 m s⁻¹ the object catches up with the cloth and goes with it — the cloth cannot be pulled out" },
+    expect: { zh: "抽得越快，摩擦作用時間 Δt 越短，衝量 J = fΔt 越小，Δv 越小（5 → 10 m s⁻¹：0.121 → 0.0602 m s⁻¹）。1.0 m s⁻¹ 時物件追上桌布，一起走——桌布抽不出", en: "The faster the pull, the shorter the friction time Δt, the smaller the impulse J = fΔt and Δv (5 → 10 m s⁻¹: 0.121 → 0.0602 m s⁻¹). At 1.0 m s⁻¹ the object catches up with the cloth and goes with it — the cloth cannot be pulled out" },
     layers: ["friction", "velocity", "net"],
   },
   {

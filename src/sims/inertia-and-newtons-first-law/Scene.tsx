@@ -10,7 +10,7 @@ import type { ArrowPlan, RenderPlan, SceneProps } from "@/shell/types";
 // 只畫 plan，不算物理。比例（米／像素、每 N 與每 m s⁻¹ 的像素）與軸範圍在重置時由 meta 的預測上界一次定好，運行中不變（老師規則 F）；
 // 學生一直按着施力／引擎而超出預測時，軸只放大、不縮小。物體離開畫面用鏡頭跟隨（中央 40% 死區），背景在世界座標。
 // 老師決定：巴士只有地面視角，沒有虛擬力。
-// 第 2 輪（儀器審核員）：推手畫成手、桌面畫成桌（室內）、粗糙紋跟 μ、樽有頸、拉布的手、巴士車廂兩端開放且鏡頭跟乘客與巴士的中點、
+// 第 2 輪（儀器審核員）：推手畫成手、桌面畫成桌（室內）、粗糙紋跟摩擦力、樽有頸、拉布的手、巴士車廂兩端開放且鏡頭跟乘客與巴士的中點、
 // 受力標籤分層不重疊、水平力與垂直力各自一個像素比例（同一 kind 全場景一個係數）。
 
 interface Frozen { t: number; viewW: number; pxH: number; pxV: number; pxVel: number; pxA: number; sAx: number; vAx: number; aAx: number }
@@ -18,9 +18,9 @@ const LABEL_H = 15;
 const isIndoor = (scene: number) => scene === 1 || scene === 2;
 
 // 施力物 → 受力物 標籤（規格 §6，與 S5 同格式）
-function forceLabel(a: ArrowPlan, scene: number, zh: boolean, onCloth = false): string {
+function forceLabel(a: ArrowPlan, scene: number, zh: boolean, onCloth = false, inBus = true): string {
   const obj = scene === 1 ? (zh ? "方塊" : "block") : scene === 2 ? (zh ? "樽" : "bottle") : scene === 3 ? (zh ? "乘客" : "passenger") : zh ? "飛船" : "craft";
-  const surf = scene === 3 ? (zh ? "地板" : "floor") : scene === 2 ? (onCloth ? (zh ? "布" : "cloth") : zh ? "桌" : "table") : zh ? "桌" : "table";
+  const surf = scene === 3 ? (inBus ? (zh ? "地板" : "floor") : zh ? "地面" : "ground") : scene === 2 ? (onCloth ? (zh ? "布" : "cloth") : zh ? "桌" : "table") : zh ? "桌" : "table";
   if (a.kind === "weight") return `${a.label} ${zh ? "地球" : "Earth"} → ${obj}`;
   if (a.kind === "normal") return `${a.label} ${surf} → ${obj}`;
   if (a.kind === "friction") return `${a.label} ${surf} → ${obj}${zh ? "（摩擦）" : " (friction)"}`;
@@ -73,13 +73,14 @@ export default function Scene({ plan }: SceneProps) {
     const ty = scene === 4 ? tr.y + tr.h * 0.56 : isIndoor(scene) ? tr.y + tr.h * 0.66 : tr.y + tr.h * 0.72;   // 桌面／路面／太空中線（略低，留位給上方那艘的速度箭嘴）
     const floorY = tr.y + tr.h - 26;
     const lanesN = scene === 1 || scene === 4 ? Math.max(1, m.lanes) : 1;
+    const inBus = scene !== 3 || Math.abs(m.sRel) <= m.busL / 2 + 0.2;   // 乘客滑出車廂（18 m）後，法向反作用力／摩擦的施力物改寫「地面」（儀器審核員第 7 輪）
     const laneGap = scene === 4 ? tr.h * 0.25 : Math.max(90, tr.h * 0.34);
     const laneY = (lane: number) => (scene === 4 ? ty - (lane === 1 ? 1 : lane === 2 ? -1 : 0) * laneGap : ty - lane * laneGap);
     const reset = frozen.current.viewW === 0 || m.t < frozen.current.t - 1e-9 || m.t === 0;
     if (reset) {
       const f = frozen.current;
       // 視野闊度固定（老師 2026-09-08：推力一改飛船大小就變）：不隨參數預測改變，物體走遠由鏡頭跟隨處理；桌布按布長
-      f.viewW = scene === 1 ? 6 : scene === 2 ? Math.max(3, nice(2 * (m.L + 1.2))) : scene === 3 ? 26 : 24;
+      f.viewW = scene === 1 ? 6 : scene === 2 ? Math.max(3, nice(2 * (m.L + 1.2))) : scene === 3 ? 26 : m.lanes > 1 ? 56 : 24;   // 三艘飛船共用鏡頭：±2 m s⁻¹ × 12 s = ±24 m 連標籤要放得下（儀器審核員第 7 輪）
       const maxLen = Math.min(120, 0.22 * (tr.w - 2 * pad), 0.3 * tr.h, lanesN > 1 ? laneGap * 0.4 : Infinity);
       // 垂直力另設上限：室內時重量箭頭不落到地板刻度（標籤在箭頭旁），泳道疊排時上下箭頭相隔 ≥ 0.2 倍間距
       const maxLenV = Math.min(maxLen, isIndoor(scene) ? Math.max(30, floorY - ty - 22) : Infinity);
@@ -93,12 +94,14 @@ export default function Scene({ plan }: SceneProps) {
     frozen.current.t = m.t;
     const F = frozen.current; const pxPerM = (tr.w - 2 * pad) / F.viewW;
     const rocketL = lanesN > 1 ? Math.max(48, 0.9 * pxPerM) : Math.max(64, 1.2 * pxPerM);   // 火箭畫面長度（三艘並排時縮小一級，令每條泳道放得下速度與力箭嘴）
-    // 鏡頭：情景 3 跟乘客與巴士的中點（地面視角；兩者都留在畫面內），其餘每條泳道跟自己的物體
-    const anchors: number[] = scene === 3 ? [bodyOf("passenger")!.position[0]]   // 地面視角：鏡頭跟乘客（儀器審核員第 2 輪）；巴士離開畫面時邊緣指示
+    // 鏡頭：情景 3 鎖定巴士中心（老師 2026-09-11：要看到完整的巴士；車廂 18 m 在 26 m 視野內，乘客在車內必然可見），其餘每條泳道跟自己的物體
+    const anchors: number[] = scene === 3 ? [bodyOf("bus")!.position[0]]
       : scene === 2 ? [bodyOf("object")!.position[0]]
-      : scene === 4 ? ["ship", "shipR", "shipL"].map(k => (bodyOf(k)?.position[0] ?? 0) + F.viewW * 0.25)   // 火箭在畫面左方四分一（老師 2026-09-11：速度箭嘴向右要有空間）
+      : scene === 4 ? (lanesN > 1
+        ? (() => { const mean = ["ship", "shipR", "shipL"].reduce((acc, k) => acc + (bodyOf(k)?.position[0] ?? 0), 0) / 3; return [mean, mean, mean]; })()   // 三艘共用一個鏡頭（三艘的平均位置）：靜者恆靜、動者恆動在畫面上看得見真實相對位置（儀器審核員第 7 輪）
+        : [(bodyOf("ship")?.position[0] ?? 0) + F.viewW * 0.25])   // 單艘：火箭在畫面左方四分一（老師 2026-09-11：速度箭嘴向右要有空間）
       : ["block", "blockB"].map(k => bodyOf(k)?.position[0] ?? 0);
-    anchors.forEach((a, lane) => { const dz = F.viewW * (scene === 4 ? 0.04 : 0.2); if (a > cam.current.s[lane] + dz) cam.current.s[lane] = a - dz; else if (a < cam.current.s[lane] - dz) cam.current.s[lane] = a + dz; });
+    anchors.forEach((a, lane) => { const dz = F.viewW * (scene === 4 ? 0.04 : scene === 3 ? 0 : 0.2); if (a > cam.current.s[lane] + dz) cam.current.s[lane] = a - dz; else if (a < cam.current.s[lane] - dz) cam.current.s[lane] = a + dz; });
     cam.current.t = m.t;
     const sx = (s: number, lane = 0) => tr.x + tr.w / 2 + (s - cam.current.s[lane]) * pxPerM;
     const camS = cam.current.s[0];
@@ -140,30 +143,37 @@ export default function Scene({ plan }: SceneProps) {
     {   // 軸標題（室內時在地板上方，桌腳之間，加白底框）
       const axisTitle = zh ? "位移 s / m（向右為正 →）" : "displacement s / m (right = + →)"; const ay = scene === 4 ? tr.y + tr.h - 24 : isIndoor(scene) ? floorY - 6 : ty + 47;
       ctx.font = monoFont(11); const tw = ctx.measureText(axisTitle).width;
-      if (isIndoor(scene)) { ctx.save(); ctx.globalAlpha = 0.8; ctx.fillStyle = SCENE.white; ctx.fillRect(tr.x + tr.w - 10 - tw, ay - 12, tw + 4, 15); ctx.restore(); }
+      if (isIndoor(scene)) { ctx.fillStyle = SCENE.white; ctx.fillRect(tr.x + tr.w - 10 - tw, ay - 12, tw + 4, 15); }   // 不透明：桌腳不再穿過軸標題（儀器審核員第 8 輪）
       ctx.fillStyle = scene === 4 ? SCENE.muted : ink3; ctx.textAlign = "right"; ctx.fillText(axisTitle, tr.x + tr.w - 8, ay);
     }
     if (Math.abs(camS) > 1e-9) { ctx.font = uiFont(12, "700"); ctx.fillStyle = scene === 4 ? SCENE.white : ink; ctx.textAlign = "right"; ctx.fillText(zh ? "鏡頭跟着物體移動（比例不變）" : "Camera follows the object (same scale)", tr.x + tr.w - 8, tr.y + 34); }
 
-    // ---- 桌（情景 1、2）：桌面板 + 桌腳（世界座標，每 1.5 m 一對）；桌面質感跟 μ ----
-    const drawTable = (yl: number, lane: number, mu1: number, mu2: number, splitAt: number | null) => {
+    // ---- 桌（情景 1、2）：桌面板 + 桌腳（世界座標，每 1.5 m 一對）；桌面質感跟摩擦力 f（0 光滑；越大紋越密，3 N 為滿）----
+    ctx.font = monoFont(11); const axisTitleW = ctx.measureText(zh ? "位移 s / m（向右為正 →）" : "displacement s / m (right = + →)").width;
+    const drawTable = (yl: number, lane: number, f1: number, f2: number, splitAt: number | null) => {
       const [lo, hi] = rangeOf(lane);
       ctx.fillStyle = SCENE.trunk;
       const legBottom = lane === 0 ? floorY : yl + laneGap - 26;
       const legGap = Math.max(1.5, nice(F.viewW / 8));
       for (let s0 = Math.floor(lo / legGap) * legGap; s0 <= hi; s0 += legGap) { const lx = sx(s0, lane); ctx.fillRect(lx - 4, yl + 4, 8, Math.max(0, legBottom - yl - 4)); }
       ctx.fillRect(tr.x, yl, tr.w, 12);
-      const seg = (x0: number, x1: number, mu: number, text: string) => {
+      const seg = (x0: number, x1: number, f: number, text: string, short: string) => {
         if (x1 <= x0) return;
-        ctx.fillStyle = mu === 0 ? SCENE.hub : SCENE.road; ctx.fillRect(x0, yl - 9, x1 - x0, 9);
-        if (mu > 0) { const gapPx = Math.max(5, 22 - mu * 28); ctx.strokeStyle = SCENE.post; ctx.lineWidth = 1.5; for (let xx = x0 + 3; xx < x1; xx += gapPx) { ctx.beginPath(); ctx.moveTo(xx, yl - 9); ctx.lineTo(xx + 5, yl); ctx.stroke(); } }
-        if (x1 - x0 > 54 && text) { const ly = lane === 0 ? floorY - 6 : yl + 40; ctx.font = uiFont(11); const tw = ctx.measureText(text).width; ctx.save(); ctx.globalAlpha = 0.8; ctx.fillStyle = SCENE.white; ctx.fillRect(x0 + 4, ly - 12, tw + 4, 15); ctx.restore(); ctx.fillStyle = ink2; ctx.textAlign = "left"; ctx.fillText(text, x0 + 6, ly); }   // 主泳道：地板上方；上方泳道：桌面板下（A、B 之下）；白底框令桌腳之間亦可讀
+        ctx.fillStyle = f === 0 ? SCENE.hub : SCENE.road; ctx.fillRect(x0, yl - 9, x1 - x0, 9);
+        if (f > 0) { const gapPx = Math.max(5, 22 - Math.min(1, f / 3) * 17); ctx.strokeStyle = SCENE.post; ctx.lineWidth = 1.5; for (let xx = x0 + 3; xx < x1; xx += gapPx) { ctx.beginPath(); ctx.moveTo(xx, yl - 9); ctx.lineTo(xx + 5, yl); ctx.stroke(); } }
+        if (text) {   // 主泳道：地板上方；上方泳道：桌面板下（A、B 之下）；白底框（不透明）令桌腳之間亦可讀。放不下全句就用短寫（儀器審核員第 7 輪：兩段都粗糙時 A–B 只有 118 px）
+          const ly = lane === 0 ? floorY - 6 : yl + 40; ctx.font = uiFont(11);
+          let t = text, tw = ctx.measureText(t).width;
+          const xEnd = lane === 0 && x1 >= tr.x + tr.w - 1 ? x1 - axisTitleW - 20 : x1;   // 右端與軸標題同一行：留位
+          if (tw + 12 > xEnd - x0) { t = short; tw = ctx.measureText(t).width; }
+          if (tw + 12 <= xEnd - x0) { ctx.fillStyle = SCENE.white; ctx.fillRect(x0 + 4, ly - 12, tw + 4, 15); ctx.fillStyle = ink2; ctx.textAlign = "left"; ctx.fillText(t, x0 + 6, ly); }
+        }
       };
-      if (splitAt === null) seg(tr.x, tr.x + tr.w, mu1, zh ? (mu1 === 0 ? "桌面光滑" : `桌面 μ桌 = ${trim3(sig(mu1))}`) : mu1 === 0 ? "smooth table" : `table μ = ${trim3(sig(mu1))}`);
+      if (splitAt === null) seg(tr.x, tr.x + tr.w, f1, zh ? (f1 === 0 ? "桌面光滑" : `桌面摩擦力 f桌 = ${trim3(sig(f1))} N`) : f1 === 0 ? "smooth table" : `table friction f = ${trim3(sig(f1))} N`, f1 === 0 ? (zh ? "光滑" : "smooth") : `f桌 = ${trim3(sig(f1))} N`);
       else {
         const xA = sx(0, lane), xB = sx(splitAt, lane);
-        seg(Math.max(tr.x, xA), Math.min(tr.x + tr.w, xB), mu1, zh ? (mu1 === 0 ? "A–B 光滑" : `A–B μ₁ = ${trim3(sig(mu1))}`) : mu1 === 0 ? "A–B smooth" : `A–B μ₁ = ${trim3(sig(mu1))}`);
-        seg(Math.max(tr.x, xB), tr.x + tr.w, mu2, zh ? (mu2 === 0 ? "B 之後光滑" : `B 之後 μ₂ = ${trim3(sig(mu2))}`) : mu2 === 0 ? "beyond B smooth" : `beyond B μ₂ = ${trim3(sig(mu2))}`);
+        seg(Math.max(tr.x, xA), Math.min(tr.x + tr.w, xB), f1, zh ? (f1 === 0 ? "A–B 光滑" : `A–B 摩擦力 f₁ = ${trim3(sig(f1))} N`) : f1 === 0 ? "A–B smooth" : `A–B friction f₁ = ${trim3(sig(f1))} N`, f1 === 0 ? (zh ? "光滑" : "smooth") : `f₁ = ${trim3(sig(f1))} N`);
+        seg(Math.max(tr.x, xB), tr.x + tr.w, f2, zh ? (f2 === 0 ? "B 之後光滑" : `B 之後摩擦力 f₂ = ${trim3(sig(f2))} N`) : f2 === 0 ? "beyond B smooth" : `beyond B friction f₂ = ${trim3(sig(f2))} N`, f2 === 0 ? (zh ? "光滑" : "smooth") : `f₂ = ${trim3(sig(f2))} N`);
         ctx.font = uiFont(12, "700"); ctx.fillStyle = ink; ctx.textAlign = "center";
         if (xA > tr.x - 20 && xA < tr.x + tr.w + 20) ctx.fillText("A", xA + 8, yl + 24);
         if (xB > tr.x - 20 && xB < tr.x + tr.w + 20) ctx.fillText("B", xB + 8, yl + 24);
@@ -173,7 +183,7 @@ export default function Scene({ plan }: SceneProps) {
 
     // ---- 情景專屬幾何 ----
     if (scene === 1) {
-      for (let lane = 0; lane < lanesN; lane++) drawTable(laneY(lane), lane, m.mu1, m.mu2, m.LAB);
+      for (let lane = 0; lane < lanesN; lane++) drawTable(laneY(lane), lane, m.f1, m.f2, m.LAB);
       for (const b of plan.bodies!) {
         const lane = b.position[2]; const yl = laneY(lane); const bw = Math.max(26, b.size[0] * pxPerM); const cx = sx(b.position[0], lane);
         const main = b.key === "block";
@@ -188,7 +198,7 @@ export default function Scene({ plan }: SceneProps) {
         if (m.push) drawHand(ctx, cx - bw / 2 - 1, yl - 9 - bw * 0.5, Math.max(20, bw * 0.75), 1);   // 施力中：手掌貼着方塊左面；放手即消失
       }
     } else if (scene === 2) {
-      drawTable(ty, 0, m.muTable, 0, null);
+      drawTable(ty, 0, m.fTable, 0, null);
       const cloth = bodyOf("cloth")!; const xe = sx(cloth.position[0]); const clothW = cloth.size[0] * pxPerM;
       ctx.fillStyle = SCENE.roadDash; ctx.fillRect(xe, ty - 15, clothW, 6); ctx.strokeStyle = SCENE.objectBEdge; ctx.lineWidth = 1; ctx.strokeRect(xe, ty - 15, clothW, 6);   // 桌布：黃色（與桌面、樽分得開），尾邊在 xe，向右伸到手
       const xh = xe + clothW; drawHand(ctx, xh + 4, ty - 24, 26, -1);        // 拉布的手在布的右端
@@ -212,8 +222,8 @@ export default function Scene({ plan }: SceneProps) {
       ctx.font = monoFont(11); ctx.fillStyle = ink2;
       ctx.font = monoFont(11); ctx.fillStyle = ink2; ctx.textAlign = "left";
       ctx.fillText(`Δt = ${m.dtPull >= 0 ? trim3(sig(m.dtPull)) : "—"} s，Δv = ${trim3(sig(m.dv))} m s⁻¹`, bx, by + 38);
-      ctx.fillStyle = ink3; ctx.fillText(zh ? `（滿格 = 臨界速度 √(2μ布gL) 時的衝量 ${trim3(sig(m.Jmax))} N s）` : `(full bar = impulse at the critical speed √(2μgL), ${trim3(sig(m.Jmax))} N s)`, bx, by + 54);
-      if (m.stuck) { ctx.font = uiFont(13, "700"); ctx.fillStyle = SCENE.flag; ctx.fillText(zh ? "樽追上布速，隨布一起走：桌布抽不出" : "The bottle caught up with the cloth and moves with it: the cloth cannot be pulled out", bx, by + 72); }
+      ctx.fillStyle = ink3; ctx.fillText(zh ? `（滿格 = 剛好抽不出時的衝量 ${trim3(sig(m.Jmax))} N s；布對樽的摩擦力 f布 = ${trim3(sig(m.fCloth))} N）` : `(full bar = impulse at the critical speed, ${trim3(sig(m.Jmax))} N s; cloth friction f = ${trim3(sig(m.fCloth))} N)`, bx, by + 54);
+      if (m.stuck) { ctx.font = uiFont(15, "700"); ctx.fillStyle = SCENE.flag; ctx.fillText(zh ? "樽追上布速，隨布一起走：桌布抽不出" : "The bottle caught up with the cloth and moves with it: the cloth cannot be pulled out", bx, by + 72); }
       else if (m.phase >= 2) { ctx.font = uiFont(12); ctx.fillStyle = ink2; ctx.fillText(zh ? "桌布已抽出，樽在桌面滑行" : "Cloth out; the bottle slides on the table", bx, by + 72); }
     } else if (scene === 3) {
       const bus = bodyOf("bus")!; const bh = bus.size[1] * pxPerM; const floor = ty - 12; const busX = sx(bus.position[0]);
@@ -236,6 +246,7 @@ export default function Scene({ plan }: SceneProps) {
       ctx.beginPath(); ctx.roundRect(cx - pw / 2, floor - ph * 0.72, pw, ph * 0.72, 5); ctx.fill(); ctx.stroke();
       ctx.beginPath(); ctx.arc(cx, floor - ph * 0.86, ph * 0.13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       if (m.handrail) { ctx.strokeStyle = SCENE.objectBEdge; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(cx + pw * 0.4, floor - ph * 0.6); ctx.lineTo(cx + pw * 0.9, railY); ctx.stroke(); ctx.fillStyle = SCENE.objectB; ctx.beginPath(); ctx.arc(cx + pw * 0.9, railY, 6, 0, Math.PI * 2); ctx.fill(); }
+      if (cx < tr.x + 8 || cx > tr.x + tr.w - 8) { const left = cx < tr.x + 8; ctx.font = uiFont(12, "700"); ctx.fillStyle = SCENE.objectBEdge; ctx.textAlign = left ? "left" : "right"; ctx.fillText(`${left ? "◀ " : ""}${zh ? "乘客在 s = " : "passenger at s = "}${trim3(sig(pas.position[0]))} m${zh ? "（已滑出車廂）" : " (out of the bus)"}${left ? "" : " ▶"}`, left ? tr.x + 8 : tr.x + tr.w - 8, floor - ph * 0.5); }   // 鏡頭鎖定巴士：乘客滑出車廂後以邊緣標記指示
       // 座椅列（跟巴士走，每 1.4 m 一張）：乘客相對車廂的移動一眼可見
       const seatGap = 1.4 * pxPerM, seatW = 0.5 * pxPerM, seatH = ph * 0.32;
       for (let sxSeat = bx0 + 0.6 * pxPerM; sxSeat + seatW < bx1 - 1.8 * pxPerM; sxSeat += seatGap) { if (Math.abs(sxSeat - cx) < pw) continue; ctx.fillStyle = SCENE.objectAEdge; ctx.fillRect(sxSeat, floor - seatH, seatW, seatH); ctx.fillRect(sxSeat, floor - seatH * 1.9, seatW * 0.28, seatH); }
@@ -248,13 +259,16 @@ export default function Scene({ plan }: SceneProps) {
         const yDim = floor - ph - 34;   // 乘客頭頂之上（速度箭嘴之下）
         ctx.strokeStyle = SCENE.flag; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(originX, yDim); ctx.lineTo(cx, yDim); ctx.moveTo(originX, yDim - 6); ctx.lineTo(originX, yDim + 6); ctx.moveTo(cx, yDim - 6); ctx.lineTo(cx, yDim + 6); ctx.stroke();
         const dirSign = Math.sign(cx - originX); ctx.beginPath(); ctx.moveTo(cx, yDim); ctx.lineTo(cx - dirSign * 9, yDim - 5); ctx.lineTo(cx - dirSign * 9, yDim + 5); ctx.closePath(); ctx.fillStyle = SCENE.flag; ctx.fill();
-        ctx.font = monoFont(12, "700"); ctx.textAlign = "center"; ctx.fillText(`s_rel = ${sig(m.sRel)} m`, (originX + cx) / 2, yDim - 8);
+        // 標示文字放在起點那一側、離乘客至少 56 px：相對位移小（起步頭一秒、iPad 直向）時不會壓住乘客頭上的 R 標籤
+        ctx.font = monoFont(12, "700");
+        if (cx < originX) { ctx.textAlign = "left"; ctx.fillText(`s_rel = ${sig(m.sRel)} m`, Math.max(cx + 56, originX + 4), yDim - 8); }
+        else { ctx.textAlign = "right"; ctx.fillText(`s_rel = ${sig(m.sRel)} m`, Math.min(cx - 56, originX - 4), yDim - 8); }
       }
       const phaseTxt = zh ? ["起步（勻加速）", "巡航（勻速）", "急煞（勻減速）", "已停"][m.busPhase] : ["starting (uniform acceleration)", "cruising", "braking", "stopped"][m.busPhase];
       ctx.font = uiFont(13, "700"); ctx.fillStyle = ink; ctx.textAlign = "left"; ctx.fillText(`${zh ? "巴士" : "Bus"}：${phaseTxt}　v = ${trim3(sig(m.vBus))} m s⁻¹`, tr.x + 14, tr.y + 34);
       ctx.font = uiFont(12, "700"); ctx.fillStyle = accent; ctx.fillText(zh ? "地面（慣性）視角；考試作答一律用地面視角" : "Ground (inertial) frame — always the frame used in exam answers", tr.x + 14, tr.y + 52);
       ctx.font = monoFont(12); ctx.fillStyle = ink; ctx.fillText(`${zh ? "乘客相對巴士的位移" : "passenger rel. bus"} s_rel = ${sig(m.sRel)} m`, tr.x + 14, tr.y + 70);
-      if (m.sliding && !m.handrail) { ctx.font = uiFont(12); ctx.fillStyle = ink2; ctx.fillText(zh ? "乘客相對地板滑動（地板加速超過 μg）" : "Passenger sliding on the floor (floor acceleration exceeds μg)", tr.x + 14, tr.y + 88); }
+      if (m.sliding && !m.handrail) { ctx.font = uiFont(12); ctx.fillStyle = ink2; ctx.textAlign = "right"; ctx.fillText(zh ? `乘客相對地板滑動（巴士加速度超過摩擦力能給乘客的 f/m = ${trim3(sig(m.aLim))} m s⁻²）` : `Passenger sliding (bus acceleration exceeds f/m = ${trim3(sig(m.aLim))} m s⁻² that friction can give)`, tr.x + tr.w - 8, tr.y + 52); ctx.textAlign = "left"; }   // 右上角（鏡頭提示之下）：iPad 直向時左上第四行會撞到 R 標籤
     } else {
       for (const b of plan.bodies!) {
         const lane = b.position[2]; const yl = laneY(lane); const cx = sx(b.position[0], lane); const L = rocketL, H = rocketL * 0.36;
@@ -304,7 +318,7 @@ export default function Scene({ plan }: SceneProps) {
       if (a.kind === "velocity" || a.kind === "acceleration") { const yy = Math.min(top - (scene === 4 ? 26 : 30), yRTip) - (a.kind === "velocity" ? 0 : 24); drawArrow2D(ctx, cx, yy, cx + a.vector[0] * k, yy, a.kind, a.label); continue; }
       if (a.vector[1] !== 0) {   // 垂直力：法向反作用力由接觸面向上、標籤在箭頭上方置中；重量由中心向下、標籤在箭頭旁（桿左側）
         const y0 = a.kind === "normal" ? base : cy; const y1 = y0 - a.vector[1] * k; drawArrow2D(ctx, cx, y0, cx, y1, a.kind);
-        if (a.vector[1] > 0) label(forceLabel(a, scene, zh, onCloth), cx, y1 - 6, color, "center"); else label(forceLabel(a, scene, zh, onCloth), cx - 9, y1 + 4, color, "right");
+        if (a.vector[1] > 0) label(forceLabel(a, scene, zh, onCloth, inBus), cx, y1 - 6, color, "center"); else label(forceLabel(a, scene, zh, onCloth, inBus), cx - 9, y1 + 4, color, "right");
         continue;
       }
       // 水平力分三層：施力在中心之上（標籤在箭嘴上方）、淨力在中心（標籤在箭嘴下方）、摩擦貼接觸面（標籤在桌面／地板之下）
@@ -314,7 +328,7 @@ export default function Scene({ plan }: SceneProps) {
       const align: CanvasTextAlign = a.vector[0] > 0 ? "left" : "right"; const lx = x1 + (a.vector[0] > 0 ? 6 : -6);
       // 施力：箭頭外側、箭嘴上方；摩擦：箭頭外側、沿箭嘴線；淨力：沿箭嘴線，但有同向摩擦（放手後粗糙段淨力 = 摩擦，兩箭頭同 x）時改放箭嘴上方
       const frictionSameDir = a.kind === "net" && plan.arrows.some(x => x.kind === "friction" && x.origin[2] === lane && Math.sign(x.vector[0]) === Math.sign(a.vector[0]));
-      label(forceLabel(a, scene, zh, onCloth), lx, scene === 4 ? yy + 5 : a.layer === "applied" ? yy - 8 : frictionSameDir ? yy - 9 : yy + 5, color, align);
+      label(forceLabel(a, scene, zh, onCloth, inBus), lx, scene === 4 ? yy + 5 : a.layer === "applied" ? yy - 8 : frictionSameDir ? yy - 9 : yy + 5, color, align);
     }
     if (shrink < 1 - 1e-9) { ctx.font = uiFont(11); ctx.fillStyle = scene === 4 ? SCENE.muted : ink3; ctx.textAlign = "right"; ctx.fillText(zh ? "箭嘴已按邊緣空間同步縮短（比例不變）" : "Arrows shortened together to fit the edge (same ratio)", tr.x + tr.w - 8, tr.y + 16); }
     // 位移標籤
@@ -342,7 +356,7 @@ export default function Scene({ plan }: SceneProps) {
     if (third.length) line(vPane, third, SCENE.ghost, 2, 0.9);
     line(vPane, tr2("v-t"), SERIES.v.color);
     if (second.length) { ctx.font = uiFont(11); ctx.fillStyle = ink2; ctx.textAlign = "left"; const who = scene === 1 ? (zh ? "綠＝方塊 A（琥珀色），藍＝方塊 B" : "green = block A (amber), blue = block B") : scene === 2 ? (zh ? "綠＝樽，藍＝桌布" : "green = bottle, blue = cloth") : scene === 3 ? (zh ? "綠＝乘客，藍＝巴士" : "green = passenger, blue = bus") : zh ? "綠＝靜止那艘（琥珀色），藍＝向右，灰＝向左" : "green = at rest (amber), blue = right, grey = left"; ctx.fillText(who, vx0 + 6, vPane.y + vPane.h - 28); }
-    // a–t 圖：主體（青藍）與第二體（鋼藍）；巴士情景煞車時乘客 a = −μg、巴士 a = −a車，兩線分開
+    // a–t 圖：主體（青藍）與第二體（鋼藍）；巴士情景煞車時乘客 a = −f/m、巴士 a = −a車，兩線分開
     const { x0: ax0 } = drawPane(ctx, aPane, { title: zh ? "a–t 圖（加速度—時間）" : "a–t graph", yLabel: "a / m s⁻²", color: SERIES.a.color, tint: SERIES.a.tint, xTicks }, T);
     const second2 = tr2("a2-t");
     if (second2.length) line(aPane, second2, SCENE.objectB, 2, 0.9);
