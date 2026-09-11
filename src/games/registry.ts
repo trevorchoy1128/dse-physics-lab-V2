@@ -21,12 +21,14 @@ export const GAMES: GameDef[] = [
   {
     id: "graph-chase", unit: "c2", topic: { zh: "運動圖線", en: "Motion graphs" },
     title: { zh: "v–t 圖追車", en: "Graph Chase" },
-    summary: { zh: "用鍵盤控制一架車，令自己的 v–t 圖與目標圖線重疊。", en: "Drive a car so that your v–t graph matches the target curve." },
+    summary: { zh: "駕駛警車追賊車：用油門桿設定加速度，令警車的 v–t 圖貼住賊車的線。八關，斜率就是 a。", en: "Drive a police car after a getaway car: set the acceleration on a lever so your v–t graph hugs the getaway car's line. Eight levels; the slope is a." },
+    load: () => import("./graph-chase/GraphChase"),
   },
   {
     id: "laser-maze", unit: "c3", topic: { zh: "光的折射", en: "Refraction" },
     title: { zh: "激光迷宮", en: "Laser Maze" },
-    summary: { zh: "放置鏡、稜鏡與透鏡，令激光繞過障礙射中目標。", en: "Place mirrors, prisms and lenses to guide a laser round obstacles to the target." },
+    summary: { zh: "兩部分：先用平面鏡，再用稜鏡。放好、拖動轉角，或調校入射角，令激光射中探測器。十關：反射、折射、臨界角、全內反射、光纖。", en: "Two parts: plane mirrors first, then prisms. Place and drag pieces round, or set the angle of incidence, so the laser reaches the detector. Ten levels: reflection, refraction, critical angle, total internal reflection, fibres." },
+    load: () => import("./laser-maze/LaserMaze"),
   },
   {
     id: "circuit-escape", unit: "c4", topic: { zh: "電路", en: "Circuits" },
