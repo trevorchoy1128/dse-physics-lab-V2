@@ -1,6 +1,6 @@
 {
   "simId": "inertia-and-newtons-first-law",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "date": "2026-09-11",
   "spec": "reference/13_024_慣性與牛頓運動第一定律_模擬器規格.md（v0.4：v0.3 老師 2026-09-07 核准；v0.4 摩擦改為摩擦力 f，2026-09-11，滑桿範圍與預設待老師核准）",
   "tests": {

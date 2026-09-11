@@ -8,7 +8,7 @@ for (const [name, vp] of [["desktop", { width: 1440, height: 900 }], ["ipad", { 
   await page.getByRole("button", { name: "巴士上的乘客" }).click(); await page.waitForTimeout(400);
   const pause = page.getByRole("button", { name: /暫停/ }); if (await pause.count()) await pause.first().click();
   const seek = async t => { const el = page.getByLabel(/跳到/).first(); await el.fill(String(t)); await el.dispatchEvent("input"); await el.dispatchEvent("change"); await page.waitForTimeout(300); };
-  for (const t of [1.5, 8.5, 12]) { await seek(t); await page.locator("canvas").first().screenshot({ path: `${out}/bus-${name}-t${t}.png` }); }
+  for (const t of [1.5, 5, 8.5, 12]) { await seek(t); await page.locator("canvas").first().screenshot({ path: `${out}/bus-${name}-t${t}.png` }); }
   await page.close();
 }
 await browser.close(); console.log("done");

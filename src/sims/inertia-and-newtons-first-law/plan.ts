@@ -1,5 +1,5 @@
 import type { PlanFn, Vec3, ArrowPlan, BodyPlan, LabelPlan, Layers } from "@/shell/types";
-import { model, duration, blockForces, clothForces, passengerForces, busAt, shipAccel, clothAnalytic, passengerALimit, sceneCode, L_AB, M_PASSENGER, type S, type P } from "./model";
+import { model, duration, blockForces, clothForces, passengerForces, busAt, busT1, shipAccel, clothAnalytic, passengerALimit, sceneCode, L_AB, M_PASSENGER, T_CRUISE, type S, type P } from "./model";
 
 // 畫面的物理（純函數）。2D 側視：上方情景（方塊／桌布／巴士／太空），下方 s–t 與 v–t 線圖（以 trails 傳遞，點 = [t, y, 0]）。
 // 箭嘴 vector 一律填物理量（SI），縮放係數在 scales 統一為 1；像素比例由 Scene 按 meta 的預測上界在重置時定好，運行中不變。
@@ -124,7 +124,7 @@ export const plan: PlanFn<S, P> = (st, p, obs, layers) => {
     force("net", "net", c, [fp.Fnet, 0, 0], "ΣF");
     motion([c[0], PASS_H + 0.1, 0], st.a.v, fp.a);
     meta.sBus = bus.s; meta.vBus = bus.v; meta.aBus = bus.a; meta.busPhase = bus.phase; meta.handrail = p.handrail ? 1 : 0;
-    meta.sRel = obs.sRel; meta.sliding = st.phase; meta.busL = BUS_L; meta.busH = BUS_H; meta.aLim = passengerALimit(p); meta.fBus = p.fBus;
+    meta.sRel = obs.sRel; meta.sliding = st.phase; meta.busL = BUS_L; meta.busH = BUS_H; meta.aLim = passengerALimit(p); meta.fBus = p.fBus; meta.busT1 = Number.isFinite(busT1(p)) ? busT1(p) : -1; meta.tCruise = T_CRUISE;   // 時間線（Scene）用；a車 = 0 時 −1
     labels.push({ position: [st.a.s, -0.1, 0], symbol: "sRel", value: obs.sRel, unit: "m" });
   } else {
     const acc = shipAccel(p); const Fe = obs.Fe;
