@@ -8,10 +8,9 @@ export function sig(x: number, n = 3): string {
   if (x === 0) return (0).toFixed(n - 1);
   const e = Math.floor(Math.log10(Math.abs(x)));
   if (e >= 4 || e <= -4) {
-    const m = x / 10 ** e;
-    const ms = Number(m.toPrecision(n));
-    if (Math.abs(ms) >= 10) return sig(x, n); // toPrecision 進位到 10 的邊界情況極少，遞歸一次即穩定
-    return `${ms.toFixed(n - 1)} × 10${sup(e)}`;
+    let ee = e, ms = Number((x / 10 ** ee).toPrecision(n));
+    if (Math.abs(ms) >= 10) { ee += 1; ms = Number((x / 10 ** ee).toPrecision(n)); }   // 尾數進位到 10（例 9.9995 × 10⁻¹⁴）：指數加一重算，不可遞歸（舊版無限遞歸令頁面崩潰）
+    return `${ms.toFixed(n - 1)} × 10${sup(ee)}`;
   }
   const rounded = Number(x.toPrecision(n));
   const e2 = rounded === 0 ? e : Math.floor(Math.log10(Math.abs(rounded)));

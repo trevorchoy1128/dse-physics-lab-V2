@@ -21,7 +21,8 @@ export const GAMES: GameDef[] = [
   {
     id: "graph-chase", unit: "c2", topic: { zh: "運動圖線", en: "Motion graphs" },
     title: { zh: "v–t 圖追車", en: "Graph Chase" },
-    summary: { zh: "用鍵盤控制一架車，令自己的 v–t 圖與目標圖線重疊。", en: "Drive a car so that your v–t graph matches the target curve." },
+    summary: { zh: "駕駛警車追賊車：用油門桿設定加速度，令警車的 v–t 圖貼住賊車的線。八關，斜率就是 a。", en: "Drive a police car after a getaway car: set the acceleration on a lever so your v–t graph hugs the getaway car's line. Eight levels; the slope is a." },
+    load: () => import("./graph-chase/GraphChase"),
   },
   {
     id: "laser-maze", unit: "c3", topic: { zh: "光的折射", en: "Refraction" },
