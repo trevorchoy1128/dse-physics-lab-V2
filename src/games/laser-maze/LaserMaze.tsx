@@ -9,7 +9,7 @@ import { navigate } from "@/app/router";
 import { LEVELS, PARTS } from "./levels";
 import {
   DEFAULT_ROT, H, ROT_STEP, W, dirOf, initialState, loadProgress, normRot, remaining, saveProgress, sceneOf, snapRot, starsFor, trace,
-  type Level, type PieceType, type Progress, type RayEvent, type State, type TraceResult, type Vec,
+  type Beam, type Level, type PieceType, type Progress, type RayEvent, type State, type TraceResult, type Vec,
 } from "./game";
 
 // 激光迷宮：畫面與互動。光學全部在 game.ts；這裏只畫棋盤、元件、光線，並把格位／角度交回 State。
@@ -361,9 +361,9 @@ function makeDraw(L: Level, st: State, sel: number | null, shown: Fired | null, 
       ctx.strokeStyle = SCENE.hub; ctx.lineWidth = Math.max(2, 0.04 * sc); ctx.beginPath(); ctx.moveTo(...P(m.a)); ctx.lineTo(...P(m.b)); ctx.stroke();
     }
 
-    // 激光器與方向參考
+    // 激光器
     const lasers = scene.lasers;
-    lasers.forEach((ls, k) => {
+    lasers.forEach(ls => {
       const d = dirOf(ls.dir), [x, y] = P(ls.pos);
       const bodyL = 0.7 * sc, bodyW = 0.28 * sc;
       ctx.save(); ctx.translate(x, y); ctx.rotate(-Math.atan2(d[1], d[0]));
@@ -371,24 +371,18 @@ function makeDraw(L: Level, st: State, sel: number | null, shown: Fired | null, 
       ctx.fillStyle = SCENE.hub; ctx.fillRect(-bodyL + 3, -bodyW / 2 + 3, bodyL * 0.45, bodyW - 6);
       ctx.fillStyle = SCENE.flag; ctx.beginPath(); ctx.arc(0, 0, Math.max(3, 0.07 * sc), 0, Math.PI * 2); ctx.fill();
       ctx.restore();
-      if (k === 0 && L.angle) {
-        // 參考線（法線或軸）與角度弧：anchor 是量角的點（激光口，或半圓關的圓心）；u1、u2 是由 anchor 指向「法線」與「激光」的方向
-        const pv = !!L.angle.pivot;
-        const anchor: Vec = pv ? L.angle.pivot!.c : ls.pos;
-        const ref = dirOf(L.angle.ref), [ax, ay] = P(anchor);
-        const u1: Vec = pv ? [-ref[0], -ref[1]] : ref, u2: Vec = pv ? [-d[0], -d[1]] : d;
-        ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = T.ink3; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(ax - ref[0] * 1.5 * sc, ay + ref[1] * 1.5 * sc); ctx.lineTo(ax + ref[0] * 1.5 * sc, ay - ref[1] * 1.5 * sc); ctx.stroke(); ctx.restore();
-        ctx.font = uiFont(11); ctx.fillStyle = T.ink3; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        const labelDir: Vec = [-u1[0], -u1[1]];   // 標籤放在法線遠離激光的一端
-        ctx.fillText(t(L.id === "fibre" ? { zh: "軸", en: "axis" } : { zh: "法線", en: "normal" }), px(anchor[0] + labelDir[0] * 1.72), py(anchor[1] + labelDir[1] * 1.72));
-        const A1 = Math.atan2(u1[1], u1[0]); let dA = Math.atan2(u2[1], u2[0]) - A1; dA = Math.atan2(Math.sin(dA), Math.cos(dA));   // 取短弧
-        ctx.strokeStyle = T.unit; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ax, ay, 0.9 * sc, -A1, -(A1 + dA), dA > 0); ctx.stroke();
-        const Am = A1 + dA / 2;
-        ctx.font = uiFont(13, "700"); ctx.fillStyle = T.unit; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillText(`θ = ${tick(st.theta)}°`, ax + Math.cos(Am) * 1.25 * sc, ay - Math.sin(Am) * 1.25 * sc);
-      }
     });
+
+    // 未發射（調角度的關）：虛線由激光畫到第一個有角度的界面，並在入射介質一側畫入射角弧——學生調 θ 時看到的就是課本的入射角
+    if (!shown && L.angle) {
+      const b = trace(L, st).beams[0];
+      let k = b.events.findIndex(e => e.i > 0.5); if (k < 0) k = b.events.length ? 0 : -1;
+      if (k >= 0) {
+        ctx.save(); ctx.setLineDash([6, 5]); ctx.strokeStyle = SCENE.flag; ctx.globalAlpha = 0.7; ctx.lineWidth = 1.5;
+        ctx.beginPath(); for (let j = 0; j <= k + 1; j++) { const q = P(b.points[j]); if (j) ctx.lineTo(...q); else ctx.moveTo(...q); } ctx.stroke(); ctx.restore();
+        drawAngles(ctx, b, k, sc, P, T, t, true);
+      }
+    }
 
     // 叉魚關：直線瞄準參考
     if (L.aimLine && tg.kind === "spot") {
@@ -421,23 +415,38 @@ function makeDraw(L: Level, st: State, sel: number | null, shown: Fired | null, 
         ctx.strokeStyle = SCENE.flag; ctx.lineWidth = 2.5; ctx.beginPath(); pts.forEach((q, k) => (k ? ctx.lineTo(...q) : ctx.moveTo(...q))); ctx.stroke();
         ctx.lineCap = "butt"; ctx.lineJoin = "miter";
       }
-      // 完成後：界面的法線與角度
-      if (done) {
-        const evs = shown.result.beams[0].events.slice(0, 8);
-        evs.forEach((e, k) => {
-          const [x, y] = P(e.p), n = e.n;
-          ctx.save(); ctx.setLineDash([3, 4]); ctx.strokeStyle = T.ink3; ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.moveTo(x - n[0] * 0.8 * sc, y + n[1] * 0.8 * sc); ctx.lineTo(x + n[0] * 0.8 * sc, y - n[1] * 0.8 * sc); ctx.stroke(); ctx.restore();
-          if (k < 4) {
-            ctx.font = monoFont(11); ctx.fillStyle = T.ink; ctx.textAlign = n[0] >= 0 ? "left" : "right"; ctx.textBaseline = "bottom";
-            const lab = e.kind === "tir" ? `${tick(+e.i.toFixed(1))}° > C` : e.i < 0.5 ? "" : `i ${tick(+e.i.toFixed(1))}°  r ${tick(+(e.r ?? e.i).toFixed(1))}°`;   // 垂直入射不標（0°，只會擋畫面）
-            if (lab) ctx.fillText(lab, x + n[0] * 0.85 * sc + (n[0] >= 0 ? 4 : -4), y - n[1] * 0.85 * sc - 2);
-          }
-        });
-      }
+      // 完成後：頭三個界面畫法線、入射角弧與折射角（或反射角）弧；其餘只畫法線
+      if (done) shown.result.beams[0].events.slice(0, 8).forEach((_, k) => drawAngles(ctx, shown.result.beams[0], k, sc, P, T, t, false, k < 3));
     }
     ctx.textBaseline = "alphabetic";
   };
+}
+
+// 界面 k 的法線（虛線）、入射角弧 i（入射介質一側，法線與入射線之間）、出射弧 r（反射：同側；折射：另一側）。live = 未發射，只畫 i 並標 θ
+function drawAngles(ctx: CanvasRenderingContext2D, b: Beam, k: number, sc: number, P: (v: Vec) => [number, number], T: ReturnType<typeof theme>, t: (x: Text) => string, live: boolean, withArcs = true) {
+  const e = b.events[k], n = e.n, [x, y] = P(e.p);
+  const pIn = b.points[k], pOut = b.points[k + 2];
+  const din: Vec = [e.p[0] - pIn[0], e.p[1] - pIn[1]];
+  ctx.save(); ctx.setLineDash([3, 4]); ctx.strokeStyle = T.ink3; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x - n[0] * 0.9 * sc, y + n[1] * 0.9 * sc); ctx.lineTo(x + n[0] * 0.9 * sc, y - n[1] * 0.9 * sc); ctx.stroke(); ctx.restore();
+  if (live || k === 0) { ctx.font = uiFont(11); ctx.fillStyle = T.ink3; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(t({ zh: "法線", en: "normal" }), x + n[0] * 1.08 * sc, y - n[1] * 1.08 * sc); }
+  if (!withArcs || e.i < 0.5) return;
+  const back: Vec = [-din[0], -din[1]];
+  const labI = live ? `θ = ${tick(+e.i.toFixed(1))}°` : e.kind === "tir" ? `i = ${tick(+e.i.toFixed(1))}° > C` : `i = ${tick(+e.i.toFixed(1))}°`;
+  arcBetween(ctx, x, y, n, back, 0.45 * sc, T.unit, labI, sc);
+  if (live || !pOut) return;
+  const dout: Vec = [pOut[0] - e.p[0], pOut[1] - e.p[1]];
+  const nOut: Vec = e.kind === "refract" ? [-n[0], -n[1]] : n;
+  arcBetween(ctx, x, y, nOut, dout, 0.68 * sc, T.unit, `r = ${tick(+(e.r ?? e.i).toFixed(1))}°`, sc);   // 出射弧大一圈，標籤才不會與 i 重疊
+}
+/** 由方向 u1 到 u2 的短弧（世界座標方向，畫布 y 反轉），標籤放在弧中央外側 */
+function arcBetween(ctx: CanvasRenderingContext2D, x: number, y: number, u1: Vec, u2: Vec, R: number, color: string, label: string, sc: number) {
+  const A1 = Math.atan2(u1[1], u1[0]); let dA = Math.atan2(u2[1], u2[0]) - A1; dA = Math.atan2(Math.sin(dA), Math.cos(dA));
+  if (Math.abs(dA) < 0.005) return;
+  ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, R, -A1, -(A1 + dA), dA > 0); ctx.stroke();
+  const Am = A1 + dA / 2, lr = R + 0.38 * sc;
+  ctx.font = uiFont(12, "700"); ctx.fillStyle = color; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(label, x + Math.cos(Am) * lr, y - Math.sin(Am) * lr);
 }
 
 function fish(ctx: CanvasRenderingContext2D, cx: number, cy: number, sc: number) {

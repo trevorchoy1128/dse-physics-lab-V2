@@ -43,11 +43,11 @@ export const LEVELS: Level[] = [
   // ---- 第二部分：稜鏡與折射 ----
   {
     id: "fish", part: 2, name: { zh: "水池叉魚", en: "Spear the fish" },
-    brief: { zh: "激光裝在水面，魚在水底。直線瞄準會射不中：光進入水會向法線偏折。調校激光與法線的夾角。", en: "The laser sits at the water surface; the fish is on the bottom. Aiming straight misses: light bends towards the normal on entering water. Set the angle from the normal." },
+    brief: { zh: "激光在水面上，魚在水底。直線瞄準會射不中：光進入水會向法線偏折。調校入射角。", en: "The laser is above the water; the fish is on the bottom. Aiming straight misses: light bends towards the normal on entering water. Set the angle of incidence." },
     hint: { zh: "先由魚的位置求水中的折射角 r：tan r = 水平距離 / 深度 = 4 / 4.5。再用折射定律 sin i = n sin r，n = 1.33。", en: "First find the angle of refraction r from the fish: tan r = horizontal / depth = 4 / 4.5. Then Snell's law sin i = n sin r with n = 1.33." },
     note: { zh: "水 n = 1.33。光由空氣入水（光疏入光密）只會折射，不會全內反射。", en: "Water n = 1.33. Air into water (less dense to denser) only refracts; there is no total internal reflection." },
-    lasers: [{ pos: [3.5, 5.02], dir: -90 }],
-    angle: { ref: -90, sign: 1, min: 0, max: 85, start: 42, label: { zh: "激光與法線夾角", en: "Laser angle from the normal" } },
+    lasers: [{ pos: [3.5, 6.6], dir: -90 }],
+    angle: { ref: -90, sign: 1, min: 0, max: 85, start: 42, label: { zh: "入射角（與法線夾角）", en: "Angle of incidence (from the normal)" }, pivot: { c: [3.5, 5], r: 1.6 } },   // 激光在水面上 1.6 格，繞入射點轉
     glass: [{ n: N_WATER, edges: rectEdges(0, 0, 12, 5), name: { zh: "水", en: "water" }, label: { zh: "水 n = 1.33", en: "water n = 1.33" }, labelAt: [0.3, 4.6] }], mirrors: [], blocks: [],
     target: { kind: "spot", c: [7.5, 0.5], r: 0.2, fish: true },
     slots: [], inventory: {}, aimLine: true,
