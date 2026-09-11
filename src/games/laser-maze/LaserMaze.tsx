@@ -6,22 +6,23 @@ import type { Text } from "@/shell/types";
 import { UNIT_COLORS } from "@/app/units";
 import { TopBar } from "@/app/TopBar";
 import { navigate } from "@/app/router";
-import { LEVELS } from "./levels";
+import { LEVELS, PARTS } from "./levels";
 import {
-  DEFAULT_ROT, H, ROT_STEP, W, dirOf, initialState, loadProgress, normRot, remaining, saveProgress, sceneOf, solutionKey, starsFor, trace,
+  DEFAULT_ROT, H, ROT_STEP, W, dirOf, initialState, loadProgress, normRot, remaining, saveProgress, sceneOf, snapRot, starsFor, trace,
   type Level, type PieceType, type Progress, type RayEvent, type State, type TraceResult, type Vec,
 } from "./game";
 
 // 激光迷宮：畫面與互動。光學全部在 game.ts；這裏只畫棋盤、元件、光線，並把格位／角度交回 State。
-// 棋盤 12 × 8 格，比例每關固定；光線在按「發射」後沿路徑生長，完成才判定命中。
+// 棋盤 12 × 8 格，比例每關固定；元件按虛線格放入、在棋盤上拖動即旋轉（吸附 5°）；光線在按「發射」後沿路徑生長，完成才判定命中。
 
 interface Fired { st: State; result: TraceResult }
 const GHOSTS = 3;
 const SPEED = 9;                  // 光線生長速度 / 格 s⁻¹
 const STAR = (n: number) => "★★★".slice(0, n) + "☆☆☆".slice(0, 3 - n);
 const LETTER = (i: number) => String.fromCharCode(65 + i);
-const PIECE_NAME: Record<PieceType, Text> = { mirror: { zh: "平面鏡", en: "Plane mirror" }, prism: { zh: "直角稜鏡", en: "Right-angle prism" }, lens: { zh: "凸透鏡", en: "Convex lens" } };
-const PIECE_GLYPH: Record<PieceType, string> = { mirror: "▬", prism: "◣", lens: "()" };
+const PIECE_NAME: Record<PieceType, Text> = { mirror: { zh: "平面鏡", en: "Plane mirror" }, prism: { zh: "直角稜鏡", en: "Right-angle prism" } };
+const PIECE_GLYPH: Record<PieceType, string> = { mirror: "▬", prism: "◣" };
+const SLOT_R = 0.62;              // 按棋盤時算作「按中格位」的距離 / 格
 
 export default function LaserMaze() {
   const t = useT();
@@ -35,20 +36,19 @@ export default function LaserMaze() {
   const [firing, setFiring] = useState<Fired | null>(null);
   const [len, setLen] = useState(0);
   const [showHint, setShowHint] = useState(false);
-  const [twinKeys, setTwinKeys] = useState<string[]>([]);
   const raf = useRef(0);
   const shotsRef = useRef<Fired[]>([]);
-  const twinRef = useRef<string[]>([]);
   const stageRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ slot: number; type: PieceType; rot0: number; a0: number } | null>(null);   // 拖動旋轉中的元件
 
   const setSt = useCallback((f: (s: State) => State) => { setStRaw(f); setCurrent(null); }, []);
 
   const openLevel = useCallback((i: number) => {
     cancelAnimationFrame(raf.current);
     const nl = LEVELS[i];
-    setLi(i); setStRaw(initialState(nl)); setSel(null);
-    shotsRef.current = []; twinRef.current = [];
-    setShots([]); setCurrent(null); setFiring(null); setLen(0); setShowHint(false); setTwinKeys([]);
+    setLi(i); setStRaw(initialState(nl)); setSel(null); dragRef.current = null;
+    shotsRef.current = [];
+    setShots([]); setCurrent(null); setFiring(null); setLen(0); setShowHint(false);
   }, []);
 
   // 發射：算好整條光路，再沿路徑生長；完成才記錄結果與星數
@@ -65,10 +65,7 @@ export default function LaserMaze() {
         setLen(total); setFiring(null); setCurrent(f);
         shotsRef.current = [...shotsRef.current, f]; setShots(shotsRef.current);
         if (result.hit) {
-          const key = solutionKey(f.st);
-          if (!twinRef.current.includes(key)) twinRef.current = [...twinRef.current, key];
-          setTwinKeys(twinRef.current);
-          const stars = starsFor(L, { shots: shotsRef.current.length, theta: f.st.theta, twinKeys: twinRef.current.length });
+          const stars = starsFor(L, { shots: shotsRef.current.length, theta: f.st.theta });
           setProgress(p => { if ((p[L.id] ?? 0) >= stars) return p; const np = { ...p, [L.id]: stars }; saveProgress(np); return np; });   // 最佳星數
         }
         return;
@@ -85,7 +82,7 @@ export default function LaserMaze() {
     window.addEventListener("keydown", on); return () => window.removeEventListener("keydown", on);
   }, [fire]);
 
-  // 棋盤上按格位：空格且有剩餘元件即放入（每關只有一種元件），有元件則選取
+  // 格位：空格且有剩餘元件即放入（每關只有一種元件），有元件則選取
   const types = (Object.keys(L.inventory) as PieceType[]).filter(k => (L.inventory[k] ?? 0) > 0);
   const tapSlot = useCallback((i: number) => {
     setSel(i);
@@ -95,34 +92,42 @@ export default function LaserMaze() {
       const placed = [...s.placed]; placed[i] = { type, rot: DEFAULT_ROT[type] }; return { ...s, placed };
     });
   }, [L, types, setSt]);
-  const onStagePointer = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (firing || !L.slots.length) return;
-    const el = stageRef.current!; const r = el.getBoundingClientRect();
-    const lay = layout(r.width, r.height);
-    const x = (e.clientX - r.left - lay.ox) / lay.sc, y = (r.height - (e.clientY - r.top) - lay.oy) / lay.sc;
-    let best = -1, bd = 0.6;
-    L.slots.forEach(([sx, sy], i) => { const d = Math.hypot(sx - x, sy - y); if (d < bd) { bd = d; best = i; } });
-    if (best >= 0) tapSlot(best);
-  }, [L, firing, tapSlot]);
   const rotate = (i: number, d: number) => setSt(s => { const p = s.placed[i]; if (!p) return s; const placed = [...s.placed]; placed[i] = { ...p, rot: normRot(p.type, p.rot + d) }; return { ...s, placed }; });
   const remove = (i: number) => setSt(s => { const placed = [...s.placed]; placed[i] = null; return { ...s, placed }; });
   const place = (i: number, type: PieceType) => setSt(s => { const placed = [...s.placed]; placed[i] = { type, rot: DEFAULT_ROT[type] }; return { ...s, placed }; });
 
+  // 棋盤指標：按空格 → 放入；按已放的元件並拖動 → 旋轉（元件跟着手指轉，吸附 5°）
+  const worldOf = (e: React.PointerEvent<HTMLDivElement>): Vec => {
+    const r = stageRef.current!.getBoundingClientRect(); const lay = layout(r.width, r.height);
+    return [(e.clientX - r.left - lay.ox) / lay.sc, (r.height - (e.clientY - r.top) - lay.oy) / lay.sc];
+  };
+  const nearestSlot = ([x, y]: Vec) => { let best = -1, bd = SLOT_R; L.slots.forEach(([sx, sy], i) => { const d = Math.hypot(sx - x, sy - y); if (d < bd) { bd = d; best = i; } }); return best; };
+  const angleAt = ([x, y]: Vec, i: number) => (Math.atan2(y - L.slots[i][1], x - L.slots[i][0]) * 180) / Math.PI;
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (firing || !L.slots.length) return;
+    const w = worldOf(e), i = nearestSlot(w); if (i < 0) return;
+    const p = st.placed[i];
+    if (p) { setSel(i); dragRef.current = { slot: i, type: p.type, rot0: p.rot, a0: angleAt(w, i) }; e.currentTarget.setPointerCapture(e.pointerId); }
+    else tapSlot(i);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = dragRef.current; if (!d) return;
+    const rot = snapRot(d.type, d.rot0 + angleAt(worldOf(e), d.slot) - d.a0);
+    setSt(s => { const p = s.placed[d.slot]; if (!p || p.rot === rot) return s; const placed = [...s.placed]; placed[d.slot] = { ...p, rot }; return { ...s, placed }; });
+  };
+  const onPointerUp = () => { dragRef.current = null; };
+
   const shown = firing ?? current;                      // 畫面上正在畫的一炮
   const done = !firing && !!current;
   const hit = done && current!.result.hit;
-  const stars = hit ? starsFor(L, { shots: shots.length, theta: current!.st.theta, twinKeys: twinKeys.length }) : 0;
-  const twinNeed = L.stars?.kind === "twin" && hit && twinKeys.length < 2;
+  const stars = hit ? starsFor(L, { shots: shots.length, theta: current!.st.theta }) : 0;
 
-  const lang = { t, hitLabel: t({ zh: "命中", en: "hit" }) };
-  const draw = useMemo(() => makeDraw(L, st, sel, shown, firing ? len : Infinity, shots.filter(s => s !== current).slice(-GHOSTS), done, lang.t), [L, st, sel, shown, firing, len, shots, current, done, lang.t]);   // Canvas2D 在 draw 改變時重畫
+  const draw = useMemo(() => makeDraw(L, st, sel, shown, firing ? len : Infinity, shots.filter(s => s !== current).slice(-GHOSTS), done, t), [L, st, sel, shown, firing, len, shots, current, done, t]);   // Canvas2D 在 draw 改變時重畫
 
   const unitColor = UNIT_COLORS["c3"];
   const ev0 = current?.result.beams[0].events ?? [];
-  const nBeams = L.lasers.length, nHit = current ? current.result.beams.filter(b => b.outcome === "hit").length : 0;
   const missMsg = (): string => {
     const b0 = current!.result.beams[0];
-    if (nBeams > 1) return t({ zh: `只有 ${nHit} / ${nBeams} 束命中`, en: `Only ${nHit} of ${nBeams} beams hit` });
     if (b0.outcome === "block") return t({ zh: "撞到障礙", en: "Blocked" });
     const leak = b0.events.find(e => e.kind === "refract" && e.n1 > e.n2);
     if (leak && L.id === "fibre") return t({ zh: `光在纖壁漏出了：纖壁入射角 ${sig(leak.i)}° 小於臨界角 ${sig(leak.C!)}°`, en: `Light leaked through the wall: angle ${sig(leak.i)}° at the wall is below C = ${sig(leak.C!)}°` });
@@ -142,23 +147,30 @@ export default function LaserMaze() {
             <div className="code">{t({ zh: "遊戲 · 光的反射與折射", en: "Game · Reflection and refraction" })}</div>
             <h2>{t({ zh: "激光迷宮", en: "Laser Maze" })}</h2>
           </div>
-          <div className="levels" role="tablist" aria-label={t({ zh: "關卡", en: "Levels" })}>
-            {LEVELS.map((l, i) => (
-              <button key={l.id} type="button" role="tab" aria-selected={i === li} className={progress[l.id] ? "done" : ""} onClick={() => openLevel(i)} title={t(l.name)}>
-                <b>{i + 1}</b><span>{progress[l.id] ? STAR(progress[l.id]) : "☆☆☆"}</span>
-              </button>
+          <div className="level-groups">
+            {PARTS.map(P => (
+              <div className="level-group" key={P.part}>
+                <div className="lg-name">{t(P.name)}</div>
+                <div className="levels" role="tablist" aria-label={t(P.name)}>
+                  {LEVELS.map((l, i) => l.part === P.part && (
+                    <button key={l.id} type="button" role="tab" aria-selected={i === li} className={progress[l.id] ? "done" : ""} onClick={() => openLevel(i)} title={t(l.name)}>
+                      <b>{i + 1}</b><span>{progress[l.id] ? STAR(progress[l.id]) : "☆☆☆"}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
         <div className="game-main">
-          <div className="game-stage" ref={stageRef} style={{ aspectRatio: `${W} / ${H}`, cursor: L.slots.length ? "pointer" : "default" }} onPointerDown={onStagePointer}>
+          <div className="game-stage" ref={stageRef} style={{ aspectRatio: `${W} / ${H}`, cursor: L.slots.length ? "pointer" : "default", touchAction: "none" }}
+            onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
             <Canvas2D draw={draw} frame={0} />
             {done && (
               <div className={`shot-banner ${hit ? "hit" : "block"}`} aria-live="polite">
                 {hit ? (
                   <>
                     <b>{t({ zh: "命中！", en: "Hit!" })} <span className="stars">{STAR(stars)}</span></b>
-                    {twinNeed && <p>{t({ zh: "再找另一個透鏡位置命中，才有三星。", en: "Find the other lens position for three stars." })}</p>}
                     {L.stars?.kind === "band" && stars < 3 && <p>{t({ zh: "命中了，但入射角還可以再大。", en: "Hit, but a larger angle would still work." })}</p>}
                   </>
                 ) : <b>{missMsg()}</b>}
@@ -168,7 +180,7 @@ export default function LaserMaze() {
           <aside className="panel game-panel">
             <div className="level-name"><span className="n">{li + 1} / {LEVELS.length}</span>{t(L.name)}</div>
             <p className="brief">{t(L.brief)}</p>
-            <p className="g-note">{L.note ? t(L.note) + " " : ""}{t({ zh: "理想化：只畫折射線或反射線，不畫界面的弱反射；透鏡當薄透鏡。", en: "Idealised: only the refracted or reflected ray is drawn, never the weak surface reflection; lenses are thin." })}</p>
+            <p className="g-note">{L.note ? t(L.note) + " " : ""}{t({ zh: "理想化：只畫折射線或反射線，不畫界面的弱反射。", en: "Idealised: only the refracted or reflected ray is drawn, never the weak surface reflection." })}</p>
 
             {L.angle && (
               <>
@@ -180,8 +192,8 @@ export default function LaserMaze() {
             {L.slots.length > 0 && (
               <>
                 <h2>{t({ zh: "光學元件", en: "Optical pieces" })}</h2>
-                <p className="inv">{types.map(k => <span key={k}>{t(PIECE_NAME[k])} <b>{remaining(L, st, k)} / {L.inventory[k]}</b>{L.lensF && k === "lens" ? <> (<i>f</i> = {sig(L.lensF)})</> : null}</span>)}</p>
-                <p className="stage-tip">{t({ zh: "按棋盤上的虛線格（或下面的格位鍵）放入元件，再轉角度。", en: "Tap a dashed slot on the board (or a slot button below) to place a piece, then turn it." })}</p>
+                <p className="inv">{types.map(k => <span key={k}>{t(PIECE_NAME[k])} <b>{remaining(L, st, k)} / {L.inventory[k]}</b></span>)}</p>
+                <p className="stage-tip">{t({ zh: "按棋盤上的虛線格放入元件；拖動元件即可旋轉（或用下面的按鈕，每按 15°）。", en: "Tap a dashed slot on the board to place a piece; drag the piece to turn it (or use the buttons below, 15° a press)." })}</p>
                 <div className="slot-row" role="group" aria-label={t({ zh: "格位", en: "Slots" })}>
                   {L.slots.map((_, i) => { const p = st.placed[i]; return (
                     <button key={i} type="button" className={`slot-btn${p ? " has" : ""}`} aria-pressed={sel === i} disabled={!!firing} onClick={() => tapSlot(i)} aria-label={`${t({ zh: "格位", en: "Slot" })} ${LETTER(i)}`}>
@@ -227,7 +239,6 @@ export default function LaserMaze() {
               <div className="hint-box">
                 <p>{t(L.hint)}</p>
                 <p className="formulas">{t({ zh: "反射：", en: "Reflection: " })}<i>i</i> = <i>r</i> · {t({ zh: "折射：", en: "Refraction: " })}<i>n</i>₁ sin <i>θ</i>₁ = <i>n</i>₂ sin <i>θ</i>₂ · sin <i>C</i> = 1 / <i>n</i></p>
-                <p className="formulas">{t({ zh: "透鏡：", en: "Lens: " })}1/<i>u</i> + 1/<i>v</i> = 1/<i>f</i></p>
               </div>
             )}
 
@@ -247,12 +258,12 @@ export default function LaserMaze() {
   );
 }
 
+const ang = (v: number) => sig(Math.abs(v) < 5e-3 ? 0 : v);   // 垂直入射的浮點殘差（10⁻⁶°）顯示為 0
 function describe(e: RayEvent, t: (x: Text) => string): React.ReactNode {
   const med = (n: number, g?: { name?: Text }) => (n === 1 ? t({ zh: "空氣", en: "air" }) : g?.name ? t(g.name) : `n = ${sig(n)}`);
-  if (e.kind === "reflect") return <>{t({ zh: "平面鏡反射", en: "Reflection at the mirror" })}：<i>i</i> = {sig(e.i)}°，<i>r</i> = {sig(e.i)}°</>;
-  if (e.kind === "lens") return <>{t({ zh: "經凸透鏡", en: "Through the convex lens" })}：{t({ zh: "離光心", en: "off-centre by" })} {sig(Math.abs(e.y ?? 0))}</>;
-  if (e.kind === "tir") return <>{t({ zh: "全內反射", en: "Total internal reflection" })}：<i>i</i> = {sig(e.i)}° &gt; <i>C</i> = {sig(e.C!)}°</>;
-  return <>{med(e.n1, e.glass)} → {med(e.n2, e.glass)}：<i>i</i> = {sig(e.i)}°，<i>r</i> = {sig(e.r!)}°{e.C !== undefined && <> (&lt; <i>C</i> = {sig(e.C)}°)</>}</>;
+  if (e.kind === "reflect") return <>{t({ zh: "平面鏡反射", en: "Reflection at the mirror" })}：<i>i</i> = {ang(e.i)}°，<i>r</i> = {ang(e.i)}°</>;
+  if (e.kind === "tir") return <>{t({ zh: "全內反射", en: "Total internal reflection" })}：<i>i</i> = {ang(e.i)}° &gt; <i>C</i> = {ang(e.C!)}°</>;
+  return <>{med(e.n1, e.glass)} → {med(e.n2, e.glass)}：<i>i</i> = {ang(e.i)}°，<i>r</i> = {ang(e.r!)}°{e.C !== undefined && <> (&lt; <i>C</i> = {ang(e.C)}°)</>}</>;
 }
 
 function Slider({ symbol, label, unit, min, max, step, value, disabled, onChange }: { symbol: string; label: string; unit: string; min: number; max: number; step: number; value: number; disabled: boolean; onChange: (v: number) => void }) {
@@ -313,7 +324,7 @@ function makeDraw(L: Level, st: State, sel: number | null, shown: Fired | null, 
       ctx.strokeStyle = SCENE.wheel; ctx.lineWidth = 1.5; ctx.strokeRect(X, Y, BW, BH);
     }
 
-    // 格位（虛線方格 + 字母）
+    // 格位（虛線方格 + 字母）；選中的畫實線，有元件的另加旋轉提示圈
     L.slots.forEach(([x, y], i) => {
       const s = 0.84 * sc;
       ctx.save();
@@ -321,6 +332,7 @@ function makeDraw(L: Level, st: State, sel: number | null, shown: Fired | null, 
       ctx.strokeRect(px(x) - s / 2, py(y) - s / 2, s, s); ctx.restore();
       ctx.font = monoFont(11, "700"); ctx.fillStyle = sel === i ? T.unit : T.ink3; ctx.textAlign = "left"; ctx.textBaseline = "top";
       ctx.fillText(LETTER(i), px(x) - s / 2 + 3, py(y) - s / 2 + 2);
+      if (sel === i && st.placed[i]) { ctx.save(); ctx.globalAlpha = 0.45; ctx.setLineDash([3, 4]); ctx.strokeStyle = T.unit; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(px(x), py(y), 0.62 * sc, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
     });
 
     // 探測器：圓點或探測條；命中時亮起
@@ -342,47 +354,23 @@ function makeDraw(L: Level, st: State, sel: number | null, shown: Fired | null, 
     const tl: Vec = tg.kind === "spot" ? [tg.c[0], tg.c[1] - tg.r - 0.1] : [(tg.a[0] + tg.b[0]) / 2, Math.min(tg.a[1], tg.b[1]) - 0.1];
     ctx.fillText(t({ zh: "探測器", en: "detector" }), px(tl[0]), py(tl[1]));
 
-    // 元件
+    // 平面鏡（放置的稜鏡已在 glass 畫出）
     for (const m of scene.mirrors) {
       ctx.lineCap = "butt";
       ctx.strokeStyle = SCENE.wheel; ctx.lineWidth = Math.max(6, 0.12 * sc); ctx.beginPath(); ctx.moveTo(...P(m.a)); ctx.lineTo(...P(m.b)); ctx.stroke();
       ctx.strokeStyle = SCENE.hub; ctx.lineWidth = Math.max(2, 0.04 * sc); ctx.beginPath(); ctx.moveTo(...P(m.a)); ctx.lineTo(...P(m.b)); ctx.stroke();
     }
-    for (const l of scene.lenses) {
-      const [ax, ay] = P(l.a), [bx, by] = P(l.b), ang = Math.atan2(by - ay, bx - ax), half = Math.hypot(bx - ax, by - ay) / 2;
-      ctx.save(); ctx.translate((ax + bx) / 2, (ay + by) / 2); ctx.rotate(ang);
-      ctx.beginPath(); ctx.ellipse(0, 0, half, Math.max(4, 0.12 * sc), 0, 0, Math.PI * 2);
-      ctx.globalAlpha = 0.28; ctx.fillStyle = SCENE.objectB; ctx.fill(); ctx.globalAlpha = 1;
-      ctx.strokeStyle = SCENE.objectBEdge; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(-half, 0); ctx.lineTo(half, 0); ctx.stroke();
-      ctx.fillStyle = SCENE.objectBEdge;
-      for (const s of [-1, 1]) { ctx.beginPath(); ctx.moveTo(s * half, 0); ctx.lineTo(s * half - s * 9, -6); ctx.lineTo(s * half - s * 9, 6); ctx.closePath(); ctx.fill(); }   // 會聚透鏡符號：兩端向外的箭頭
-      ctx.restore();
-      ctx.font = monoFont(11); ctx.fillStyle = T.ink2; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
-      ctx.fillText(`f = ${sig(l.f)}`, (ax + bx) / 2 + 6, Math.min(ay, by) - 4);
-    }
-    // 放置的稜鏡已在 glass 畫出；固定玻璃的標籤已畫
 
     // 激光器與方向參考
     const lasers = scene.lasers;
-    const pointSource = lasers.length > 1 && lasers.every(l => l.pos[0] === lasers[0].pos[0] && l.pos[1] === lasers[0].pos[1]);
-    if (pointSource) {
-      // 點源：一個發光點加短輻射線
-      const [x, y] = P(lasers[0].pos);
-      ctx.strokeStyle = SCENE.flag; ctx.lineWidth = 1.5;
-      for (let k = 0; k < 8; k++) { const a = (k * Math.PI) / 4; ctx.beginPath(); ctx.moveTo(x + Math.cos(a) * 0.16 * sc, y + Math.sin(a) * 0.16 * sc); ctx.lineTo(x + Math.cos(a) * 0.28 * sc, y + Math.sin(a) * 0.28 * sc); ctx.stroke(); }
-      ctx.fillStyle = SCENE.flag; ctx.beginPath(); ctx.arc(x, y, Math.max(4, 0.1 * sc), 0, Math.PI * 2); ctx.fill();
-      ctx.font = uiFont(11); ctx.fillStyle = T.ink2; ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillText(t({ zh: "點源", en: "point source" }), x, y + 0.34 * sc);
-    }
     lasers.forEach((ls, k) => {
       const d = dirOf(ls.dir), [x, y] = P(ls.pos);
-      if (!pointSource) {
-        const bodyL = 0.7 * sc, bodyW = 0.28 * sc;
-        ctx.save(); ctx.translate(x, y); ctx.rotate(-Math.atan2(d[1], d[0]));
-        ctx.fillStyle = SCENE.wheel; ctx.fillRect(-bodyL, -bodyW / 2, bodyL, bodyW);
-        ctx.fillStyle = SCENE.hub; ctx.fillRect(-bodyL + 3, -bodyW / 2 + 3, bodyL * 0.45, bodyW - 6);
-        ctx.fillStyle = SCENE.flag; ctx.beginPath(); ctx.arc(0, 0, Math.max(3, 0.07 * sc), 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
-      }
+      const bodyL = 0.7 * sc, bodyW = 0.28 * sc;
+      ctx.save(); ctx.translate(x, y); ctx.rotate(-Math.atan2(d[1], d[0]));
+      ctx.fillStyle = SCENE.wheel; ctx.fillRect(-bodyL, -bodyW / 2, bodyL, bodyW);
+      ctx.fillStyle = SCENE.hub; ctx.fillRect(-bodyL + 3, -bodyW / 2 + 3, bodyL * 0.45, bodyW - 6);
+      ctx.fillStyle = SCENE.flag; ctx.beginPath(); ctx.arc(0, 0, Math.max(3, 0.07 * sc), 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
       if (k === 0 && L.angle) {
         // 參考線（法線或軸）與角度弧：anchor 是量角的點（激光口，或半圓關的圓心）；u1、u2 是由 anchor 指向「法線」與「激光」的方向
         const pv = !!L.angle.pivot;
@@ -442,7 +430,7 @@ function makeDraw(L: Level, st: State, sel: number | null, shown: Fired | null, 
           ctx.beginPath(); ctx.moveTo(x - n[0] * 0.8 * sc, y + n[1] * 0.8 * sc); ctx.lineTo(x + n[0] * 0.8 * sc, y - n[1] * 0.8 * sc); ctx.stroke(); ctx.restore();
           if (k < 4) {
             ctx.font = monoFont(11); ctx.fillStyle = T.ink; ctx.textAlign = n[0] >= 0 ? "left" : "right"; ctx.textBaseline = "bottom";
-            const lab = e.kind === "tir" ? `${tick(+e.i.toFixed(1))}° > C` : e.kind === "lens" || e.i < 0.5 ? "" : `i ${tick(+e.i.toFixed(1))}°  r ${tick(+(e.r ?? e.i).toFixed(1))}°`;   // 垂直入射不標（0°，只會擋畫面）
+            const lab = e.kind === "tir" ? `${tick(+e.i.toFixed(1))}° > C` : e.i < 0.5 ? "" : `i ${tick(+e.i.toFixed(1))}°  r ${tick(+(e.r ?? e.i).toFixed(1))}°`;   // 垂直入射不標（0°，只會擋畫面）
             if (lab) ctx.fillText(lab, x + n[0] * 0.85 * sc + (n[0] >= 0 ? 4 : -4), y - n[1] * 0.85 * sc - 2);
           }
         });
@@ -459,4 +447,3 @@ function fish(ctx: CanvasRenderingContext2D, cx: number, cy: number, sc: number)
   ctx.beginPath(); ctx.moveTo(cx + rx * 0.9, cy); ctx.lineTo(cx + rx * 1.5, cy - ry * 0.9); ctx.lineTo(cx + rx * 1.5, cy + ry * 0.9); ctx.closePath(); ctx.fill(); ctx.stroke();
   ctx.fillStyle = SCENE.wheel; ctx.beginPath(); ctx.arc(cx - rx * 0.5, cy - ry * 0.2, Math.max(1.5, 0.035 * sc), 0, Math.PI * 2); ctx.fill();
 }
-

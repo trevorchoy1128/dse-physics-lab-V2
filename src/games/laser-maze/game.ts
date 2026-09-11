@@ -1,20 +1,20 @@
 import type { Text } from "@/shell/types";
 
 // 激光迷宮：遊戲邏輯（純 TypeScript，不碰畫布）。
-// 光學跟牛津 Book 3A Ch1–3：反射定律、折射定律 n₁ sin θ₁ = n₂ sin θ₂、臨界角 sin C = 1/n、薄透鏡。
+// 光學跟牛津 Book 3A Ch1–2：反射定律、折射定律 n₁ sin θ₁ = n₂ sin θ₂、臨界角 sin C = 1/n。
 // 棋盤 12 × 8 格，x 右 y 上，單位「格」。光線由激光出發，逐段找最近的界面：
-//   平面鏡 → 反射；玻璃邊界 → 折射（sin θ₂ > 1 即全內反射）；薄透鏡 → tan θ′ = tan θ − y/f；障礙、探測器、棋盤邊界 → 結束。
-// 理想化：只畫折射線或反射線，不畫界面的弱反射；透鏡當薄透鏡；空氣折射率當 1。
+//   平面鏡 → 反射；玻璃邊界 → 折射（sin θ₂ > 1 即全內反射）；障礙、探測器、棋盤邊界 → 結束。
+// 理想化：只畫折射線或反射線，不畫界面的弱反射；空氣折射率當 1。
+// 兩部分：第一部分平面鏡（放鏡、轉角），第二部分稜鏡與折射（放稜鏡、轉角；或調入射角）。
 
 export type Vec = [number, number];
 export type Edge = { kind: "seg"; a: Vec; b: Vec } | { kind: "arc"; c: Vec; r: number; a0: number; a1: number };   // arc：由 a0 逆時針到 a1（弧度）
 
-export type PieceType = "mirror" | "prism" | "lens";
+export type PieceType = "mirror" | "prism";
 export interface Placed { type: PieceType; rot: number }             // rot / °
 
-export interface Glass { n: number; edges: Edge[]; name?: Text; label?: Text; labelAt?: Vec }   // name：讀數用的介質名（玻璃／水／光纖／稜鏡）   // 閉合區域（邊只可屬一個區域，區域不可重疊）
+export interface Glass { n: number; edges: Edge[]; name?: Text; label?: Text; labelAt?: Vec }   // 閉合區域（邊只可屬一個區域，區域不可重疊）；name：讀數用的介質名
 export interface Mirror { a: Vec; b: Vec }
-export interface Lens { a: Vec; b: Vec; f: number }                  // 薄透鏡：a→b 是鏡面，f 為焦距（格）
 export interface Block { x0: number; x1: number; y0: number; y1: number }
 export type Target = { kind: "spot"; c: Vec; r: number; fish?: boolean } | { kind: "strip"; a: Vec; b: Vec };
 
@@ -27,21 +27,20 @@ export interface AngleCtl {
 
 export interface Level {
   id: string;
+  part: 1 | 2;                       // 1 平面鏡；2 稜鏡與折射
   name: Text;
   brief: Text;                       // 關卡說明
   hint: Text;                        // 公式提示（按「提示」才看）
-  note?: Text;                       // 本關的數值（n、f）
+  note?: Text;                       // 本關的數值（n）
   lasers: { pos: Vec; dir: number }[];   // dir / °；有 angle 時第一支由 angle 決定
   angle?: AngleCtl;
   glass: Glass[];
   mirrors: Mirror[];
-  lenses: Lens[];
   blocks: Block[];
   target: Target;
   slots: Vec[];                      // 可放元件的格（中心座標）
   inventory: Partial<Record<PieceType, number>>;
-  lensF?: number;                    // 可放置的凸透鏡焦距
-  stars?: { kind: "twin" } | { kind: "band"; three: number; two: number };   // twin：兩個不同解都命中才三星；band：θ ≥ three 三星、≥ two 兩星
+  stars?: { kind: "band"; three: number; two: number };   // band：θ ≥ three 三星、≥ two 兩星（其餘關按發射次數）
   aimLine?: boolean;                 // 畫激光到目標的直線（叉魚關：直線瞄準會射不中）
   start?: Partial<State>;            // 進入關卡的預設（刻意不命中）
 }
@@ -49,10 +48,11 @@ export interface Level {
 export interface State { theta: number; placed: (Placed | null)[] }
 
 export const W = 12, H = 8;
-export const ROT_STEP = 15;
-export const ROT_MOD: Record<PieceType, number> = { mirror: 180, prism: 360, lens: 180 };
-export const DEFAULT_ROT: Record<PieceType, number> = { mirror: 90, prism: 90, lens: 90 };
-const MIRROR_LEN = 1.0, LENS_LEN = 2.4;
+export const ROT_STEP = 15;          // 按鈕一按的轉角
+export const DRAG_STEP = 5;          // 拖動旋轉的吸附格
+export const ROT_MOD: Record<PieceType, number> = { mirror: 180, prism: 360 };
+export const DEFAULT_ROT: Record<PieceType, number> = { mirror: 90, prism: 90 };
+const MIRROR_LEN = 1.0;
 const PRISM_LOCAL: Vec[] = [[-0.5, -0.5], [0.5, -0.5], [-0.5, 0.5]];   // 直角等腰稜鏡：直角在左下，斜面「\」
 
 // ---- 向量 ----
@@ -79,12 +79,11 @@ export const semicircleEdges = (c: Vec, r: number, flatNormal: number): Edge[] =
 export const polyEdges = (pts: Vec[]): Edge[] => pts.map((p, i) => ({ kind: "seg", a: p, b: pts[(i + 1) % pts.length] }));
 
 export function pieceMirror(c: Vec, rotDeg: number): Mirror { const h = mul(dirOf(rotDeg), MIRROR_LEN / 2); return { a: sub(c, h), b: add(c, h) }; }
-export function pieceLens(c: Vec, rotDeg: number, f: number): Lens { const h = mul(dirOf(rotDeg), LENS_LEN / 2); return { a: sub(c, h), b: add(c, h), f }; }
 export function piecePrism(c: Vec, rotDeg: number, n = 1.5): Glass { return { n, name: { zh: "稜鏡", en: "prism" }, edges: polyEdges(PRISM_LOCAL.map(p => add(c, rot(p, rotDeg)))) }; }
 export const prismVertices = (c: Vec, rotDeg: number): Vec[] => PRISM_LOCAL.map(p => add(c, rot(p, rotDeg)));
 
 // ---- 由關卡 + 狀態組成場景 ----
-export interface Scene { lasers: { pos: Vec; dir: number }[]; glass: Glass[]; mirrors: Mirror[]; lenses: Lens[]; blocks: Block[]; target: Target }
+export interface Scene { lasers: { pos: Vec; dir: number }[]; glass: Glass[]; mirrors: Mirror[]; blocks: Block[]; target: Target }
 export function laserOf(L: Level, theta: number): { pos: Vec; dir: number } {
   const a = L.angle; if (!a) return L.lasers[0];
   const dir = a.ref + a.sign * theta;
@@ -93,19 +92,18 @@ export function laserOf(L: Level, theta: number): { pos: Vec; dir: number } {
 }
 export function sceneOf(L: Level, st: State): Scene {
   const lasers = L.lasers.map((l, i) => (i === 0 && L.angle ? laserOf(L, st.theta) : l));
-  const glass = [...L.glass], mirrors = [...L.mirrors], lenses = [...L.lenses];
+  const glass = [...L.glass], mirrors = [...L.mirrors];
   L.slots.forEach((c, i) => {
     const p = st.placed[i]; if (!p) return;
     if (p.type === "mirror") mirrors.push(pieceMirror(c, p.rot));
-    else if (p.type === "lens") lenses.push(pieceLens(c, p.rot, L.lensF ?? 2));
     else glass.push(piecePrism(c, p.rot));
   });
-  return { lasers, glass, mirrors, lenses, blocks: L.blocks, target: L.target };
+  return { lasers, glass, mirrors, blocks: L.blocks, target: L.target };
 }
 
 // ---- 光線追蹤 ----
-type HitKind = "mirror" | "glass" | "lens" | "block" | "target" | "bound";
-interface Hit { t: number; kind: HitKind; n: Vec; glass?: Glass; lens?: Lens }
+type HitKind = "mirror" | "glass" | "block" | "target" | "bound";
+interface Hit { t: number; kind: HitKind; n: Vec; glass?: Glass }
 const EPS = 1e-7;
 
 function hitSeg(p: Vec, d: Vec, a: Vec, b: Vec): { t: number; n: Vec } | null {
@@ -136,8 +134,8 @@ function hitCircle(p: Vec, d: Vec, c: Vec, r: number, a0?: number, a1?: number):
 }
 const hitEdge = (p: Vec, d: Vec, e: Edge) => (e.kind === "seg" ? hitSeg(p, d, e.a, e.b) : hitCircle(p, d, e.c, e.r, e.a0, e.a1));
 
-export type EventKind = "reflect" | "refract" | "tir" | "lens";
-export interface RayEvent { kind: EventKind; p: Vec; n: Vec; i: number; r?: number; C?: number; n1: number; n2: number; glass?: Glass; y?: number }   // 角度 / °；n 為入射一側的法線；y：透鏡上離光心的距離
+export type EventKind = "reflect" | "refract" | "tir";
+export interface RayEvent { kind: EventKind; p: Vec; n: Vec; i: number; r?: number; C?: number; n1: number; n2: number; glass?: Glass }   // 角度 / °；n 為入射一側的法線
 export type Outcome = "hit" | "out" | "block";
 export interface Beam { points: Vec[]; events: RayEvent[]; outcome: Outcome; length: number }
 export interface TraceResult { beams: Beam[]; hit: boolean; length: number }
@@ -155,7 +153,6 @@ export function traceBeam(sc: Scene, pos: Vec, dirDeg: number): Beam {
     if (sc.target.kind === "spot") consider(hitCircle(p, d, sc.target.c, sc.target.r), "target");
     else consider(hitSeg(p, d, sc.target.a, sc.target.b), "target");
     for (const m of sc.mirrors) consider(hitSeg(p, d, m.a, m.b), "mirror");
-    for (const l of sc.lenses) consider(hitSeg(p, d, l.a, l.b), "lens", { lens: l });
     for (const g of sc.glass) for (const e of g.edges) consider(hitEdge(p, d, e), "glass", { glass: g });
     if (!best) break;                                             // 理論上不會（棋盤邊界永遠在）
     const h: Hit = best;
@@ -165,12 +162,7 @@ export function traceBeam(sc: Scene, pos: Vec, dirDeg: number): Beam {
     if (h.kind === "block") { outcome = "block"; break; }
     if (h.kind === "target") { outcome = "hit"; break; }
     if (h.kind === "mirror") { d = reflect(d, h.n); events.push({ kind: "reflect", p: q, n: h.n, i, r: i, n1, n2: n1 }); }
-    else if (h.kind === "lens") {
-      const l = h.lens!, fwd = mul(h.n, -1), tang = norm(sub(l.b, l.a)), c = mul(add(l.a, l.b), 0.5);
-      const y = dot(sub(q, c), tang), tanIn = dot(d, tang) / dot(d, fwd), tanOut = tanIn - y / l.f;
-      d = norm(add(fwd, mul(tang, tanOut)));
-      events.push({ kind: "lens", p: q, n: h.n, i, r: deg(Math.atan(tanOut)), n1, n2: n1, y });
-    } else {
+    else {
       const g = h.glass!, leaving: boolean = inside === g, n2 = leaving ? 1 : g.n;
       const sin1 = Math.sqrt(Math.max(0, 1 - cos1 * cos1)), ratio = n1 / n2, sin2 = ratio * sin1;
       if (sin2 > 1) { d = reflect(d, h.n); events.push({ kind: "tir", p: q, n: h.n, i, C: deg(Math.asin(1 / n1)), n1, n2, glass: g }); }
@@ -196,12 +188,11 @@ export function trace(L: Level, st: State): TraceResult {
 export const initialState = (L: Level): State => ({ theta: L.angle?.start ?? 0, placed: L.slots.map(() => null), ...L.start });
 export const remaining = (L: Level, st: State, type: PieceType) => (L.inventory[type] ?? 0) - st.placed.filter(p => p?.type === type).length;
 export const normRot = (type: PieceType, r: number) => ((r % ROT_MOD[type]) + ROT_MOD[type]) % ROT_MOD[type];
-/** 解的身份（twin 用）：透鏡／鏡放在哪個格 */
-export const solutionKey = (st: State) => st.placed.map((p, i) => (p ? `${i}:${p.type}` : "")).filter(Boolean).join(",") + `|${st.theta}`;
+/** 拖動旋轉：吸附到 DRAG_STEP 的格 */
+export const snapRot = (type: PieceType, r: number) => normRot(type, Math.round(r / DRAG_STEP) * DRAG_STEP);
 
 /** 命中時的星數（1–3） */
-export function starsFor(L: Level, ctx: { shots: number; theta: number; twinKeys: number }): number {
-  if (L.stars?.kind === "twin") return ctx.twinKeys >= 2 ? 3 : 1;
+export function starsFor(L: Level, ctx: { shots: number; theta: number }): number {
   if (L.stars?.kind === "band") return ctx.theta >= L.stars.three ? 3 : ctx.theta >= L.stars.two ? 2 : 1;
   return ctx.shots <= 1 ? 3 : ctx.shots <= 3 ? 2 : 1;
 }

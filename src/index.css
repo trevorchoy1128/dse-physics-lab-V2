@@ -294,7 +294,9 @@ i { font-style: italic; font-family: "Noto Serif TC", "Times New Roman", serif; 
   .game-main.chase { grid-template-areas: "lever" "stage" "panel"; grid-template-rows: auto; }
   .lever-grid { grid-template-columns: minmax(0, 1fr) 200px; align-items: end; column-gap: 14px; }
 }
-/* 激光迷宮：格位、元件與轉角 */
+/* 激光迷宮：關卡分兩部分、格位、元件與轉角 */
+.level-groups { display: flex; gap: 8px 22px; flex-wrap: wrap; align-items: flex-end; }
+.level-group .lg-name { font-size: 11.5px; color: var(--ink-3); margin-bottom: 4px; letter-spacing: .02em; }
 .inv { margin: 4px 0; font-size: 13.5px; color: var(--ink-2); display: flex; gap: 14px; flex-wrap: wrap; }
 .inv b { font-family: "IBM Plex Mono", monospace; font-weight: 500; color: var(--ink); }
 .stage-tip { margin: 0 0 4px; font-size: 12.5px; color: var(--ink-3); }
